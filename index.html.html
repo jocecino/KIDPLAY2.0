@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KidPlay - Ayres Diversão</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 font-sans text-gray-800">
+
+    <!-- TELA DE LOGIN (PASSO 1: SENHA) -->
+    <div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md text-center">
+            <div class="mb-4">
+                <img src="https://i.ibb.co/hxnj1WQj/IMG-1599.png" alt="Ayres Diversões" class="w-36 h-36 mx-auto object-contain rounded-full shadow-md mb-2 bg-gray-50">
+                <h1 class="text-2xl font-bold text-gray-900">KidPlay</h1>
+                <p class="text-indigo-600 font-medium text-sm">Ayres Diversões - A alegria de Jesus</p>
+            </div>
+            
+            <form id="login-form" onsubmit="handleCheckPassword(event)" class="space-y-4 text-left">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Senha de Acesso</label>
+                    <input type="password" id="password-input" placeholder="Digite a senha" required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition duration-200 shadow-md">
+                    Continuar
+                </button>
+            </form>
+
+            <form id="operator-form" onsubmit="handleOperatorLogin(event)" class="space-y-4 text-left hidden">
+                <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 p-3 rounded-lg text-xs mb-2">
+                    <i class="fa-solid fa-circle-check mr-1"></i> Senha correta! Agora informe quem está operando.
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Seu Nome (Operador(a))</label>
+                    <input type="text" id="operator-name-input" placeholder="Ex: João / Maria" required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-lg transition duration-200 shadow-md">
+                    Entrar no Sistema
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- TELA PRINCIPAL (DASHBOARD) -->
+    <div id="app-screen" class="hidden min-h-screen flex flex-col">
+        <header class="bg-indigo-600 text-white shadow-md px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <img src="https://i.ibb.co/hxnj1WQj/IMG-1599.png" alt="Logo" class="w-12 h-12 object-contain bg-white rounded-full p-1">
+                <div>
+                    <span class="text-lg font-bold block leading-tight">KidPlay</span>
+                    <span class="text-xs text-indigo-200">Ayres Diversões</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <div class="text-right hidden sm:block">
+                    <span class="text-xs text-indigo-200 block">Operador(a) em turno:</span>
+                    <strong id="display-operator-name" class="text-sm font-semibold">Nome</strong>
+                </div>
+                <button onclick="handleLogout()" class="bg-indigo-700 hover:bg-indigo-800 px-4 py-2 rounded-lg text-sm font-medium transition">
+                    <i class="fa-solid fa-right-from-bracket mr-2"></i>Sair
+                </button>
+            </div>
+        </header>
+
+        <main class="flex-1 max-w-6xl w-full mx-auto p-4 md:p-6 space-y-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">Painel de Controle</h2>
+                    <p class="text-sm text-gray-500">Tarifa: R$ 1,50 por minuto (por criança)</p>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="openCashModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-xl font-semibold shadow-md transition flex items-center space-x-2">
+                        <i class="fa-solid fa-cash-register"></i>
+                        <span>Fechamento</span>
+                    </button>
+                    <button onclick="openModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-3 rounded-xl font-semibold shadow-md transition flex items-center space-x-2">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Nova Entrada</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="sessions-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+            <div id="empty-state" class="text-center py-16 hidden">
+                <i class="fa-solid fa-clipboard-list text-gray-300 text-5xl mb-3"></i>
+                <p class="text-gray-500 font-medium">Nenhuma criança registrada no momento.</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL DE NOVA ENTRADA -->
+    <div id="entry-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative max-h-[90vh] overflow-y-auto">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">Registrar Entrada</h3>
+            <form id="entry-form" onsubmit="addSession(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Celular (Opcional - Busca Cliente)</label>
+                    <input type="tel" id="child-phone" placeholder="Ex: 11999999999" oninput="searchClientByPhone(this.value)"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    <div id="client-feedback" class="text-xs font-semibold mt-1 hidden"></div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nome de Referência (Responsável)</label>
+                    <input type="text" id="child-reference" required placeholder="Ex: Maria (Mãe)"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nome da Criança</label>
+                    <input type="text" id="child-name" required placeholder="Ex: Joãozinho"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Qtd Crianças</label>
+                        <input type="number" id="child-qty" min="1" value="1" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Minutos (Meta)</label>
+                        <input type="number" id="time-limit" min="1" placeholder="Ex: 15 (Opcional)"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <!-- ALERTA DE BRINDE DE 10 VISITAS -->
+                <div id="loyalty-bonus-box" class="hidden bg-amber-50 border border-amber-300 p-3 rounded-lg text-xs space-y-2">
+                    <div class="flex items-center text-amber-800 font-bold">
+                        <i class="fa-solid fa-gift mr-1.5 text-base text-amber-600"></i>
+                        <span>Cliente Fiel! Atingiu 10 Visitas!</span>
+                    </div>
+                    <p class="text-amber-700">Deseja aplicar o brinde de <strong>10 minutos grátis</strong>?</p>
+                    <button type="button" onclick="applyBonusMinutes()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 py-1.5 rounded transition">
+                        Aplicar +10 Minutos Grátis
+                    </button>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Status de Pagamento Inicial</label>
+                    <select id="initial-pay-status" onchange="toggleInitialPaymentFields()"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+                        <option value="Pendente">Pagar ao Sair / Futuro</option>
+                        <option value="Pago">Já Pagou Agora</option>
+                    </select>
+                </div>
+                <div id="initial-payment-details" class="hidden space-y-3 bg-gray-50 p-3 rounded-lg border">
+                    <p class="text-xs font-bold text-gray-600">Formas de Pagamento:</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[11px] text-gray-500">Pix (R$)</label>
+                            <input type="number" step="0.01" id="init-pix" placeholder="0.00" oninput="calcInitTotal()" class="w-full p-1.5 border rounded text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-gray-500">Dinheiro (R$)</label>
+                            <input type="number" step="0.01" id="init-dinheiro" placeholder="0.00" oninput="calcInitTotal()" class="w-full p-1.5 border rounded text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-gray-500">Débito (R$)</label>
+                            <input type="number" step="0.01" id="init-debito" placeholder="0.00" oninput="calcInitTotal()" class="w-full p-1.5 border rounded text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-gray-500">Crédito (R$)</label>
+                            <input type="number" step="0.01" id="init-credito" placeholder="0.00" oninput="calcInitTotal()" class="w-full p-1.5 border rounded text-sm">
+                        </div>
+                    </div>
+                    <div class="text-right text-xs font-bold text-emerald-600 pt-1">Total Pago: R$ <span id="init-total-display">0.00</span></div>
+                </div>
+                <div class="flex space-x-3 pt-2">
+                    <button type="button" onclick="closeModal()" class="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 rounded-lg transition">Cancelar</button>
+                    <button type="submit" class="w-1/2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition">Salvar Entrada</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE ADICIONAR MAIS TEMPO -->
+    <div id="add-time-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 relative">
+            <h3 class="text-lg font-bold text-gray-900 mb-3">Adicionar Mais Tempo</h3>
+            <p class="text-sm text-gray-500 mb-4">Quantos minutos deseja acrescentar para <strong id="add-time-child-name"></strong>?</p>
+            <div class="space-y-3">
+                <input type="number" id="extra-minutes-input" min="1" value="10"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg text-center font-bold text-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                <div class="flex space-x-3">
+                    <button type="button" onclick="closeAddTimeModal()" class="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 rounded-lg">Cancelar</button>
+                    <button type="button" onclick="confirmAddTime()" class="w-1/2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg">Adicionar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE MARCAR COMO PAGO NO DECORRER DO TEMPO -->
+    <div id="midway-pay-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative">
+            <h3 class="text-xl font-bold text-gray-900 mb-1">Registrar Pagamento</h3>
+            <p id="midway-pay-subtitle" class="text-sm text-gray-500 mb-4"></p>
+            <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-3 bg-gray-50 p-3 rounded-xl border">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Pix (R$)</label>
+                        <input type="number" step="0.01" id="mid-pix" placeholder="0.00" oninput="calcMidTotal()" class="w-full px-3 py-2 border rounded-lg text-sm font-bold">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Dinheiro (R$)</label>
+                        <input type="number" step="0.01" id="mid-dinheiro" placeholder="0.00" oninput="calcMidTotal()" class="w-full px-3 py-2 border rounded-lg text-sm font-bold">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Débito (R$)</label>
+                        <input type="number" step="0.01" id="mid-debito" placeholder="0.00" oninput="calcMidTotal()" class="w-full px-3 py-2 border rounded-lg text-sm font-bold">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Crédito (R$)</label>
+                        <input type="number" step="0.01" id="mid-credito" placeholder="0.00" oninput="calcMidTotal()" class="w-full px-3 py-2 border rounded-lg text-sm font-bold">
+                    </div>
+                </div>
+                <div class="flex justify-between items-center px-1">
+                    <span class="text-sm font-medium text-gray-700">Total Pago:</span>
+                    <span id="mid-total-display" class="text-xl font-extrabold text-emerald-600">R$ 0,00</span>
+                </div>
+                <div class="flex space-x-3 pt-2">
+                    <button type="button" onclick="closeMidwayModal()" class="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 rounded-lg">Cancelar</button>
+                    <button type="button" onclick="confirmMidwayPayment()" class="w-1/2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 rounded-lg">Confirmar Pago</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE CANCELAMENTO COM MOTIVO -->
+    <div id="cancel-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 relative">
+            <h3 class="text-lg font-bold text-gray-900 mb-2 text-red-600">Cancelar Atendimento</h3>
+            <p class="text-sm text-gray-500 mb-3">Informe o motivo do cancelamento para <strong id="cancel-child-name"></strong>:</p>
+            <div class="space-y-3">
+                <textarea id="cancel-reason-input" rows="3" placeholder="Ex: Criança passou mal, desistiu, etc."
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-red-500 focus:outline-none"></textarea>
+                <div class="flex space-x-3">
+                    <button type="button" onclick="closeCancelModal()" class="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 rounded-lg">Voltar</button>
+                    <button type="button" onclick="confirmCancelSession()" class="w-1/2 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded-lg">Confirmar Cancelamento</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE SAÍDA E PAGAMENTO -->
+    <div id="checkout-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative">
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Finalizar Brinquedo</h3>
+            <p id="checkout-summary" class="text-sm text-gray-500 mb-4"></p>
+            
+            <form onsubmit="confirmCheckout(event)" class="space-y-4">
+                <div class="bg-gray-50 p-3 rounded-xl border space-y-2">
+                    <p class="text-xs font-bold text-gray-700">Formas de Pagamento (Neste acerto final):</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[11px] text-gray-500">Pix (R$)</label>
+                            <input type="number" step="0.01" id="out-pix" placeholder="0.00" oninput="calcOutTotal()" class="w-full p-1.5 border rounded text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-gray-500">Dinheiro (R$)</label>
+                            <input type="number" step="0.01" id="out-dinheiro" placeholder="0.00" oninput="calcOutTotal()" class="w-full p-1.5 border rounded text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-gray-500">Débito (R$)</label>
+                            <input type="number" step="0.01" id="out-debito" placeholder="0.00" oninput="calcOutTotal()" class="w-full p-1.5 border rounded text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-gray-500">Crédito (R$)</label>
+                            <input type="number" step="0.01" id="out-credito" placeholder="0.00" oninput="calcOutTotal()" class="w-full p-1.5 border rounded text-sm">
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center px-1">
+                    <span class="text-sm font-medium text-gray-700">Total a Pagar Agora:</span>
+                    <span id="out-total-display" class="text-xl font-extrabold text-emerald-600">R$ 0,00</span>
+                </div>
+                <div class="flex space-x-3 pt-2">
+                    <button type="button" onclick="closeCheckoutModal()" class="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 rounded-lg transition">Cancelar</button>
+                    <button type="submit" class="w-1/2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 rounded-lg transition">Confirmar Pagamento</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE FECHAMENTO -->
+    <div id="cash-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-900">Fechamento</h3>
+                <button onclick="closeCashModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Escolher Data do Relatório:</label>
+                    <input type="date" id="report-date-input" onchange="openCashModal()"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-gray-50 font-medium">
+                </div>
+
+                <div class="bg-indigo-50 p-4 rounded-xl flex justify-between items-center">
+                    <span class="font-medium text-indigo-900">Faturamento no Dia:</span>
+                    <span id="cash-total" class="text-2xl font-extrabold text-indigo-600">R$ 0,00</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 text-sm">
+                    <div class="bg-gray-50 p-3 rounded-lg border">
+                        <span class="text-gray-500 block">Pix</span>
+                        <strong id="total-pix" class="text-gray-800">R$ 0,00</strong>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg border">
+                        <span class="text-gray-500 block">Espécie</span>
+                        <strong id="total-dinheiro" class="text-gray-800">R$ 0,00</strong>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg border">
+                        <span class="text-gray-500 block">Débito</span>
+                        <strong id="total-debito" class="text-gray-800">R$ 0,00</strong>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg border">
+                        <span class="text-gray-500 block">Crédito</span>
+                        <strong id="total-credito" class="text-gray-800">R$ 0,00</strong>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-gray-700 text-sm mb-2">Atendimentos na Data Selecionada:</h4>
+                    <div id="history-list" class="max-h-48 overflow-y-auto space-y-2 border rounded-lg p-2 text-sm bg-gray-50"></div>
+                </div>
+            </div>
+
+            <button onclick="closeCashModal()" class="w-full mt-5 bg-gray-800 hover:bg-gray-900 text-white font-semibold py-2.5 rounded-lg transition">Fechar Janela</button>
+        </div>
+    </div>
+
+    <!-- SCRIPT -->
+    <script>
+        // URL do Google Apps Script devidamente atualizada
+        const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxl9tOw4Kk_F2uLcMKETLXUSmdl0dWR103sKaHEtboevjqZmeErFQr82QqZc2ILMF_f/exec";
+        
+        let sessions = [];
+        let history = [];
+        let currentOperator = localStorage.getItem('kidplay_operator') || '';
+        let currentCheckoutId = null;
+        let currentAddTimeId = null;
+        let currentMidwayId = null;
+        let currentCancelId = null;
+        const RATE_PER_MINUTE = 1.50;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (currentOperator) {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('app-screen').classList.remove('hidden');
+                document.getElementById('display-operator-name').innerText = currentOperator;
+            }
+            loadDataFromCloud();
+            
+            // Sincronização automática a cada 5 segundos para múltiplos celulares
+            setInterval(loadDataFromCloud, 5000);
+        });
+
+        function loadDataFromCloud() {
+            if (!GOOGLE_SHEET_URL) return;
+            fetch(GOOGLE_SHEET_URL)
+                .then(res => res.json())
+                .then(data => {
+                    if (Array.isArray(data)) {
+                        history = data;
+                    }
+                })
+                .catch(err => console.log("Erro ao carregar dados da nuvem:", err));
+
+            let cloudSessions = localStorage.getItem('kidplay_sessions');
+            if (cloudSessions) {
+                sessions = JSON.parse(cloudSessions);
+            }
+            if (currentOperator) {
+                renderSessions();
+            }
+        }
+
+        function playAlarmSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                function playBeep(freq, time, duration) {
+                    setTimeout(() => {
+                        const oscillator = audioCtx.createOscillator();
+                        const gainNode = audioCtx.createGain();
+                        oscillator.type = 'sine';
+                        oscillator.frequency.value = freq;
+                        gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioCtx.destination);
+                        oscillator.start();
+                        oscillator.stop(audioCtx.currentTime + duration);
+                    }, time);
+                }
+                playBeep(880, 0, 0.15);
+                playBeep(1100, 200, 0.15);
+                playBeep(880, 400, 0.15);
+                playBeep(1100, 600, 0.15);
+                playBeep(1320, 800, 0.25);
+            } catch (e) {
+                console.log("Áudio bloqueado.");
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('kidplay_sessions', JSON.stringify(sessions));
+            renderSessions();
+        }
+
+        function handleCheckPassword(event) {
+            event.preventDefault();
+            const pass = document.getElementById('password-input').value;
+            if (pass === "2026") {
+                document.getElementById('login-form').classList.add('hidden');
+                document.getElementById('operator-form').classList.remove('hidden');
+                document.getElementById('operator-name-input').focus();
+            } else {
+                alert("Senha incorreta!");
+                document.getElementById('password-input').value = '';
+            }
+        }
+
+        function handleOperatorLogin(event) {
+            event.preventDefault();
+            const name = document.getElementById('operator-name-input').value.trim();
+            if (!name) return;
+
+            currentOperator = name;
+            localStorage.setItem('kidplay_operator', currentOperator);
+
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('app-screen').classList.remove('hidden');
+            document.getElementById('display-operator-name').innerText = currentOperator;
+            renderSessions();
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('kidplay_operator');
+            currentOperator = '';
+            document.getElementById('app-screen').classList.add('hidden');
+            document.getElementById('login-screen').classList.remove('hidden');
+            document.getElementById('login-form').classList.remove('hidden');
+            document.getElementById('operator-form').classList.add('hidden');
+            document.getElementById('password-input').value = '';
+            document.getElementById('operator-name-input').value = '';
+        }
+
+        function openModal() {
+            document.getElementById('entry-modal').classList.remove('hidden');
+            document.getElementById('entry-modal').classList.add('flex');
+            document.getElementById('loyalty-bonus-box').classList.add('hidden');
+            document.getElementById('client-feedback').classList.add('hidden');
+            toggleInitialPaymentFields();
+        }
+
+        function closeModal() {
+            document.getElementById('entry-modal').classList.add('hidden');
+            document.getElementById('entry-modal').classList.remove('flex');
+            document.getElementById('entry-form').reset();
+            document.getElementById('loyalty-bonus-box').classList.add('hidden');
+        }
+
+        function toggleInitialPaymentFields() {
+            const status = document.getElementById('initial-pay-status').value;
+            const details = document.getElementById('initial-payment-details');
+            if (status === 'Pago') {
+                details.classList.remove('hidden');
+            } else {
+                details.classList.add('hidden');
+            }
+        }
+
+        function calcInitTotal() {
+            const p = parseFloat(document.getElementById('init-pix').value) || 0;
+            const d = parseFloat(document.getElementById('init-dinheiro').value) || 0;
+            const db = parseFloat(document.getElementById('init-debito').value) || 0;
+            const c = parseFloat(document.getElementById('init-credito').value) || 0;
+            document.getElementById('init-total-display').innerText = (p + d + db + c).toFixed(2);
+        }
+
+        function searchClientByPhone(phone) {
+            const cleanPhone = phone.trim().replace(/\D/g, '');
+            const feedback = document.getElementById('client-feedback');
+            const bonusBox = document.getElementById('loyalty-bonus-box');
+            bonusBox.classList.add('hidden');
+
+            if (cleanPhone.length < 4) {
+                feedback.classList.add('hidden');
+                return;
+            }
+
+            const foundItem = history.slice().reverse().find(h => h.phone && h.phone.replace(/\D/g, '') === cleanPhone);
+            const visitCount = history.filter(h => h.phone && h.phone.replace(/\D/g, '') === cleanPhone).length;
+
+            if (foundItem) {
+                document.getElementById('child-reference').value = foundItem.reference || '';
+                let cleanName = foundItem.name ? foundItem.name.split(' (CANCELADO')[0] : '';
+                document.getElementById('child-name').value = cleanName;
+
+                feedback.innerText = `Cliente encontrado! Visitas anteriores: ${visitCount}`;
+                feedback.className = "text-xs font-semibold mt-1 text-emerald-600";
+                feedback.classList.remove('hidden');
+            } else {
+                feedback.innerText = `Novo cliente ou celular não cadastrado.`;
+                feedback.className = "text-xs font-semibold mt-1 text-gray-500";
+                feedback.classList.remove('hidden');
+            }
+
+            if (visitCount >= 10) {
+                bonusBox.classList.remove('hidden');
+            }
+        }
+
+        function applyBonusMinutes() {
+            const timeLimitInput = document.getElementById('time-limit');
+            let currentLimit = parseInt(timeLimitInput.value) || 0;
+            timeLimitInput.value = currentLimit + 10;
+            document.getElementById('loyalty-bonus-box').classList.add('hidden');
+            alert("Brinde de 10 minutos grátis aplicado com sucesso!");
+        }
+
+        function addSession(event) {
+            event.preventDefault();
+            const phone = document.getElementById('child-phone').value.trim();
+            const reference = document.getElementById('child-reference').value.trim();
+            const name = document.getElementById('child-name').value.trim();
+            const qty = parseInt(document.getElementById('child-qty').value);
+            const limit = document.getElementById('time-limit').value ? parseInt(document.getElementById('time-limit').value) : null;
+            const payStatus = document.getElementById('initial-pay-status').value;
+            
+            let pixVal = 0, dinheiroVal = 0, debitoVal = 0, creditoVal = 0;
+            let totalPaid = 0;
+            let methodDesc = "Pendente";
+
+            if (payStatus === 'Pago') {
+                pixVal = parseFloat(document.getElementById('init-pix').value) || 0;
+                dinheiroVal = parseFloat(document.getElementById('init-dinheiro').value) || 0;
+                debitoVal = parseFloat(document.getElementById('init-debito').value) || 0;
+                creditoVal = parseFloat(document.getElementById('init-credito').value) || 0;
+                
+                totalPaid = pixVal + dinheiroVal + debitoVal + creditoVal;
+                let parts = [];
+                if(pixVal > 0) parts.push(`Pix: R$ ${pixVal.toFixed(2)}`);
+                if(dinheiroVal > 0) parts.push(`Dinheiro: R$ ${dinheiroVal.toFixed(2)}`);
+                if(debitoVal > 0) parts.push(`Débito: R$ ${debitoVal.toFixed(2)}`);
+                if(creditoVal > 0) parts.push(`Crédito: R$ ${creditoVal.toFixed(2)}`);
+                methodDesc = parts.join(' | ') || "Pago";
+            }
+
+            const nowObj = new Date();
+            const newSession = {
+                id: Date.now(),
+                phone: phone,
+                name: name,
+                reference: reference,
+                qty: qty,
+                entryTime: nowObj.getTime(),
+                timeLimit: limit,
+                paymentStatus: payStatus,
+                paidAmount: totalPaid,
+                paymentMethod: methodDesc,
+                isPaused: false,
+                pausedDuration: 0,
+                lastPauseStart: null,
+                alertTriggered: false
+            };
+
+            sessions.push(newSession);
+
+            if (payStatus === 'Pago' && totalPaid > 0) {
+                const record = {
+                    date: getFormattedDate(nowObj),
+                    time: nowObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                    name: newSession.name,
+                    qty: newSession.qty,
+                    reference: newSession.reference,
+                    phone: newSession.phone,
+                    minutes: 0,
+                    referenceTotal: 0,
+                    total: totalPaid,
+                    pix: pixVal,
+                    dinheiro: dinheiroVal,
+                    debito: debitoVal,
+                    credito: creditoVal,
+                    method: methodDesc,
+                    operator: currentOperator || "Desconhecido"
+                };
+                sendRecordToSheet(record);
+                history.push(record);
+            }
+
+            saveData();
+            closeModal();
+        }
+
+        function togglePauseSession(id) {
+            const session = sessions.find(s => s.id === id);
+            if (!session) return;
+
+            const now = new Date().getTime();
+            if (!session.isPaused) {
+                session.isPaused = true;
+                session.lastPauseStart = now;
+            } else {
+                session.isPaused = false;
+                if (session.lastPauseStart) {
+                    session.pausedDuration += (now - session.lastPauseStart);
+                    session.lastPauseStart = null;
+                }
+            }
+            saveData();
+        }
+
+        function openAddTimeModal(id) {
+            currentAddTimeId = id;
+            const session = sessions.find(s => s.id === id);
+            if (!session) return;
+            document.getElementById('add-time-child-name').innerText = session.name;
+            document.getElementById('add-time-modal').classList.remove('hidden');
+            document.getElementById('add-time-modal').classList.add('flex');
+        }
+
+        function closeAddTimeModal() {
+            document.getElementById('add-time-modal').classList.add('hidden');
+            document.getElementById('add-time-modal').classList.remove('flex');
+            currentAddTimeId = null;
+        }
+
+        function confirmAddTime() {
+            const extra = parseInt(document.getElementById('extra-minutes-input').value) || 0;
+            const session = sessions.find(s => s.id === currentAddTimeId);
+            if (session && extra > 0) {
+                if (session.timeLimit) {
+                    session.timeLimit += extra;
+                } else {
+                    session.timeLimit = extra;
+                }
+                session.alertTriggered = false;
+                saveData();
+            }
+            closeAddTimeModal();
+        }
+
+        function openMidwayModal(id) {
+            currentMidwayId = id;
+            const session = sessions.find(s => s.id === id);
+            if (!session) return;
+
+            const now = session.isPaused ? session.lastPauseStart : new Date().getTime();
+            const activeMs = now - session.entryTime - session.pausedDuration;
+            const diffMinutes = Math.max(1, Math.ceil(activeMs / (1000 * 60)));
+            const currentCost = diffMinutes * RATE_PER_MINUTE * session.qty;
+
+            document.getElementById('midway-pay-subtitle').innerHTML = `Criança: <strong>${session.name}</strong><br>Valor Atual Calculado: <strong class="text-indigo-600">R$ ${currentCost.toFixed(2)}</strong>`;
+            document.getElementById('mid-pix').value = '';
+            document.getElementById('mid-dinheiro').value = '';
+            document.getElementById('mid-debito').value = '';
+            document.getElementById('mid-credito').value = '';
+            document.getElementById('mid-total-display').innerText = '0.00';
+
+            document.getElementById('midway-pay-modal').classList.remove('hidden');
+            document.getElementById('midway-pay-modal').classList.add('flex');
+        }
+
+        function closeMidwayModal() {
+            document.getElementById('midway-pay-modal').classList.add('hidden');
+            document.getElementById('midway-pay-modal').classList.remove('flex');
+            currentMidwayId = null;
+        }
+
+        function calcMidTotal() {
+            const p = parseFloat(document.getElementById('mid-pix').value) || 0;
+            const d = parseFloat(document.getElementById('mid-dinheiro').value) || 0;
+            const db = parseFloat(document.getElementById('mid-debito').value) || 0;
+            const c = parseFloat(document.getElementById('mid-credito').value) || 0;
+            document.getElementById('mid-total-display').innerText = (p + d + db + c).toFixed(2);
+        }
+
+        function confirmMidwayPayment() {
+            const session = sessions.find(s => s.id === currentMidwayId);
+            if (!session) return;
+
+            const pixVal = parseFloat(document.getElementById('mid-pix').value) || 0;
+            const dinheiroVal = parseFloat(document.getElementById('mid-dinheiro').value) || 0;
+            const debitoVal = parseFloat(document.getElementById('mid-debito').value) || 0;
+            const creditoVal = parseFloat(document.getElementById('mid-credito').value) || 0;
+            const totalPaid = pixVal + dinheiroVal + debitoVal + creditoVal;
+
+            if (totalPaid <= 0) {
+                alert("Informe pelo menos um valor pago.");
+                return;
+            }
+
+            let parts = [];
+            if(pixVal > 0) parts.push(`Pix: R$ ${pixVal.toFixed(2)}`);
+            if(dinheiroVal > 0) parts.push(`Dinheiro: R$ ${dinheiroVal.toFixed(2)}`);
+            if(debitoVal > 0) parts.push(`Débito: R$ ${debitoVal.toFixed(2)}`);
+            if(creditoVal > 0) parts.push(`Crédito: R$ ${creditoVal.toFixed(2)}`);
+            const methodDesc = parts.join(' | ');
+
+            const now = session.isPaused ? session.lastPauseStart : new Date().getTime();
+            const activeMs = now - session.entryTime - session.pausedDuration;
+            const diffMinutes = Math.max(1, Math.ceil(activeMs / (1000 * 60)));
+            const currentCost = diffMinutes * RATE_PER_MINUTE * session.qty;
+
+            session.paymentStatus = "Pago";
+            session.paidAmount = totalPaid;
+            session.paymentMethod = methodDesc;
+            saveData();
+            closeMidwayModal();
+
+            const nowObj = new Date();
+            const record = {
+                date: getFormattedDate(nowObj),
+                time: nowObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                name: session.name,
+                qty: session.qty,
+                reference: session.reference,
+                phone: session.phone,
+                minutes: diffMinutes,
+                referenceTotal: currentCost,
+                total: totalPaid,
+                pix: pixVal,
+                dinheiro: dinheiroVal,
+                debito: debitoVal,
+                credito: creditoVal,
+                method: methodDesc,
+                operator: currentOperator || "Desconhecido"
+            };
+            sendRecordToSheet(record);
+            history.push(record);
+
+            alert("Pagamento registrado com sucesso!");
+        }
+
+        function openCancelModal(id) {
+            currentCancelId = id;
+            const session = sessions.find(s => s.id === id);
+            if (!session) return;
+            document.getElementById('cancel-child-name').innerText = session.name;
+            document.getElementById('cancel-reason-input').value = '';
+            document.getElementById('cancel-modal').classList.remove('hidden');
+            document.getElementById('cancel-modal').classList.add('flex');
+        }
+
+        function closeCancelModal() {
+            document.getElementById('cancel-modal').classList.add('hidden');
+            document.getElementById('cancel-modal').classList.remove('flex');
+            currentCancelId = null;
+        }
+
+        function confirmCancelSession() {
+            const reason = document.getElementById('cancel-reason-input').value.trim();
+            if (!reason) {
+                alert("Por favor, digite o motivo do cancelamento.");
+                return;
+            }
+
+            const index = sessions.findIndex(s => s.id === currentCancelId);
+            if (index !== -1) {
+                const session = sessions[index];
+                const nowObj = new Date();
+                const nowMs = session.isPaused ? session.lastPauseStart : nowObj.getTime();
+                const diffMinutes = Math.floor((nowMs - session.entryTime - session.pausedDuration) / (1000 * 60));
+                const refCost = Math.max(0, diffMinutes) * RATE_PER_MINUTE * session.qty;
+
+                const cancelledRecord = {
+                    date: getFormattedDate(nowObj),
+                    time: nowObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                    name: `${session.name} (CANCELADO: ${reason})`,
+                    qty: session.qty,
+                    reference: session.reference,
+                    phone: session.phone,
+                    minutes: diffMinutes,
+                    referenceTotal: refCost,
+                    total: 0,
+                    pix: 0,
+                    dinheiro: 0,
+                    debito: 0,
+                    credito: 0,
+                    method: "Cancelado",
+                    operator: currentOperator || "Desconhecido"
+                };
+
+                sendRecordToSheet(cancelledRecord);
+                history.push(cancelledRecord);
+                sessions.splice(index, 1);
+                saveData();
+                closeCancelModal();
+            }
+        }
+
+        function initCheckout(id) {
+            currentCheckoutId = id;
+            const session = sessions.find(s => s.id === id);
+            if (!session) return;
+
+            const now = session.isPaused ? session.lastPauseStart : new Date().getTime();
+            const activeMs = now - session.entryTime - session.pausedDuration;
+            const diffMinutes = Math.max(1, Math.ceil(activeMs / (1000 * 60)));
+            const totalCost = diffMinutes * RATE_PER_MINUTE * session.qty;
+            
+            let remainingToPay = 0;
+            if (session.paymentStatus !== 'Pago') {
+                remainingToPay = totalCost;
+            }
+
+            document.getElementById('checkout-summary').innerHTML = `
+                Criança: <strong>${session.name}</strong> (${session.qty}x)<br>
+                Ref/Responsável: <strong>${session.reference}</strong><br>
+                Celular: <strong>${session.phone || 'Não informado'}</strong><br>
+                Tempo total ativo: <strong>${diffMinutes} min</strong><br>
+                Valor de Referência: <strong>R$ ${totalCost.toFixed(2)}</strong><br>
+                Status Anterior: <strong class="${session.paymentStatus === 'Pago' ? 'text-emerald-600' : 'text-amber-600'}">${session.paymentStatus}</strong><br>
+                Valor a Pagar Agora: <strong class="text-indigo-600">R$ ${remainingToPay.toFixed(2)}</strong>
+            `;
+
+            document.getElementById('out-pix').value = '';
+            document.getElementById('out-dinheiro').value = '';
+            document.getElementById('out-debito').value = '';
+            document.getElementById('out-credito').value = '';
+            document.getElementById('out-total-display').innerText = remainingToPay.toFixed(2);
+            if (remainingToPay > 0) {
+                document.getElementById('out-dinheiro').value = remainingToPay.toFixed(2);
+            }
+
+            document.getElementById('checkout-modal').classList.remove('hidden');
+            document.getElementById('checkout-modal').classList.add('flex');
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkout-modal').classList.add('hidden');
+            document.getElementById('checkout-modal').classList.remove('flex');
+            currentCheckoutId = null;
+        }
+
+        function calcOutTotal() {
+            const p = parseFloat(document.getElementById('out-pix').value) || 0;
+            const d = parseFloat(document.getElementById('out-dinheiro').value) || 0;
+            const db = parseFloat(document.getElementById('out-debito').value) || 0;
+            const c = parseFloat(document.getElementById('out-credito').value) || 0;
+            document.getElementById('out-total-display').innerText = (p + d + db + c).toFixed(2);
+        }
+
+        function confirmCheckout(event) {
+            event.preventDefault();
+            const pixVal = parseFloat(document.getElementById('out-pix').value) || 0;
+            const dinheiroVal = parseFloat(document.getElementById('out-dinheiro').value) || 0;
+            const debitoVal = parseFloat(document.getElementById('out-debito').value) || 0;
+            const creditoVal = parseFloat(document.getElementById('out-credito').value) || 0;
+            
+            const paidAmount = pixVal + dinheiroVal + debitoVal + creditoVal;
+            
+            let parts = [];
+            if(pixVal > 0) parts.push(`Pix: R$ ${pixVal.toFixed(2)}`);
+            if(dinheiroVal > 0) parts.push(`Dinheiro: R$ ${dinheiroVal.toFixed(2)}`);
+            if(debitoVal > 0) parts.push(`Débito: R$ ${debitoVal.toFixed(2)}`);
+            if(creditoVal > 0) parts.push(`Crédito: R$ ${creditoVal.toFixed(2)}`);
+            const methodDesc = parts.join(' | ') || "Quitado Anteriormente";
+
+            const index = sessions.findIndex(s => s.id === currentCheckoutId);
+            if (index !== -1) {
+                const session = sessions[index];
+                const nowObj = new Date();
+                const nowMs = session.isPaused ? session.lastPauseStart : nowObj.getTime();
+                const diffMinutes = Math.max(1, Math.ceil((nowMs - session.entryTime - session.pausedDuration) / (1000 * 60)));
+                const referenceCost = diffMinutes * RATE_PER_MINUTE * session.qty;
+
+                const completedRecord = {
+                    date: getFormattedDate(nowObj),
+                    time: nowObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                    name: session.name,
+                    qty: session.qty,
+                    reference: session.reference,
+                    phone: session.phone,
+                    minutes: diffMinutes,
+                    referenceTotal: referenceCost,
+                    total: paidAmount,
+                    pix: pixVal,
+                    dinheiro: dinheiroVal,
+                    debito: debitoVal,
+                    credito: creditoVal,
+                    method: methodDesc,
+                    operator: currentOperator || "Desconhecido"
+                };
+
+                sendRecordToSheet(completedRecord);
+                history.push(completedRecord);
+
+                sessions.splice(index, 1);
+                saveData();
+                closeCheckoutModal();
+            }
+        }
+
+        function sendRecordToSheet(record) {
+            if (GOOGLE_SHEET_URL) {
+                fetch(GOOGLE_SHEET_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(record)
+                }).catch(err => console.error("Erro ao salvar na planilha:", err));
+            }
+        }
+
+        function getFormattedDate(dateObj) {
+            const year = dateObj.getFullYear();
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const day = String(dateObj.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function openCashModal() {
+            const dateInput = document.getElementById('report-date-input');
+            let selectedDate = dateInput ? dateInput.value : '';
+
+            if (!selectedDate) {
+                selectedDate = getFormattedDate(new Date());
+                if (dateInput) dateInput.value = selectedDate;
+            }
+
+            let total = 0;
+            let pixSum = 0, dinheiroSum = 0, debitoSum = 0, creditoSum = 0;
+            let historyHtml = '';
+
+            const filteredHistory = history.filter(item => {
+                if (!item.date) return selectedDate === getFormattedDate(new Date());
+                return item.date === selectedDate;
+            });
+
+            if (filteredHistory.length === 0) {
+                historyHtml = `<p class="text-gray-400 text-center py-2">Nenhum atendimento finalizado nesta data.</p>`;
+            } else {
+                filteredHistory.slice().reverse().forEach(item => {
+                    total += item.total || 0;
+                    pixSum += item.pix || 0;
+                    dinheiroSum += item.dinheiro || 0;
+                    debitoSum += item.debito || 0;
+                    creditoSum += item.credito || 0;
+
+                    historyHtml += `
+                        <div class="flex justify-between items-center bg-white p-2 rounded border mb-2">
+                            <div>
+                                <strong>${item.name}</strong> (${item.qty}x) - ${item.minutes}min<br>
+                                <span class="text-xs text-gray-500">Ref: ${item.reference} | Tel: ${item.phone || 'N/A'} | Op: ${item.operator || 'N/A'} às ${item.time}</span><br>
+                                <span class="text-xs text-indigo-600">Ref. Calc: R$ ${(item.referenceTotal || 0).toFixed(2)}</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="font-bold text-emerald-600">R$ ${(item.total || 0).toFixed(2)}</span>
+                                <br><span class="text-[10px] bg-gray-100 px-1 rounded text-gray-600">${item.method || ''}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            document.getElementById('cash-total').innerText = `R$ ${total.toFixed(2)}`;
+            document.getElementById('total-pix').innerText = `R$ ${pixSum.toFixed(2)}`;
+            document.getElementById('total-dinheiro').innerText = `R$ ${dinheiroSum.toFixed(2)}`;
+            document.getElementById('total-debito').innerText = `R$ ${debitoSum.toFixed(2)}`;
+            document.getElementById('total-credito').innerText = `R$ ${creditoSum.toFixed(2)}`;
+            document.getElementById('history-list').innerHTML = historyHtml;
+
+            document.getElementById('cash-modal').classList.remove('hidden');
+            document.getElementById('cash-modal').classList.add('flex');
+        }
+
+        function closeCashModal() {
+            document.getElementById('cash-modal').classList.add('hidden');
+            document.getElementById('cash-modal').classList.remove('flex');
+        }
+
+        function renderSessions() {
+            const grid = document.getElementById('sessions-grid');
+            const emptyState = document.getElementById('empty-state');
+            grid.innerHTML = '';
+
+            if (sessions.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            sessions.forEach(session => {
+                const now = new Date().getTime();
+                const entryTimeDate = new Date(session.entryTime);
+                
+                let activeMs = 0;
+                if (session.isPaused) {
+                    activeMs = session.lastPauseStart - session.entryTime - session.pausedDuration;
+                } else {
+                    activeMs = now - session.entryTime - session.pausedDuration;
+                }
+
+                const diffMinutes = Math.floor(activeMs / (1000 * 60));
+                const currentCost = Math.max(1, diffMinutes) * RATE_PER_MINUTE * session.qty;
+                
+                let timeStatusClass = "text-gray-600";
+                let alertBadge = "";
+
+                if (session.isPaused) {
+                    timeStatusClass = "text-amber-500 font-bold";
+                    alertBadge = `<span class="bg-amber-100 text-amber-700 text-xs px-2 py-1 rounded-full font-bold"><i class="fa-solid fa-pause mr-1"></i>Pausado</span>`;
+                } else if (session.timeLimit) {
+                    if (diffMinutes >= session.timeLimit) {
+                        timeStatusClass = "text-red-600 font-bold animate-pulse";
+                        alertBadge = `<span class="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-full font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Esgotado!</span>`;
+                        
+                        if (!session.alertTriggered) {
+                            session.alertTriggered = true;
+                            playAlarmSound();
+                            setTimeout(() => {
+                                alert(`Atenção! O tempo estipulado para ${session.name} acabou.`);
+                                if (confirm(`Deseja finalizar o atendimento de ${session.name} agora?`)) {
+                                    initCheckout(session.id);
+                                }
+                            }, 300);
+                        }
+                    } else {
+                        alertBadge = `<span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium">Meta: ${session.timeLimit} min</span>`;
+                    }
+                } else {
+                    alertBadge = `<span class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full font-medium">Livre</span>`;
+                }
+
+                const paymentBadge = session.paymentStatus === 'Pago' 
+                    ? `<span class="bg-emerald-100 text-emerald-700 text-xs px-2 py-0.5 rounded font-semibold"><i class="fa-solid fa-check mr-1"></i>Pago</span>`
+                    : `<button onclick="openMidwayModal(${session.id})" class="bg-amber-100 hover:bg-amber-200 text-amber-800 text-xs px-2 py-0.5 rounded font-semibold transition shadow-sm"><i class="fa-solid fa-clock mr-1"></i>Pendente</button>`;
+
+                const pauseButtonText = session.isPaused ? '<i class="fa-solid fa-play mr-1"></i> Retomar' : '<i class="fa-solid fa-pause mr-1"></i> Pausar';
+                const pauseButtonClass = session.isPaused ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200' : 'bg-yellow-50 hover:bg-yellow-100 text-yellow-700 border-yellow-200';
+
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl shadow-md p-5 border border-gray-200 flex flex-col justify-between";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="font-bold text-lg text-gray-800">${session.name}</h3>
+                                <p class="text-xs text-indigo-600 font-medium">Ref: ${session.reference}</p>
+                                <p class="text-xs text-gray-500">Tel: ${session.phone || 'Não informado'}</p>
+                            </div>
+                            ${alertBadge}
+                        </div>
+                        <div class="space-y-2 text-sm text-gray-600 mb-4">
+                            <p><i class="fa-solid fa-users mr-2 text-indigo-500"></i>Qtd: <strong class="text-gray-800">${session.qty}</strong></p>
+                            <p><i class="fa-solid fa-clock mr-2 text-indigo-500"></i>Entrada: <strong class="text-gray-800">${entryTimeDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</strong></p>
+                            <p><i class="fa-solid fa-stopwatch mr-2 text-indigo-500"></i>Ativo: <strong class="${timeStatusClass}">${diffMinutes} min</strong></p>
+                            <div class="pt-1 flex items-center justify-between">
+                                <span class="text-xs text-gray-500">Status:</span>
+                                ${paymentBadge}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border-t pt-4 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-xs text-gray-400 block">Valor Atual</span>
+                                <span class="text-xl font-extrabold text-emerald-600">R$ ${currentCost.toFixed(2)}</span>
+                            </div>
+                            <div class="flex gap-1.5">
+                                <button onclick="togglePauseSession(${session.id})" class="${pauseButtonClass} px-2.5 py-1.5 rounded-lg text-xs font-bold transition border">
+                                    ${pauseButtonText}
+                                </button>
+                                <button onclick="openAddTimeModal(${session.id})" class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-2.5 py-1.5 rounded-lg text-xs font-bold transition border border-blue-200">
+                                    <i class="fa-solid fa-plus mr-1"></i> Mais
+                                </button>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="openCancelModal(${session.id})" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-2 rounded-xl text-xs font-semibold transition">
+                                Cancelar
+                            </button>
+                            <button onclick="initCheckout(${session.id})" class="w-1/2 bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-xl text-xs font-semibold transition shadow-sm">
+                                Finalizar
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        setInterval(() => {
+            if (sessions.length > 0 && currentOperator) {
+                renderSessions();
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
