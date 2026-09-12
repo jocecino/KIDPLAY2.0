@@ -9,11 +9,11 @@
 </head>
 <body class="bg-gray-100 font-sans text-gray-800">
 
-    <!-- TELA DE LOGIN (PASSO 1: SENHA) -->
+    <!-- TELA DE LOGIN -->
     <div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
         <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md text-center">
             <div class="mb-4">
-                <img src="https://i.ibb.co/hxnj1WQj/IMG-1599.png" alt="Ayres Diversões" class="w-36 h-36 mx-auto object-contain rounded-full shadow-md mb-2 bg-gray-50">
+                <img src=" https://ibb.co/B51Mhcc6" alt="Ayres Diversões" class="w-36 h-36 mx-auto object-contain rounded-full shadow-md mb-2 bg-gray-50">
                 <h1 class="text-2xl font-bold text-gray-900">KidPlay</h1>
                 <p class="text-indigo-600 font-medium text-sm">Ayres Diversões - A alegria de Jesus</p>
             </div>
@@ -45,7 +45,7 @@
         </div>
     </div>
 
-    <!-- TELA PRINCIPAL (DASHBOARD) -->
+    <!-- TELA PRINCIPAL -->
     <div id="app-screen" class="hidden min-h-screen flex flex-col">
         <header class="bg-indigo-600 text-white shadow-md px-6 py-4 flex justify-between items-center">
             <div class="flex items-center space-x-3">
@@ -83,6 +83,18 @@
                         <span>Nova Entrada</span>
                     </button>
                 </div>
+            </div>
+
+            <!-- ALERTA VISUAL GLOBAL DE TEMPO ESGOTADO -->
+            <div id="global-alert-banner" class="hidden bg-red-600 text-white px-4 py-3 rounded-xl shadow-lg flex items-center justify-between animate-bounce">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
+                    <div>
+                        <strong class="block text-sm">ATENÇÃO: Tempo Esgotado!</strong>
+                        <span id="global-alert-text" class="text-xs">Uma ou mais crianças atingiram o tempo limite estipulado.</span>
+                    </div>
+                </div>
+                <button onclick="dismissGlobalAlert()" class="bg-red-700 hover:bg-red-800 px-3 py-1.5 rounded-lg text-xs font-bold">Dispensar</button>
             </div>
 
             <div id="sessions-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
@@ -194,10 +206,10 @@
         </div>
     </div>
 
-    <!-- MODAL DE MARCAR COMO PAGO NO DECORRER DO TEMPO -->
+    <!-- MODAL DE PAGAMENTO INTERMEDIÁRIO -->
     <div id="midway-pay-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative">
-            <h3 class="text-xl font-bold text-gray-900 mb-1">Registrar Pagamento</h3>
+            <h3 class="text-xl font-bold text-gray-900 mb-1">Registrar Pagamento Parcial</h3>
             <p id="midway-pay-subtitle" class="text-sm text-gray-500 mb-4"></p>
             <div class="space-y-4">
                 <div class="grid grid-cols-2 gap-3 bg-gray-50 p-3 rounded-xl border">
@@ -219,18 +231,18 @@
                     </div>
                 </div>
                 <div class="flex justify-between items-center px-1">
-                    <span class="text-sm font-medium text-gray-700">Total Pago:</span>
+                    <span class="text-sm font-medium text-gray-700">Total Pago Agora:</span>
                     <span id="mid-total-display" class="text-xl font-extrabold text-emerald-600">R$ 0,00</span>
                 </div>
                 <div class="flex space-x-3 pt-2">
                     <button type="button" onclick="closeMidwayModal()" class="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 rounded-lg">Cancelar</button>
-                    <button type="button" onclick="confirmMidwayPayment()" class="w-1/2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 rounded-lg">Confirmar Pago</button>
+                    <button type="button" onclick="confirmMidwayPayment()" class="w-1/2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 rounded-lg">Confirmar e Salvar</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL DE CANCELAMENTO COM MOTIVO -->
+    <!-- MODAL DE CANCELAMENTO -->
     <div id="cancel-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 relative">
             <h3 class="text-lg font-bold text-gray-900 mb-2 text-red-600">Cancelar Atendimento</h3>
@@ -240,7 +252,7 @@
                     class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-red-500 focus:outline-none"></textarea>
                 <div class="flex space-x-3">
                     <button type="button" onclick="closeCancelModal()" class="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 rounded-lg">Voltar</button>
-                    <button type="button" onclick="confirmCancelSession()" class="w-1/2 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded-lg">Confirmar Cancelamento</button>
+                    <button type="button" onclick="confirmCancelSession()" class="w-1/2 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded-lg">Confirmar</button>
                 </div>
             </div>
         </div>
@@ -280,7 +292,7 @@
                 </div>
                 <div class="flex space-x-3 pt-2">
                     <button type="button" onclick="closeCheckoutModal()" class="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 rounded-lg transition">Cancelar</button>
-                    <button type="submit" class="w-1/2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 rounded-lg transition">Confirmar Pagamento</button>
+                    <button type="submit" class="w-1/2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 rounded-lg transition">Confirmar e Salvar</button>
                 </div>
             </form>
         </div>
@@ -356,7 +368,7 @@
                 document.getElementById('display-operator-name').innerText = currentOperator;
             }
             loadDataFromCloud();
-            setInterval(loadDataFromCloud, 5000);
+            setInterval(loadDataFromCloud, 10000);
         });
 
         function loadDataFromCloud() {
@@ -372,7 +384,6 @@
                         else if (Array.isArray(data)) {
                             history = data.map(item => {
                                 let rawDate = String(item.date || '');
-                                // Normaliza data se vier em formato ISO ou T e Z
                                 if (rawDate.includes('T')) {
                                     rawDate = rawDate.split('T')[0];
                                 }
@@ -405,22 +416,7 @@
         }
 
         function saveData() {
-            saveSessionsToCloud();
             renderSessions();
-        }
-
-        function saveSessionsToCloud() {
-            if (!GOOGLE_SHEET_URL) return;
-            const payload = {
-                type: "SYNC_SESSIONS",
-                sessions: sessions
-            };
-            fetch(GOOGLE_SHEET_URL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            }).catch(err => console.error("Erro ao sincronizar sessões:", err));
         }
 
         function playAlarmSound() {
@@ -535,7 +531,6 @@
             const clientVisits = history.filter(h => h.phone && String(h.phone).replace(/\D/g, '') === cleanPhone);
             let visitCount = clientVisits.length;
             
-            // Abate os blocos de 10 visitas já resgatados anteriormente por este celular
             const deductedPacks = bonusAppliedPhones[cleanPhone] || 0;
             visitCount = Math.max(0, visitCount - (deductedPacks * 10));
 
@@ -573,7 +568,6 @@
 
             document.getElementById('loyalty-bonus-box').classList.add('hidden');
             
-            // Atualiza texto de feedback visualmente na hora
             const cleanPhone = phone;
             const clientVisits = history.filter(h => h.phone && String(h.phone).replace(/\D/g, '') === cleanPhone);
             let visitCount = Math.max(0, clientVisits.length - ((bonusAppliedPhones[cleanPhone] || 0) * 10));
@@ -633,26 +627,8 @@
 
             sessions.push(newSession);
 
-            const record = {
-                date: getFormattedDate(nowObj),
-                time: nowObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-                name: newSession.name,
-                qty: newSession.qty,
-                reference: newSession.reference,
-                phone: newSession.phone,
-                minutes: 0,
-                referenceTotal: 0,
-                total: totalPaid,
-                pix: pixVal,
-                dinheiro: dinheiroVal,
-                debito: debitoVal,
-                credito: creditoVal,
-                method: methodDesc,
-                operator: currentOperator || "Desconhecido"
-            };
-            
-            sendRecordToSheet(record);
-            history.push(record);
+            // CORREÇÃO: Removido envio duplicado na entrada. 
+            // A entrada agora fica apenas local no painel do operador até ser finalizada ou paga parcialmente.
 
             saveData();
             closeModal();
@@ -778,7 +754,7 @@
             const record = {
                 date: getFormattedDate(nowObj),
                 time: nowObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-                name: session.name,
+                name: `${session.name} (Parcial)`,
                 qty: session.qty,
                 reference: session.reference,
                 phone: session.phone,
@@ -795,7 +771,7 @@
             sendRecordToSheet(record);
             history.push(record);
 
-            alert("Pagamento registrado com sucesso!");
+            alert("Pagamento parcial registrado com sucesso!");
         }
 
         function openCancelModal(id) {
@@ -1036,17 +1012,26 @@
             document.getElementById('cash-modal').classList.remove('flex');
         }
 
+        function dismissGlobalAlert() {
+            document.getElementById('global-alert-banner').classList.add('hidden');
+        }
+
         function renderSessions() {
             const grid = document.getElementById('sessions-grid');
             const emptyState = document.getElementById('empty-state');
+            const globalAlert = document.getElementById('global-alert-banner');
             grid.innerHTML = '';
 
             if (sessions.length === 0) {
                 emptyState.classList.remove('hidden');
+                globalAlert.classList.add('hidden');
                 return;
             } else {
                 emptyState.classList.add('hidden');
             }
+
+            let hasExpired = false;
+            let expiredNames = [];
 
             sessions.forEach(session => {
                 const now = new Date().getTime();
@@ -1073,10 +1058,12 @@
                         timeStatusClass = "text-red-600 font-bold animate-pulse";
                         alertBadge = `<span class="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-full font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Esgotado!</span>`;
                         
+                        hasExpired = true;
+                        expiredNames.push(session.name);
+
                         if (!session.alarmTriggered) {
                             session.alarmTriggered = true;
                             playAlarmSound();
-                            saveSessionsToCloud();
                         }
                     } else {
                         alertBadge = `<span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium">Meta: ${session.timeLimit} min</span>`;
@@ -1141,6 +1128,13 @@
                 `;
                 grid.appendChild(card);
             });
+
+            if (hasExpired) {
+                globalAlert.classList.remove('hidden');
+                document.getElementById('global-alert-text').innerText = `Tempo esgotado para: ${expiredNames.join(', ')}`;
+            } else {
+                globalAlert.classList.add('hidden');
+            }
         }
 
         setInterval(() => {
