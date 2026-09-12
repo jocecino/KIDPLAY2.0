@@ -363,15 +363,32 @@
             fetch(GOOGLE_SHEET_URL)
                 .then(res => res.json())
                 .then(data => {
-                    if (data && typeof data === 'object') {
-                        if (Array.isArray(data.history)) {
-                            history = data.history;
+                    if (data) {
+                        // Se o Google Sheets retornar o objeto completo salvo na nuvem
+                        if (typeof data === 'object' && !Array.isArray(data)) {
+                            if (Array.isArray(data.history)) history = data.history;
+                            if (Array.isArray(data.sessions)) sessions = data.sessions;
+                        } 
+                        // Se retornar direto a lista de linhas da planilha (comportamento padrão atual do seu Apps Script)
+                        else if (Array.isArray(data)) {
+                            history = data.map(item => ({
+                                date: item.date || '',
+                                time: item.time || '',
+                                name: item.name || '',
+                                qty: Number(item.qty) || 1,
+                                reference: item.reference || '',
+                                phone: item.phone ? String(item.phone) : '',
+                                minutes: Number(item.minutes) || 0,
+                                referenceTotal: Number(item.referenceTotal) || 0,
+                                total: Number(item.total) || 0,
+                                pix: Number(item.pix) || 0,
+                                dinheiro: Number(item.dinheiro) || 0,
+                                debito: Number(item.debito) || 0,
+                                credito: Number(item.credito) || 0,
+                                method: item.method || '',
+                                operator: item.operator || ''
+                            }));
                         }
-                        if (Array.isArray(data.sessions)) {
-                            sessions = data.sessions;
-                        }
-                    } else if (Array.isArray(data)) {
-                        history = data;
                     }
                 })
                 .catch(err => console.log("Erro ao carregar dados da nuvem:", err));
@@ -509,8 +526,7 @@
                 return;
             }
 
-            // Conta quantas vezes o número aparece no histórico carregado
-            const clientVisits = history.filter(h => h.phone && h.phone.replace(/\D/g, '') === cleanPhone);
+            const clientVisits = history.filter(h => h.phone && String(h.phone).replace(/\D/g, '') === cleanPhone);
             const visitCount = clientVisits.length;
             const foundItem = clientVisits[clientVisits.length - 1];
 
@@ -584,7 +600,7 @@
                 isPaused: false,
                 pausedDuration: 0,
                 lastPauseStart: null,
-                alarmTriggered: false // Garante que o alarme toque apenas uma vez ao esgotar
+                alarmTriggered: false
             };
 
             sessions.push(newSession);
@@ -656,7 +672,7 @@
                 } else {
                     session.timeLimit = extra;
                 }
-                session.alarmTriggered = false; // Reseta para permitir alarme se estourar novamente
+                session.alarmTriggered = false;
                 saveData();
             }
             closeAddTimeModal();
@@ -1029,7 +1045,6 @@
                         timeStatusClass = "text-red-600 font-bold animate-pulse";
                         alertBadge = `<span class="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-full font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Esgotado!</span>`;
                         
-                        // Dispara o alarme sonoro apenas uma única vez quando o tempo atinge o limite
                         if (!session.alarmTriggered) {
                             session.alarmTriggered = true;
                             playAlarmSound();
