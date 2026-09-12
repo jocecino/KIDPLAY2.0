@@ -351,7 +351,7 @@
     <script>
         const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxl9tOw4Kk_F2uLcMKETLXUSmdl0dWR103sKaHEtboevjqZmeErFQr82QqZc2ILMF_f/exec";
         
-        let sessions = [];
+        let sessions = JSON.parse(localStorage.getItem('kidplay_sessions') || '[]');
         let history = [];
         let bonusAppliedPhones = JSON.parse(localStorage.getItem('kidplay_bonus_phones') || '{}');
         let currentOperator = localStorage.getItem('kidplay_operator') || '';
@@ -367,11 +367,11 @@
                 document.getElementById('app-screen').classList.remove('hidden');
                 document.getElementById('display-operator-name').innerText = currentOperator;
             }
-            loadDataFromCloud();
-            setInterval(loadDataFromCloud, 10000);
+            loadHistoryFromCloud();
+            renderSessions();
         });
 
-        function loadDataFromCloud() {
+        function loadHistoryFromCloud() {
             if (!GOOGLE_SHEET_URL) return;
             fetch(GOOGLE_SHEET_URL)
                 .then(res => res.json())
@@ -379,7 +379,6 @@
                     if (data) {
                         if (typeof data === 'object' && !Array.isArray(data)) {
                             if (Array.isArray(data.history)) history = data.history;
-                            if (Array.isArray(data.sessions)) sessions = data.sessions;
                         } 
                         else if (Array.isArray(data)) {
                             history = data.map(item => {
@@ -408,14 +407,11 @@
                         }
                     }
                 })
-                .catch(err => console.log("Erro ao carregar dados da nuvem:", err));
-
-            if (currentOperator) {
-                renderSessions();
-            }
+                .catch(err => console.log("Erro ao carregar histórico da nuvem:", err));
         }
 
         function saveData() {
+            localStorage.setItem('kidplay_sessions', JSON.stringify(sessions));
             renderSessions();
         }
 
@@ -626,10 +622,6 @@
             };
 
             sessions.push(newSession);
-
-            // CORREÇÃO: Removido envio duplicado na entrada. 
-            // A entrada agora fica apenas local no painel do operador até ser finalizada ou paga parcialmente.
-
             saveData();
             closeModal();
         }
@@ -1094,7 +1086,7 @@
                         <div class="space-y-2 text-sm text-gray-600 mb-4">
                             <p><i class="fa-solid fa-users mr-2 text-indigo-500"></i>Qtd: <strong class="text-gray-800">${session.qty}</strong></p>
                             <p><i class="fa-solid fa-clock mr-2 text-indigo-500"></i>Entrada: <strong class="text-gray-800">${entryTimeDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</strong></p>
-                            <p><i class="fa-solid fa-stopwatch mr-2 text-indigo-500"></i>Ativo: <strong class="${timeStatusClass}">${diffMinutes} min</strong></p>
+                            <p><i class="fa-solid fa-stopwatch mr-2 text-indigo-500">This</i>Ativo: <strong class="${timeStatusClass}">${diffMinutes} min</strong></p>
                             <div class="pt-1 flex items-center justify-between">
                                 <span class="text-xs text-gray-500">Status:</span>
                                 ${paymentBadge}
