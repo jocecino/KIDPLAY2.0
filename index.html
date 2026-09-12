@@ -337,7 +337,6 @@
 
     <!-- SCRIPT -->
     <script>
-        // URL do Google Apps Script
         const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxl9tOw4Kk_F2uLcMKETLXUSmdl0dWR103sKaHEtboevjqZmeErFQr82QqZc2ILMF_f/exec";
         
         let sessions = [];
@@ -356,8 +355,6 @@
                 document.getElementById('display-operator-name').innerText = currentOperator;
             }
             loadDataFromCloud();
-            
-            // Sincronização automática a cada 5 segundos para múltiplos celulares
             setInterval(loadDataFromCloud, 5000);
         });
 
@@ -371,7 +368,6 @@
                             history = data.history;
                         }
                         if (Array.isArray(data.sessions)) {
-                            // Sincroniza as sessões ativas da nuvem para todos os aparelhos
                             sessions = data.sessions;
                         }
                     } else if (Array.isArray(data)) {
@@ -386,7 +382,6 @@
         }
 
         function saveData() {
-            // Salva e envia imediatamente para a nuvem para sincronizar com os outros aparelhos
             saveSessionsToCloud();
             renderSessions();
         }
@@ -514,19 +509,21 @@
                 return;
             }
 
-            const foundItem = history.slice().reverse().find(h => h.phone && h.phone.replace(/\D/g, '') === cleanPhone);
-            const visitCount = history.filter(h => h.phone && h.phone.replace(/\D/g, '') === cleanPhone).length;
+            // Conta quantas vezes o número aparece no histórico carregado
+            const clientVisits = history.filter(h => h.phone && h.phone.replace(/\D/g, '') === cleanPhone);
+            const visitCount = clientVisits.length;
+            const foundItem = clientVisits[clientVisits.length - 1];
 
             if (foundItem) {
                 document.getElementById('child-reference').value = foundItem.reference || '';
                 let cleanName = foundItem.name ? foundItem.name.split(' (CANCELADO')[0] : '';
                 document.getElementById('child-name').value = cleanName;
 
-                feedback.innerText = `Cliente encontrado! Visitas anteriores: ${visitCount}`;
+                feedback.innerText = `Cliente encontrado! Já brincou ${visitCount} vez(es).`;
                 feedback.className = "text-xs font-semibold mt-1 text-emerald-600";
                 feedback.classList.remove('hidden');
             } else {
-                feedback.innerText = `Novo cliente ou celular não cadastrado.`;
+                feedback.innerText = `Novo cliente! Número cadastrado pela 1ª vez.`;
                 feedback.className = "text-xs font-semibold mt-1 text-gray-500";
                 feedback.classList.remove('hidden');
             }
@@ -587,32 +584,31 @@
                 isPaused: false,
                 pausedDuration: 0,
                 lastPauseStart: null,
-                overtimeAlertState: 0 // Controla os alertas: 0=normal, 1=alerta 2min, 2=alerta 5min, 3=alerta 10min, 4=parou
+                alarmTriggered: false // Garante que o alarme toque apenas uma vez ao esgotar
             };
 
             sessions.push(newSession);
 
-            if (payStatus === 'Pago' && totalPaid > 0) {
-                const record = {
-                    date: getFormattedDate(nowObj),
-                    time: nowObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-                    name: newSession.name,
-                    qty: newSession.qty,
-                    reference: newSession.reference,
-                    phone: newSession.phone,
-                    minutes: 0,
-                    referenceTotal: 0,
-                    total: totalPaid,
-                    pix: pixVal,
-                    dinheiro: dinheiroVal,
-                    debito: debitoVal,
-                    credito: creditoVal,
-                    method: methodDesc,
-                    operator: currentOperator || "Desconhecido"
-                };
-                sendRecordToSheet(record);
-                history.push(record);
-            }
+            const record = {
+                date: getFormattedDate(nowObj),
+                time: nowObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                name: newSession.name,
+                qty: newSession.qty,
+                reference: newSession.reference,
+                phone: newSession.phone,
+                minutes: 0,
+                referenceTotal: 0,
+                total: totalPaid,
+                pix: pixVal,
+                dinheiro: dinheiroVal,
+                debito: debitoVal,
+                credito: creditoVal,
+                method: methodDesc,
+                operator: currentOperator || "Desconhecido"
+            };
+            
+            sendRecordToSheet(record);
+            history.push(record);
 
             saveData();
             closeModal();
@@ -660,7 +656,7 @@
                 } else {
                     session.timeLimit = extra;
                 }
-                session.overtimeAlertState = 0;
+                session.alarmTriggered = false; // Reseta para permitir alarme se estourar novamente
                 saveData();
             }
             closeAddTimeModal();
@@ -1029,34 +1025,13 @@
                     timeStatusClass = "text-amber-500 font-bold";
                     alertBadge = `<span class="bg-amber-100 text-amber-700 text-xs px-2 py-1 rounded-full font-bold"><i class="fa-solid fa-pause mr-1"></i>Pausado</span>`;
                 } else if (session.timeLimit) {
-                    const overMinutes = diffMinutes - session.timeLimit; // Quanto tempo passou do limite
-
                     if (diffMinutes >= session.timeLimit) {
                         timeStatusClass = "text-red-600 font-bold animate-pulse";
                         alertBadge = `<span class="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-full font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Esgotado!</span>`;
                         
-                        // Regra de Alertas Sonoros Progressivos:
-                        // Estado 0: Atingiu o tempo exato (0 min estourado)
-                        if (overMinutes >= 0 && session.overtimeAlertState === 0) {
-                            session.overtimeAlertState = 1;
-                            playAlarmSound();
-                            saveSessionsToCloud();
-                        }
-                        // Estado 1: Passou 2 minutos do esgotado
-                        else if (overMinutes >= 2 && session.overtimeAlertState === 1) {
-                            session.overtimeAlertState = 2;
-                            playAlarmSound();
-                            saveSessionsToCloud();
-                        }
-                        // Estado 2: Passou 5 minutos do esgotado
-                        else if (overMinutes >= 5 && session.overtimeAlertState === 2) {
-                            session.overtimeAlertState = 3;
-                            playAlarmSound();
-                            saveSessionsToCloud();
-                        }
-                        // Estado 3: Passou 10 minutos do esgotado (último alarme)
-                        else if (overMinutes >= 10 && session.overtimeAlertState === 3) {
-                            session.overtimeAlertState = 4; // Para de emitir alertas daqui pra frente
+                        // Dispara o alarme sonoro apenas uma única vez quando o tempo atinge o limite
+                        if (!session.alarmTriggered) {
+                            session.alarmTriggered = true;
                             playAlarmSound();
                             saveSessionsToCloud();
                         }
