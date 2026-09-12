@@ -337,7 +337,7 @@
 
     <!-- SCRIPT -->
     <script>
-        // URL do Google Apps Script devidamente atualizada
+        // URL do Google Apps Script
         const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxl9tOw4Kk_F2uLcMKETLXUSmdl0dWR103sKaHEtboevjqZmeErFQr82QqZc2ILMF_f/exec";
         
         let sessions = [];
@@ -366,19 +366,43 @@
             fetch(GOOGLE_SHEET_URL)
                 .then(res => res.json())
                 .then(data => {
-                    if (Array.isArray(data)) {
+                    if (data && typeof data === 'object') {
+                        if (Array.isArray(data.history)) {
+                            history = data.history;
+                        }
+                        if (Array.isArray(data.sessions)) {
+                            // Sincroniza as sessões ativas da nuvem para todos os aparelhos
+                            sessions = data.sessions;
+                        }
+                    } else if (Array.isArray(data)) {
                         history = data;
                     }
                 })
                 .catch(err => console.log("Erro ao carregar dados da nuvem:", err));
 
-            let cloudSessions = localStorage.getItem('kidplay_sessions');
-            if (cloudSessions) {
-                sessions = JSON.parse(cloudSessions);
-            }
             if (currentOperator) {
                 renderSessions();
             }
+        }
+
+        function saveData() {
+            // Salva e envia imediatamente para a nuvem para sincronizar com os outros aparelhos
+            saveSessionsToCloud();
+            renderSessions();
+        }
+
+        function saveSessionsToCloud() {
+            if (!GOOGLE_SHEET_URL) return;
+            const payload = {
+                type: "SYNC_SESSIONS",
+                sessions: sessions
+            };
+            fetch(GOOGLE_SHEET_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            }).catch(err => console.error("Erro ao sincronizar sessões:", err));
         }
 
         function playAlarmSound() {
@@ -406,11 +430,6 @@
             } catch (e) {
                 console.log("Áudio bloqueado.");
             }
-        }
-
-        function saveData() {
-            localStorage.setItem('kidplay_sessions', JSON.stringify(sessions));
-            renderSessions();
         }
 
         function handleCheckPassword(event) {
@@ -568,7 +587,7 @@
                 isPaused: false,
                 pausedDuration: 0,
                 lastPauseStart: null,
-                alertTriggered: false
+                overtimeAlertState: 0 // Controla os alertas: 0=normal, 1=alerta 2min, 2=alerta 5min, 3=alerta 10min, 4=parou
             };
 
             sessions.push(newSession);
@@ -641,7 +660,7 @@
                 } else {
                     session.timeLimit = extra;
                 }
-                session.alertTriggered = false;
+                session.overtimeAlertState = 0;
                 saveData();
             }
             closeAddTimeModal();
@@ -1010,19 +1029,36 @@
                     timeStatusClass = "text-amber-500 font-bold";
                     alertBadge = `<span class="bg-amber-100 text-amber-700 text-xs px-2 py-1 rounded-full font-bold"><i class="fa-solid fa-pause mr-1"></i>Pausado</span>`;
                 } else if (session.timeLimit) {
+                    const overMinutes = diffMinutes - session.timeLimit; // Quanto tempo passou do limite
+
                     if (diffMinutes >= session.timeLimit) {
                         timeStatusClass = "text-red-600 font-bold animate-pulse";
                         alertBadge = `<span class="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-full font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Esgotado!</span>`;
                         
-                        if (!session.alertTriggered) {
-                            session.alertTriggered = true;
+                        // Regra de Alertas Sonoros Progressivos:
+                        // Estado 0: Atingiu o tempo exato (0 min estourado)
+                        if (overMinutes >= 0 && session.overtimeAlertState === 0) {
+                            session.overtimeAlertState = 1;
                             playAlarmSound();
-                            setTimeout(() => {
-                                alert(`Atenção! O tempo estipulado para ${session.name} acabou.`);
-                                if (confirm(`Deseja finalizar o atendimento de ${session.name} agora?`)) {
-                                    initCheckout(session.id);
-                                }
-                            }, 300);
+                            saveSessionsToCloud();
+                        }
+                        // Estado 1: Passou 2 minutos do esgotado
+                        else if (overMinutes >= 2 && session.overtimeAlertState === 1) {
+                            session.overtimeAlertState = 2;
+                            playAlarmSound();
+                            saveSessionsToCloud();
+                        }
+                        // Estado 2: Passou 5 minutos do esgotado
+                        else if (overMinutes >= 5 && session.overtimeAlertState === 2) {
+                            session.overtimeAlertState = 3;
+                            playAlarmSound();
+                            saveSessionsToCloud();
+                        }
+                        // Estado 3: Passou 10 minutos do esgotado (último alarme)
+                        else if (overMinutes >= 10 && session.overtimeAlertState === 3) {
+                            session.overtimeAlertState = 4; // Para de emitir alertas daqui pra frente
+                            playAlarmSound();
+                            saveSessionsToCloud();
                         }
                     } else {
                         alertBadge = `<span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium">Meta: ${session.timeLimit} min</span>`;
