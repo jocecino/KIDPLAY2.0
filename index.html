@@ -134,7 +134,7 @@
                         <i class="fa-solid fa-gift mr-1.5 text-base text-amber-600"></i>
                         <span>Cliente Fiel! Atingiu 10 Visitas!</span>
                     </div>
-                    <p class="text-amber-700">Deseja aplicar o brinde de <strong>10 minutos grátis</strong>?</p>
+                    <p class="text-amber-700">Deseja aplicar o brinde de <strong>10 minutos grátis</strong>? (Isso abaterá 10 visitas do saldo do cliente).</p>
                     <button type="button" onclick="applyBonusMinutes()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 py-1.5 rounded transition">
                         Aplicar +10 Minutos Grátis
                     </button>
@@ -341,6 +341,7 @@
         
         let sessions = [];
         let history = [];
+        let bonusAppliedPhones = JSON.parse(localStorage.getItem('kidplay_bonus_phones') || '{}');
         let currentOperator = localStorage.getItem('kidplay_operator') || '';
         let currentCheckoutId = null;
         let currentAddTimeId = null;
@@ -364,30 +365,35 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data) {
-                        // Se o Google Sheets retornar o objeto completo salvo na nuvem
                         if (typeof data === 'object' && !Array.isArray(data)) {
                             if (Array.isArray(data.history)) history = data.history;
                             if (Array.isArray(data.sessions)) sessions = data.sessions;
                         } 
-                        // Se retornar direto a lista de linhas da planilha (comportamento padrão atual do seu Apps Script)
                         else if (Array.isArray(data)) {
-                            history = data.map(item => ({
-                                date: item.date || '',
-                                time: item.time || '',
-                                name: item.name || '',
-                                qty: Number(item.qty) || 1,
-                                reference: item.reference || '',
-                                phone: item.phone ? String(item.phone) : '',
-                                minutes: Number(item.minutes) || 0,
-                                referenceTotal: Number(item.referenceTotal) || 0,
-                                total: Number(item.total) || 0,
-                                pix: Number(item.pix) || 0,
-                                dinheiro: Number(item.dinheiro) || 0,
-                                debito: Number(item.debito) || 0,
-                                credito: Number(item.credito) || 0,
-                                method: item.method || '',
-                                operator: item.operator || ''
-                            }));
+                            history = data.map(item => {
+                                let rawDate = String(item.date || '');
+                                // Normaliza data se vier em formato ISO ou T e Z
+                                if (rawDate.includes('T')) {
+                                    rawDate = rawDate.split('T')[0];
+                                }
+                                return {
+                                    date: rawDate,
+                                    time: item.time || '',
+                                    name: item.name || '',
+                                    qty: Number(item.qty) || 1,
+                                    reference: item.reference || '',
+                                    phone: item.phone ? String(item.phone) : '',
+                                    minutes: Number(item.minutes) || 0,
+                                    referenceTotal: Number(item.referenceTotal) || 0,
+                                    total: Number(item.total) || 0,
+                                    pix: Number(item.pix) || 0,
+                                    dinheiro: Number(item.dinheiro) || 0,
+                                    debito: Number(item.debito) || 0,
+                                    credito: Number(item.credito) || 0,
+                                    method: item.method || '',
+                                    operator: item.operator || ''
+                                };
+                            });
                         }
                     }
                 })
@@ -527,7 +533,12 @@
             }
 
             const clientVisits = history.filter(h => h.phone && String(h.phone).replace(/\D/g, '') === cleanPhone);
-            const visitCount = clientVisits.length;
+            let visitCount = clientVisits.length;
+            
+            // Abate os blocos de 10 visitas já resgatados anteriormente por este celular
+            const deductedPacks = bonusAppliedPhones[cleanPhone] || 0;
+            visitCount = Math.max(0, visitCount - (deductedPacks * 10));
+
             const foundItem = clientVisits[clientVisits.length - 1];
 
             if (foundItem) {
@@ -550,11 +561,28 @@
         }
 
         function applyBonusMinutes() {
+            const phone = document.getElementById('child-phone').value.trim().replace(/\D/g, '');
             const timeLimitInput = document.getElementById('time-limit');
             let currentLimit = parseInt(timeLimitInput.value) || 0;
             timeLimitInput.value = currentLimit + 10;
+            
+            if (phone) {
+                bonusAppliedPhones[phone] = (bonusAppliedPhones[phone] || 0) + 1;
+                localStorage.setItem('kidplay_bonus_phones', JSON.stringify(bonusAppliedPhones));
+            }
+
             document.getElementById('loyalty-bonus-box').classList.add('hidden');
-            alert("Brinde de 10 minutos grátis aplicado com sucesso!");
+            
+            // Atualiza texto de feedback visualmente na hora
+            const cleanPhone = phone;
+            const clientVisits = history.filter(h => h.phone && String(h.phone).replace(/\D/g, '') === cleanPhone);
+            let visitCount = Math.max(0, clientVisits.length - ((bonusAppliedPhones[cleanPhone] || 0) * 10));
+            const feedback = document.getElementById('client-feedback');
+            if (feedback) {
+                feedback.innerText = `Cliente encontrado! Já brincou ${visitCount} vez(es).`;
+            }
+
+            alert("Brinde de 10 minutos grátis aplicado e 10 visitas abatidas do saldo!");
         }
 
         function addSession(event) {
@@ -962,7 +990,7 @@
             let historyHtml = '';
 
             const filteredHistory = history.filter(item => {
-                if (!item.date) return selectedDate === getFormattedDate(new Date());
+                if (!item.date) return false;
                 return item.date === selectedDate;
             });
 
