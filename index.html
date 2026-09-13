@@ -85,17 +85,8 @@
                 </div>
             </div>
 
-            <!-- ALERTA VISUAL GLOBAL DE TEMPO ESGOTADO -->
-            <div id="global-alert-banner" class="hidden bg-red-600 text-white px-4 py-3 rounded-xl shadow-lg flex items-center justify-between animate-bounce">
-                <div class="flex items-center space-x-3">
-                    <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
-                    <div>
-                        <strong class="block text-sm">ATENÇÃO: Tempo Esgotado!</strong>
-                        <span id="global-alert-text" class="text-xs">Uma ou mais crianças atingiram o tempo limite estipulado.</span>
-                    </div>
-                </div>
-                <button onclick="dismissGlobalAlert()" class="bg-red-700 hover:bg-red-800 px-3 py-1.5 rounded-lg text-xs font-bold">Dispensar</button>
-            </div>
+            <!-- CONTAINER DE ALERTAS DE TEMPO ESGOTADO -->
+            <div id="global-alerts-container" class="space-y-3"></div>
 
             <div id="sessions-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 
@@ -338,7 +329,7 @@
                 </div>
 
                 <div>
-                    <h4 class="font-semibold text-gray-700 text-sm mb-2">Atendimentos na Date Selecionada:</h4>
+                    <h4 class="font-semibold text-gray-700 text-sm mb-2">Atendimentos na Data Selecionada:</h4>
                     <div id="history-list" class="max-h-48 overflow-y-auto space-y-2 border rounded-lg p-2 text-sm bg-gray-50"></div>
                 </div>
             </div>
@@ -359,7 +350,6 @@
         let currentAddTimeId = null;
         let currentMidwayId = null;
         let currentCancelId = null;
-        let alertDismissedUntil = 0; // Armazena até que horário (timestamp) o alerta global foi dispensado
         const RATE_PER_MINUTE = 1.50;
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -393,7 +383,7 @@
                                     name: item.name || '',
                                     qty: Number(item.qty) || 1,
                                     reference: item.reference || '',
-                                    phone: item.phone ? String(item.phone) : '',
+                                    phone: item.phone ? String(item.phone).replace(/\D/g, '') : '',
                                     minutes: Number(item.minutes) || 0,
                                     referenceTotal: Number(item.referenceTotal) || 0,
                                     total: Number(item.total) || 0,
@@ -407,6 +397,7 @@
                             });
                         }
                     }
+                    renderSessions();
                 })
                 .catch(err => console.log("Erro ao carregar histórico da nuvem:", err));
         }
@@ -525,6 +516,7 @@
                 return;
             }
 
+            // Conta unificando histórico local e da nuvem
             const clientVisits = history.filter(h => h.phone && String(h.phone).replace(/\D/g, '') === cleanPhone);
             let visitCount = clientVisits.length;
             
@@ -542,8 +534,8 @@
                 feedback.className = "text-xs font-semibold mt-1 text-emerald-600";
                 feedback.classList.remove('hidden');
             } else {
-                feedback.innerText = `Novo cliente! Número cadastrado pela 1ª vez.`;
-                feedback.className = "text-xs font-semibold mt-1 text-gray-500";
+                feedback.innerText = `Cliente encontrado! Já brincou 0 vez(es).`;
+                feedback.className = "text-xs font-semibold mt-1 text-emerald-600";
                 feedback.classList.remove('hidden');
             }
 
@@ -565,9 +557,8 @@
 
             document.getElementById('loyalty-bonus-box').classList.add('hidden');
             
-            const cleanPhone = phone;
-            const clientVisits = history.filter(h => h.phone && String(h.phone).replace(/\D/g, '') === cleanPhone);
-            let visitCount = Math.max(0, clientVisits.length - ((bonusAppliedPhones[cleanPhone] || 0) * 10));
+            const clientVisits = history.filter(h => h.phone && String(h.phone).replace(/\D/g, '') === phone);
+            let visitCount = Math.max(0, clientVisits.length - ((bonusAppliedPhones[phone] || 0) * 10));
             const feedback = document.getElementById('client-feedback');
             if (feedback) {
                 feedback.innerText = `Cliente encontrado! Já brincou ${visitCount} vez(es).`;
@@ -578,7 +569,8 @@
 
         function addSession(event) {
             event.preventDefault();
-            const phone = document.getElementById('child-phone').value.trim();
+            const phoneRaw = document.getElementById('child-phone').value.trim();
+            const phoneClean = phoneRaw.replace(/\D/g, '');
             const reference = document.getElementById('child-reference').value.trim();
             const name = document.getElementById('child-name').value.trim();
             const qty = parseInt(document.getElementById('child-qty').value);
@@ -607,7 +599,7 @@
             const nowObj = new Date();
             const newSession = {
                 id: Date.now(),
-                phone: phone,
+                phone: phoneClean,
                 name: name,
                 reference: reference,
                 qty: qty,
@@ -619,7 +611,8 @@
                 isPaused: false,
                 pausedDuration: 0,
                 lastPauseStart: null,
-                alarmTriggered: false
+                alarmTriggered: false,
+                dismissedUntil: 0 // Controla os 2 minutos específicos para esta criança
             };
 
             sessions.push(newSession);
@@ -670,9 +663,19 @@
                     session.timeLimit = extra;
                 }
                 session.alarmTriggered = false;
+                session.dismissedUntil = 0; // Reseta o snooze para o alerta poder voltar se estourar de novo
                 saveData();
             }
             closeAddTimeModal();
+        }
+
+        function dismissAlertForChild(id) {
+            const session = sessions.find(s => s.id === id);
+            if (session) {
+                // Silencia o alerta desta criança específica por 2 minutos
+                session.dismissedUntil = new Date().getTime() + (2 * 60 * 1000);
+                renderSessions();
+            }
         }
 
         function openMidwayModal(id) {
@@ -1005,31 +1008,23 @@
             document.getElementById('cash-modal').classList.remove('flex');
         }
 
-        function dismissGlobalAlert() {
-            // Silencia o alerta global por 2 minutos (120000 ms)
-            alertDismissedUntil = new Date().getTime() + (2 * 60 * 1000);
-            document.getElementById('global-alert-banner').classList.add('hidden');
-        }
-
         function renderSessions() {
             const grid = document.getElementById('sessions-grid');
             const emptyState = document.getElementById('empty-state');
-            const globalAlert = document.getElementById('global-alert-banner');
+            const alertsContainer = document.getElementById('global-alerts-container');
             grid.innerHTML = '';
+            alertsContainer.innerHTML = '';
 
             if (sessions.length === 0) {
                 emptyState.classList.remove('hidden');
-                globalAlert.classList.add('hidden');
                 return;
             } else {
                 emptyState.classList.add('hidden');
             }
 
-            let hasExpired = false;
-            let expiredNames = [];
+            const now = new Date().getTime();
 
             sessions.forEach(session => {
-                const now = new Date().getTime();
                 const entryTimeDate = new Date(session.entryTime);
                 
                 let activeMs = 0;
@@ -1049,17 +1044,30 @@
                     timeStatusClass = "text-amber-500 font-bold";
                     alertBadge = `<span class="bg-amber-100 text-amber-700 text-xs px-2 py-1 rounded-full font-bold"><i class="fa-solid fa-pause mr-1"></i>Pausado</span>`;
                 } else if (session.timeLimit !== null && session.timeLimit !== undefined) {
-                    // Verifica se o tempo decorrido atingiu ou ultrapassou a meta
                     if (diffMinutes >= session.timeLimit) {
                         timeStatusClass = "text-red-600 font-bold animate-pulse";
                         alertBadge = `<span class="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-full font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Esgotado!</span>`;
-                        
-                        hasExpired = true;
-                        expiredNames.push(session.name);
 
                         if (!session.alarmTriggered) {
                             session.alarmTriggered = true;
                             playAlarmSound();
+                        }
+
+                        // Se o tempo estourou e o operador ainda não dispensou (ou já passaram 2 minutos desde o último dispensar)
+                        if (now > (session.dismissedUntil || 0)) {
+                            const alertDiv = document.createElement('div');
+                            alertDiv.className = "bg-red-600 text-white px-4 py-3 rounded-xl shadow-lg flex items-center justify-between";
+                            alertDiv.innerHTML = `
+                                <div class="flex items-center space-x-3">
+                                    <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
+                                    <div>
+                                        <strong class="block text-sm">ATENÇÃO: Tempo Esgotado!</strong>
+                                        <span class="text-xs">Tempo esgotado para: ${session.name}</span>
+                                    </div>
+                                </div>
+                                <button onclick="dismissAlertForChild(${session.id})" class="bg-white text-red-600 font-bold px-3 py-1.5 rounded-lg text-xs shadow hover:bg-gray-100 transition">Dispensar</button>
+                            `;
+                            alertsContainer.appendChild(alertDiv);
                         }
                     } else {
                         alertBadge = `<span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium">Meta: ${session.timeLimit} min</span>`;
@@ -1124,14 +1132,6 @@
                 `;
                 grid.appendChild(card);
             });
-
-            // Gerencia a exibição do alerta global baseado no tempo estourado e no botão "Dispensar" (2 minutos)
-            if (hasExpired && now > alertDismissedUntil) {
-                globalAlert.classList.remove('hidden');
-                document.getElementById('global-alert-text').innerText = `Tempo esgotado para: ${expiredNames.join(', ')}`;
-            } else {
-                globalAlert.classList.add('hidden');
-            }
         }
 
         setInterval(() => {
