@@ -61,6 +61,7 @@
                     <span class="text-xs text-indigo-200 block">Operador(a) em turno:</span>
                     <strong id="display-operator-name" class="text-sm font-semibold">Nome</strong>
                 </div>
+                <span id="sync-status" class="text-xs text-indigo-200 hidden md:inline-flex items-center gap-1"><i class="fa-solid fa-circle text-emerald-400 text-[8px]"></i> Sincronizado</span>
                 <button onclick="handleLogout()" class="bg-indigo-700 hover:bg-indigo-800 px-4 py-2 rounded-lg text-sm font-medium transition">
                     <i class="fa-solid fa-right-from-bracket mr-2"></i>Sair
                 </button>
@@ -294,7 +295,10 @@
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-bold text-gray-900">Fechamento</h3>
-                <button onclick="closeCashModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+                <div class="flex items-center gap-3">
+                    <button onclick="openCashModal()" title="Atualizar dados da planilha" class="text-gray-400 hover:text-indigo-600"><i class="fa-solid fa-rotate"></i></button>
+                    <button onclick="closeCashModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+                </div>
             </div>
             
             <div class="space-y-4">
@@ -334,7 +338,13 @@
                 </div>
             </div>
 
-            <button onclick="closeCashModal()" class="w-full mt-5 bg-gray-800 hover:bg-gray-900 text-white font-semibold py-2.5 rounded-lg transition">Fechar Janela</button>
+            <div class="flex gap-2 mt-5">
+                <button onclick="exportCashReportToWhatsApp()" class="w-1/2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2.5 rounded-lg transition flex items-center justify-center space-x-2">
+                    <i class="fa-brands fa-whatsapp"></i>
+                    <span>Enviar</span>
+                </button>
+                <button onclick="closeCashModal()" class="w-1/2 bg-gray-800 hover:bg-gray-900 text-white font-semibold py-2.5 rounded-lg transition">Fechar Janela</button>
+            </div>
         </div>
     </div>
 
@@ -362,49 +372,108 @@
             renderSessions();
         });
 
+        let lastCloudSyncError = null;
+        let lastCashReport = null;
+
+        function normalizeHistoryItem(item) {
+            let rawDate = String(item.date || '').trim();
+            if (rawDate.includes('T')) {
+                rawDate = rawDate.split('T')[0];
+            }
+            // Corrige datas vindas em formato BR (dd/mm/aaaa) da planilha
+            const brMatch = rawDate.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+            if (brMatch) {
+                rawDate = `${brMatch[3]}-${brMatch[2].padStart(2,'0')}-${brMatch[1].padStart(2,'0')}`;
+            }
+
+            let rawTime = String(item.time || '').trim();
+            if (rawTime.includes('T')) {
+                // Fallback caso a hora venha como um valor de Data/Hora completo (ISO)
+                const timePart = rawTime.split('T')[1] || '';
+                rawTime = timePart.substring(0, 5);
+            }
+
+            return {
+                date: rawDate,
+                time: rawTime,
+                name: item.name || '',
+                qty: Number(item.qty) || 1,
+                reference: item.reference || '',
+                phone: item.phone ? String(item.phone).replace(/\D/g, '') : '',
+                minutes: Number(item.minutes) || 0,
+                referenceTotal: Number(item.referenceTotal) || 0,
+                total: Number(item.total) || 0,
+                pix: Number(item.pix) || 0,
+                dinheiro: Number(item.dinheiro) || 0,
+                debito: Number(item.debito) || 0,
+                credito: Number(item.credito) || 0,
+                method: item.method || '',
+                operator: item.operator || ''
+            };
+        }
+
         function loadHistoryFromCloud() {
-            if (!GOOGLE_SHEET_URL) return;
-            fetch(GOOGLE_SHEET_URL)
-                .then(res => res.json())
+            if (!GOOGLE_SHEET_URL) return Promise.resolve();
+            lastCloudSyncError = null;
+            return fetch(GOOGLE_SHEET_URL)
+                .then(res => {
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    return res.json();
+                })
                 .then(data => {
                     if (data) {
                         if (typeof data === 'object' && !Array.isArray(data)) {
-                            if (Array.isArray(data.history)) history = data.history;
+                            if (Array.isArray(data.history)) history = data.history.map(normalizeHistoryItem);
+
+                            if (Array.isArray(data.sessions)) {
+                                if (data.sessions.length === 0 && sessions.length > 0) {
+                                    // Primeira sincronização: a nuvem ainda está vazia, então
+                                    // envia as sessões locais em vez de apagá-las.
+                                    syncSessionsToCloud();
+                                } else {
+                                    sessions = data.sessions;
+                                    localStorage.setItem('kidplay_sessions', JSON.stringify(sessions));
+                                }
+                            }
                         } 
                         else if (Array.isArray(data)) {
-                            history = data.map(item => {
-                                let rawDate = String(item.date || '');
-                                if (rawDate.includes('T')) {
-                                    rawDate = rawDate.split('T')[0];
-                                }
-                                return {
-                                    date: rawDate,
-                                    time: item.time || '',
-                                    name: item.name || '',
-                                    qty: Number(item.qty) || 1,
-                                    reference: item.reference || '',
-                                    phone: item.phone ? String(item.phone).replace(/\D/g, '') : '',
-                                    minutes: Number(item.minutes) || 0,
-                                    referenceTotal: Number(item.referenceTotal) || 0,
-                                    total: Number(item.total) || 0,
-                                    pix: Number(item.pix) || 0,
-                                    dinheiro: Number(item.dinheiro) || 0,
-                                    debito: Number(item.debito) || 0,
-                                    credito: Number(item.credito) || 0,
-                                    method: item.method || '',
-                                    operator: item.operator || ''
-                                };
-                            });
+                            history = data.map(normalizeHistoryItem);
                         }
                     }
                     renderSessions();
+                    updateSyncStatusUI(true);
                 })
-                .catch(err => console.log("Erro ao carregar histórico da nuvem:", err));
+                .catch(err => {
+                    console.log("Erro ao carregar histórico da nuvem:", err);
+                    lastCloudSyncError = err;
+                    updateSyncStatusUI(false);
+                });
+        }
+
+        function updateSyncStatusUI(ok) {
+            const el = document.getElementById('sync-status');
+            if (!el) return;
+            if (ok) {
+                el.innerHTML = `<i class="fa-solid fa-circle text-emerald-400 text-[8px]"></i> Sincronizado`;
+            } else {
+                el.innerHTML = `<i class="fa-solid fa-circle text-red-400 text-[8px]"></i> Sem conexão`;
+            }
         }
 
         function saveData() {
             localStorage.setItem('kidplay_sessions', JSON.stringify(sessions));
+            syncSessionsToCloud();
             renderSessions();
+        }
+
+        function syncSessionsToCloud() {
+            if (!GOOGLE_SHEET_URL) return;
+            fetch(GOOGLE_SHEET_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ type: "SYNC_SESSIONS", sessions: sessions })
+            }).catch(err => console.error("Erro ao sincronizar sessões ativas:", err));
         }
 
         function playAlarmSound() {
@@ -598,7 +667,7 @@
 
             const nowObj = new Date();
             const newSession = {
-                id: Date.now(),
+                id: Date.now() * 1000 + Math.floor(Math.random() * 1000),
                 phone: phoneClean,
                 name: name,
                 reference: reference,
@@ -641,7 +710,11 @@
         function openAddTimeModal(id) {
             currentAddTimeId = id;
             const session = sessions.find(s => s.id === id);
-            if (!session) return;
+            if (!session) {
+                alert("Essa criança não está mais na lista (pode já ter sido finalizada por outro operador).");
+                renderSessions();
+                return;
+            }
             document.getElementById('add-time-child-name').innerText = session.name;
             document.getElementById('add-time-modal').classList.remove('hidden');
             document.getElementById('add-time-modal').classList.add('flex');
@@ -656,7 +729,13 @@
         function confirmAddTime() {
             const extra = parseInt(document.getElementById('extra-minutes-input').value) || 0;
             const session = sessions.find(s => s.id === currentAddTimeId);
-            if (session && extra > 0) {
+            if (!session) {
+                alert("Essa criança não está mais na lista (pode já ter sido finalizada por outro operador).");
+                closeAddTimeModal();
+                renderSessions();
+                return;
+            }
+            if (extra > 0) {
                 if (session.timeLimit) {
                     session.timeLimit += extra;
                 } else {
@@ -681,7 +760,11 @@
         function openMidwayModal(id) {
             currentMidwayId = id;
             const session = sessions.find(s => s.id === id);
-            if (!session) return;
+            if (!session) {
+                alert("Essa criança não está mais na lista (pode já ter sido finalizada por outro operador).");
+                renderSessions();
+                return;
+            }
 
             const now = session.isPaused ? session.lastPauseStart : new Date().getTime();
             const activeMs = now - session.entryTime - session.pausedDuration;
@@ -715,7 +798,12 @@
 
         function confirmMidwayPayment() {
             const session = sessions.find(s => s.id === currentMidwayId);
-            if (!session) return;
+            if (!session) {
+                alert("Essa criança não está mais na lista (pode já ter sido finalizada por outro operador).");
+                closeMidwayModal();
+                renderSessions();
+                return;
+            }
 
             const pixVal = parseFloat(document.getElementById('mid-pix').value) || 0;
             const dinheiroVal = parseFloat(document.getElementById('mid-dinheiro').value) || 0;
@@ -773,7 +861,11 @@
         function openCancelModal(id) {
             currentCancelId = id;
             const session = sessions.find(s => s.id === id);
-            if (!session) return;
+            if (!session) {
+                alert("Essa criança não está mais na lista (pode já ter sido finalizada por outro operador).");
+                renderSessions();
+                return;
+            }
             document.getElementById('cancel-child-name').innerText = session.name;
             document.getElementById('cancel-reason-input').value = '';
             document.getElementById('cancel-modal').classList.remove('hidden');
@@ -824,13 +916,21 @@
                 sessions.splice(index, 1);
                 saveData();
                 closeCancelModal();
+            } else {
+                alert("Essa criança já não está mais na lista (pode já ter sido finalizada por outro operador).");
+                closeCancelModal();
+                renderSessions();
             }
         }
 
         function initCheckout(id) {
             currentCheckoutId = id;
             const session = sessions.find(s => s.id === id);
-            if (!session) return;
+            if (!session) {
+                alert("Essa criança não está mais na lista (pode já ter sido finalizada por outro operador).");
+                renderSessions();
+                return;
+            }
 
             const now = session.isPaused ? session.lastPauseStart : new Date().getTime();
             const activeMs = now - session.entryTime - session.pausedDuration;
@@ -927,6 +1027,10 @@
                 sessions.splice(index, 1);
                 saveData();
                 closeCheckoutModal();
+            } else {
+                alert("Essa criança já não está mais na lista (pode já ter sido finalizada por outro operador).");
+                closeCheckoutModal();
+                renderSessions();
             }
         }
 
@@ -957,13 +1061,41 @@
                 if (dateInput) dateInput.value = selectedDate;
             }
 
+            // Abre o modal imediatamente e mostra estado de carregamento,
+            // enquanto busca os dados mais recentes da planilha (não usa cache antigo).
+            document.getElementById('cash-modal').classList.remove('hidden');
+            document.getElementById('cash-modal').classList.add('flex');
+            document.getElementById('cash-total').innerText = 'R$ 0,00';
+            document.getElementById('total-pix').innerText = 'R$ 0,00';
+            document.getElementById('total-dinheiro').innerText = 'R$ 0,00';
+            document.getElementById('total-debito').innerText = 'R$ 0,00';
+            document.getElementById('total-credito').innerText = 'R$ 0,00';
+            document.getElementById('history-list').innerHTML = `<p class="text-gray-400 text-center py-4"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Buscando dados atualizados da planilha...</p>`;
+
+            loadHistoryFromCloud().then(() => {
+                renderCashReport(selectedDate);
+            });
+        }
+
+        function renderCashReport(selectedDate) {
+            if (lastCloudSyncError) {
+                document.getElementById('history-list').innerHTML = `
+                    <div class="text-center py-4 text-red-600">
+                        <i class="fa-solid fa-triangle-exclamation text-xl mb-2"></i>
+                        <p class="font-semibold text-sm">Não foi possível buscar os dados da planilha.</p>
+                        <p class="text-xs text-gray-500 mt-1">Verifique sua internet ou o link do Google Sheets, e toque em "Atualizar" para tentar de novo.</p>
+                        <button onclick="openCashModal()" class="mt-3 bg-gray-800 text-white text-xs px-3 py-1.5 rounded-lg"><i class="fa-solid fa-rotate mr-1"></i>Atualizar</button>
+                    </div>`;
+                return;
+            }
+
             let total = 0;
             let pixSum = 0, dinheiroSum = 0, debitoSum = 0, creditoSum = 0;
             let historyHtml = '';
 
             const filteredHistory = history.filter(item => {
                 if (!item.date) return false;
-                return item.date === selectedDate;
+                return String(item.date).trim() === selectedDate;
             });
 
             if (filteredHistory.length === 0) {
@@ -999,8 +1131,46 @@
             document.getElementById('total-credito').innerText = `R$ ${creditoSum.toFixed(2)}`;
             document.getElementById('history-list').innerHTML = historyHtml;
 
-            document.getElementById('cash-modal').classList.remove('hidden');
-            document.getElementById('cash-modal').classList.add('flex');
+            // Guarda o resultado calculado para poder exportar para o WhatsApp sem recalcular
+            lastCashReport = {
+                date: selectedDate,
+                items: filteredHistory.slice().reverse(),
+                total, pixSum, dinheiroSum, debitoSum, creditoSum
+            };
+        }
+
+        function formatDateBR(isoDate) {
+            const parts = String(isoDate).split('-');
+            if (parts.length !== 3) return isoDate;
+            return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+
+        function exportCashReportToWhatsApp() {
+            if (!lastCashReport) return;
+            const r = lastCashReport;
+
+            let msg = `📋 *Fechamento de Caixa - KidPlay*\n`;
+            msg += `📅 Data: ${formatDateBR(r.date)}\n\n`;
+
+            if (r.items.length === 0) {
+                msg += `_Nenhum atendimento finalizado nesta data._\n`;
+            } else {
+                r.items.forEach((item, idx) => {
+                    msg += `${idx + 1}. *${item.name}* (${item.qty}x) - ${item.minutes}min\n`;
+                    msg += `   Ref: ${item.reference} | Op: ${item.operator || 'N/A'} às ${item.time}\n`;
+                    msg += `   💵 R$ ${(item.total || 0).toFixed(2)} - ${item.method || ''}\n\n`;
+                });
+            }
+
+            msg += `━━━━━━━━━━━━━━\n`;
+            msg += `💰 *Total do Dia: R$ ${r.total.toFixed(2)}*\n`;
+            msg += `▪️ Pix: R$ ${r.pixSum.toFixed(2)}\n`;
+            msg += `▪️ Espécie: R$ ${r.dinheiroSum.toFixed(2)}\n`;
+            msg += `▪️ Débito: R$ ${r.debitoSum.toFixed(2)}\n`;
+            msg += `▪️ Crédito: R$ ${r.creditoSum.toFixed(2)}\n`;
+
+            const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+            window.open(url, '_blank');
         }
 
         function closeCashModal() {
@@ -1139,8 +1309,13 @@
                 renderSessions();
             }
         }, 1000);
+
+        // Busca atualizações de outros operadores periodicamente (crianças ativas + histórico)
+        setInterval(() => {
+            if (currentOperator) {
+                loadHistoryFromCloud();
+            }
+        }, 7000);
     </script>
 </body>
 </html>
-
-
