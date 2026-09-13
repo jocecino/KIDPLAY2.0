@@ -338,7 +338,7 @@
                 </div>
 
                 <div>
-                    <h4 class="font-semibold text-gray-700 text-sm mb-2">Atendimentos na Data Selecionada:</h4>
+                    <h4 class="font-semibold text-gray-700 text-sm mb-2">Atendimentos na Date Selecionada:</h4>
                     <div id="history-list" class="max-h-48 overflow-y-auto space-y-2 border rounded-lg p-2 text-sm bg-gray-50"></div>
                 </div>
             </div>
@@ -359,6 +359,7 @@
         let currentAddTimeId = null;
         let currentMidwayId = null;
         let currentCancelId = null;
+        let alertDismissedUntil = 0; // Armazena até que horário (timestamp) o alerta global foi dispensado
         const RATE_PER_MINUTE = 1.50;
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -1005,6 +1006,8 @@
         }
 
         function dismissGlobalAlert() {
+            // Silencia o alerta global por 2 minutos (120000 ms)
+            alertDismissedUntil = new Date().getTime() + (2 * 60 * 1000);
             document.getElementById('global-alert-banner').classList.add('hidden');
         }
 
@@ -1045,7 +1048,8 @@
                 if (session.isPaused) {
                     timeStatusClass = "text-amber-500 font-bold";
                     alertBadge = `<span class="bg-amber-100 text-amber-700 text-xs px-2 py-1 rounded-full font-bold"><i class="fa-solid fa-pause mr-1"></i>Pausado</span>`;
-                } else if (session.timeLimit) {
+                } else if (session.timeLimit !== null && session.timeLimit !== undefined) {
+                    // Verifica se o tempo decorrido atingiu ou ultrapassou a meta
                     if (diffMinutes >= session.timeLimit) {
                         timeStatusClass = "text-red-600 font-bold animate-pulse";
                         alertBadge = `<span class="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-full font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Esgotado!</span>`;
@@ -1086,7 +1090,7 @@
                         <div class="space-y-2 text-sm text-gray-600 mb-4">
                             <p><i class="fa-solid fa-users mr-2 text-indigo-500"></i>Qtd: <strong class="text-gray-800">${session.qty}</strong></p>
                             <p><i class="fa-solid fa-clock mr-2 text-indigo-500"></i>Entrada: <strong class="text-gray-800">${entryTimeDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</strong></p>
-                            <p><i class="fa-solid fa-stopwatch mr-2 text-indigo-500">This</i>Ativo: <strong class="${timeStatusClass}">${diffMinutes} min</strong></p>
+                            <p><i class="fa-solid fa-stopwatch mr-2 text-indigo-500"></i>Ativo: <strong class="${timeStatusClass}">${diffMinutes} min</strong></p>
                             <div class="pt-1 flex items-center justify-between">
                                 <span class="text-xs text-gray-500">Status:</span>
                                 ${paymentBadge}
@@ -1121,7 +1125,8 @@
                 grid.appendChild(card);
             });
 
-            if (hasExpired) {
+            // Gerencia a exibição do alerta global baseado no tempo estourado e no botão "Dispensar" (2 minutos)
+            if (hasExpired && now > alertDismissedUntil) {
                 globalAlert.classList.remove('hidden');
                 document.getElementById('global-alert-text').innerText = `Tempo esgotado para: ${expiredNames.join(', ')}`;
             } else {
