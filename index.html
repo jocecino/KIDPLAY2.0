@@ -430,7 +430,11 @@
                             if (Array.isArray(data.history)) history = data.history.map(normalizeHistoryItem);
 
                             if (Array.isArray(data.sessions)) {
-                                if (data.sessions.length === 0 && sessions.length > 0) {
+                                if (pendingSessionSyncCount > 0) {
+                                    // Há um envio local (POST) ainda em andamento - não sobrescreve
+                                    // agora com esta resposta, que pode estar desatualizada e apagar
+                                    // um cadastro/alteração recém-feito. O próximo ciclo pega a versão certa.
+                                } else if (data.sessions.length === 0 && sessions.length > 0) {
                                     // Primeira sincronização: a nuvem ainda está vazia, então
                                     // envia as sessões locais em vez de apagá-las.
                                     syncSessionsToCloud();
@@ -470,14 +474,24 @@
             renderSessions();
         }
 
+        let pendingSessionSyncCount = 0;
+
         function syncSessionsToCloud() {
             if (!GOOGLE_SHEET_URL) return;
+            pendingSessionSyncCount++;
             fetch(GOOGLE_SHEET_URL, {
                 method: "POST",
                 mode: "no-cors",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ type: "SYNC_SESSIONS", sessions: sessions })
-            }).catch(err => console.error("Erro ao sincronizar sessões ativas:", err));
+            })
+                .then(() => {
+                    pendingSessionSyncCount = Math.max(0, pendingSessionSyncCount - 1);
+                })
+                .catch(err => {
+                    console.error("Erro ao sincronizar sessões ativas:", err);
+                    pendingSessionSyncCount = Math.max(0, pendingSessionSyncCount - 1);
+                });
         }
 
         function playAlarmSound() {
@@ -685,7 +699,8 @@
                 pausedDuration: 0,
                 lastPauseStart: null,
                 alarmTriggered: false,
-                dismissedUntil: 0 // Controla os 2 minutos específicos para esta criança
+                dismissedUntil: 0, // Controla o soneca (2 ou 5 min) para esta criança
+                alarmSilenced: false // "Dispensar de vez": silencia o alarme até adicionar mais tempo
             };
 
             sessions.push(newSession);
@@ -746,18 +761,30 @@
                     session.timeLimit = extra;
                 }
                 session.alarmTriggered = false;
-                session.dismissedUntil = 0; // Reseta o snooze para o alerta poder voltar se estourar de novo
+                session.dismissedUntil = 0; // Reseta o soneca para o alerta poder voltar se estourar de novo
+                session.alarmSilenced = false; // Se ganhou mais tempo, o alarme deve poder soar de novo no novo limite
                 saveData();
             }
             closeAddTimeModal();
         }
 
-        function dismissAlertForChild(id) {
+        function snoozeAlert(id, minutes) {
             const session = sessions.find(s => s.id === id);
             if (session) {
-                // Silencia o alerta desta criança específica por 2 minutos
-                session.dismissedUntil = new Date().getTime() + (2 * 60 * 1000);
-                renderSessions();
+                // Soneca o alarme desta criança específica: some agora, e volta a soar
+                // sozinho (som + aviso) quando o tempo escolhido (bônus) terminar.
+                session.dismissedUntil = new Date().getTime() + (minutes * 60 * 1000);
+                saveData();
+            }
+        }
+
+        function silenceAlertPermanently(id) {
+            const session = sessions.find(s => s.id === id);
+            if (session) {
+                if (confirm(`Silenciar o alarme de "${session.name}" até adicionar mais tempo pra ela? O card continuará mostrando "Esgotado", só o som e o aviso grande vão parar.`)) {
+                    session.alarmSilenced = true;
+                    saveData();
+                }
             }
         }
 
@@ -1233,28 +1260,39 @@
                 } else if (session.timeLimit !== null && session.timeLimit !== undefined) {
                     if (diffMinutes >= session.timeLimit) {
                         timeStatusClass = "text-red-600 font-bold animate-pulse";
-                        alertBadge = `<span class="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-full font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Esgotado!</span>`;
+                        alertBadge = `<span class="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-full font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Esgotado!${session.alarmSilenced ? ' <i class="fa-solid fa-volume-xmark ml-1" title="Alarme silenciado"></i>' : ''}</span>`;
 
-                        if (!session.alarmTriggered) {
-                            session.alarmTriggered = true;
-                            playAlarmSound();
-                        }
+                        if (!session.alarmSilenced) {
+                            const isSnoozed = now <= (session.dismissedUntil || 0);
 
-                        // Se o tempo estourou e o operador ainda não dispensou (ou já passaram 2 minutos desde o último dispensar)
-                        if (now > (session.dismissedUntil || 0)) {
-                            const alertDiv = document.createElement('div');
-                            alertDiv.className = "bg-red-600 text-white px-4 py-3 rounded-xl shadow-lg flex items-center justify-between";
-                            alertDiv.innerHTML = `
-                                <div class="flex items-center space-x-3">
-                                    <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
-                                    <div>
-                                        <strong class="block text-sm">ATENÇÃO: Tempo Esgotado!</strong>
-                                        <span class="text-xs">Tempo esgotado para: ${session.name}</span>
+                            if (!isSnoozed) {
+                                if (!session.alarmTriggered) {
+                                    session.alarmTriggered = true;
+                                    playAlarmSound();
+                                }
+
+                                const alertDiv = document.createElement('div');
+                                alertDiv.className = "bg-red-600 text-white px-4 py-3 rounded-xl shadow-lg space-y-2";
+                                alertDiv.innerHTML = `
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
+                                        <div>
+                                            <strong class="block text-sm">ATENÇÃO: Tempo Esgotado!</strong>
+                                            <span class="text-xs">Tempo esgotado para: ${session.name}</span>
+                                        </div>
                                     </div>
-                                </div>
-                                <button onclick="dismissAlertForChild(${session.id})" class="bg-white text-red-600 font-bold px-3 py-1.5 rounded-lg text-xs shadow hover:bg-gray-100 transition">Dispensar</button>
-                            `;
-                            alertsContainer.appendChild(alertDiv);
+                                    <div class="flex gap-1.5 flex-wrap">
+                                        <button onclick="snoozeAlert(${session.id}, 2)" class="flex-1 min-w-[100px] bg-white text-red-600 font-bold px-2 py-1.5 rounded-lg text-xs shadow hover:bg-gray-100 transition"><i class="fa-solid fa-gift mr-1"></i>+2 min bônus</button>
+                                        <button onclick="snoozeAlert(${session.id}, 5)" class="flex-1 min-w-[100px] bg-white text-red-600 font-bold px-2 py-1.5 rounded-lg text-xs shadow hover:bg-gray-100 transition"><i class="fa-solid fa-gift mr-1"></i>+5 min bônus</button>
+                                        <button onclick="silenceAlertPermanently(${session.id})" class="flex-1 min-w-[100px] bg-red-900 hover:bg-black text-white font-bold px-2 py-1.5 rounded-lg text-xs shadow transition"><i class="fa-solid fa-volume-xmark mr-1"></i>Dispensar de vez</button>
+                                    </div>
+                                `;
+                                alertsContainer.appendChild(alertDiv);
+                            } else {
+                                // Enquanto está em soneca, mantém o alarme "não disparado" para
+                                // que ele volte a soar (som + aviso) sozinho quando o bônus acabar.
+                                session.alarmTriggered = false;
+                            }
                         }
                     } else {
                         alertBadge = `<span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium">Meta: ${session.timeLimit} min</span>`;
