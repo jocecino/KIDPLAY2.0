@@ -415,7 +415,11 @@
         function loadHistoryFromCloud() {
             if (!GOOGLE_SHEET_URL) return Promise.resolve();
             lastCloudSyncError = null;
-            return fetch(GOOGLE_SHEET_URL)
+            // Cache-buster: evita que o navegador/rede sirva uma resposta antiga em cache
+            // para a mesma URL, o que fazia crianças já finalizadas continuarem aparecendo
+            // em outras telas mesmo depois de sincronizadas.
+            const cacheBustedUrl = GOOGLE_SHEET_URL + (GOOGLE_SHEET_URL.indexOf('?') > -1 ? '&' : '?') + '_cb=' + Date.now();
+            return fetch(cacheBustedUrl, { cache: 'no-store' })
                 .then(res => {
                     if (!res.ok) throw new Error('HTTP ' + res.status);
                     return res.json();
@@ -1146,7 +1150,10 @@
         }
 
         function exportCashReportToWhatsApp() {
-            if (!lastCashReport) return;
+            if (!lastCashReport) {
+                alert("Os dados do Fechamento ainda não foram carregados. Toque no botão de atualizar (🔄) no topo do Fechamento e tente novamente.");
+                return;
+            }
             const r = lastCashReport;
 
             let msg = `📋 *Fechamento de Caixa - KidPlay*\n`;
@@ -1170,7 +1177,17 @@
             msg += `▪️ Crédito: R$ ${r.creditoSum.toFixed(2)}\n`;
 
             const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
-            window.open(url, '_blank');
+
+            // Usar um link clicado via JS em vez de window.open: mais confiável em
+            // navegadores de celular e WebViews (o app do WhatsApp, Instagram, etc.),
+            // onde window.open costuma ser bloqueado silenciosamente.
+            const link = document.createElement('a');
+            link.href = url;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         function closeCashModal() {
@@ -1315,7 +1332,7 @@
             if (currentOperator) {
                 loadHistoryFromCloud();
             }
-        }, 7000);
+        }, 5000);
     </script>
 </body>
 </html>
