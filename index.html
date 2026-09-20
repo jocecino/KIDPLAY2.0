@@ -13,7 +13,7 @@
     <div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
         <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md text-center">
             <div class="mb-4">
-                <img src="https://i.ibb.co/hxnj1WQj/IMG-1599.png" alt="Ayres Diversões" class="w-36 h-36 mx-auto object-contain rounded-full shadow-md mb-2 bg-gray-50">
+                <img src="https://i.ibb.co/hJxqCJK1/IMG-2768.jpg" alt="Ayres Diversões" class="w-36 h-36 mx-auto object-contain rounded-full shadow-md mb-2 bg-gray-50">
                 <h1 class="text-2xl font-bold text-gray-900">KidPlay</h1>
                 <p class="text-indigo-600 font-medium text-sm">Ayres Diversões - A alegria de Jesus</p>
             </div>
@@ -49,7 +49,7 @@
     <div id="app-screen" class="hidden min-h-screen flex flex-col">
         <header class="bg-indigo-600 text-white shadow-md px-6 py-4 flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <img src="https://i.ibb.co/hxnj1WQj/IMG-1599.png" alt="Logo" class="w-12 h-12 object-contain bg-white rounded-full p-1">
+                <img src="https://i.ibb.co/hJxqCJK1/IMG-2768.jpg" alt="Logo" class="w-12 h-12 object-contain bg-white rounded-full p-1">
                 <div>
                     <span class="text-lg font-bold block leading-tight">KidPlay</span>
                     <span class="text-xs text-indigo-200">Ayres Diversões</span>
@@ -121,12 +121,10 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Pacote de Tempo (opcional - preenche automático)</label>
-                    <div class="grid grid-cols-3 gap-2 text-xs">
-                        <button type="button" onclick="selectPackage(0, this)" class="package-btn bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg py-2 font-semibold text-gray-700 transition">5 min<br><span class="text-emerald-600">R$ 10</span></button>
-                        <button type="button" onclick="selectPackage(1, this)" class="package-btn bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg py-2 font-semibold text-gray-700 transition">10 min<br><span class="text-emerald-600">R$ 15</span></button>
-                        <button type="button" onclick="selectPackage(2, this)" class="package-btn bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg py-2 font-semibold text-gray-700 transition">20 min<br><span class="text-emerald-600">R$ 25</span></button>
-                        <button type="button" onclick="selectPackage(3, this)" class="package-btn bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg py-2 font-semibold text-gray-700 transition">30+5 bônus<br><span class="text-emerald-600">R$ 35</span></button>
-                        <button type="button" onclick="selectPackage(4, this)" class="package-btn bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg py-2 font-semibold text-gray-700 transition">40+10 bônus<br><span class="text-emerald-600">R$ 45</span></button>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <button type="button" onclick="selectPackage(0, this)" class="package-btn bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg py-2 font-semibold text-gray-700 transition">10 min <span class="text-[10px] text-gray-400">(bônus por qtd)</span><br><span class="text-emerald-600">R$ 15</span></button>
+                        <button type="button" onclick="selectPackage(1, this)" class="package-btn bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg py-2 font-semibold text-gray-700 transition">20 min <span class="text-[10px] text-gray-400">(bônus por qtd)</span><br><span class="text-emerald-600">R$ 30</span></button>
+                        <button type="button" onclick="selectPackage(2, this)" class="package-btn bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg py-2 font-semibold text-gray-700 transition">30+10 bônus<br><span class="text-emerald-600">R$ 45</span></button>
                         <button type="button" onclick="selectPackage(null, this)" class="package-btn bg-gray-50 hover:bg-gray-200 border border-gray-200 rounded-lg py-2 font-semibold text-gray-500 transition">Personalizado</button>
                     </div>
                     <p id="package-note" class="text-xs text-indigo-600 mt-1.5 hidden"></p>
@@ -374,18 +372,31 @@
         let currentCancelId = null;
         const RATE_PER_MINUTE = 1.50;
 
-        // Pacotes de tempo pré-definidos. "bonus" são minutos extras já inclusos no
-        // preço, sem cobrança adicional. O timeLimit da sessão vira minutes+bonus,
-        // mas o valor cobrado fica travado em "price" (não recalcula pelo tempo).
+        // Pacotes de tempo pré-definidos. O bônus (minutos extras grátis) pode ser
+        // fixo ou variar pela quantidade de crianças (bonusByQty). O timeLimit da
+        // sessão vira minutes+bônus, mas o valor cobrado fica travado em "price"
+        // (por criança - é multiplicado pela Qtd em computeLockedCost).
         const TIME_PACKAGES = [
-            { minutes: 5, bonus: 0, price: 10 },
-            { minutes: 10, bonus: 0, price: 15 },
-            { minutes: 20, bonus: 0, price: 25 },
-            { minutes: 30, bonus: 5, price: 35 },
-            { minutes: 40, bonus: 10, price: 45 }
+            { minutes: 10, price: 15, bonusByQty: { 1: 0, 2: 2, 3: 5 } },
+            { minutes: 20, price: 30, bonusByQty: { 1: 0, 2: 5, 3: 7 } },
+            { minutes: 30, price: 45, bonus: 10 } // bônus fixo, não varia pela quantidade
         ];
         let selectedPackagePrice = null;
         let selectedPackageIndex = null;
+
+        // Calcula o bônus de um pacote para uma certa quantidade de crianças.
+        // Se a quantidade for maior que a maior definida na tabela (ex: 4+),
+        // usa o bônus da maior quantidade cadastrada (hoje, a de 3 crianças).
+        function getPackageBonus(pkg, qty) {
+            if (typeof pkg.bonus === 'number') return pkg.bonus;
+            if (pkg.bonusByQty) {
+                if (pkg.bonusByQty[qty] !== undefined) return pkg.bonusByQty[qty];
+                const definedQtys = Object.keys(pkg.bonusByQty).map(Number);
+                const maxDefinedQty = Math.max(...definedQtys);
+                return qty > maxDefinedQty ? pkg.bonusByQty[maxDefinedQty] : 0;
+            }
+            return 0;
+        }
 
         // Se a sessão tem um pacote com preço travado, usa ele sempre - não importa
         // quanto tempo passou nem quantos minutos de bônus foram dados no alarme
@@ -704,38 +715,34 @@
                 return;
             }
 
-            const pkg = TIME_PACKAGES[index];
-            const totalMinutes = pkg.minutes + pkg.bonus;
-            document.getElementById('time-limit').value = totalMinutes;
-            selectedPackagePrice = pkg.price;
             selectedPackageIndex = index;
-
             if (btnEl) btnEl.classList.add('ring-2', 'ring-indigo-500', 'bg-indigo-50');
-
-            refreshPackageNote();
-
-            // Se já estiver marcado "Já Pagou Agora", sugere o valor do pacote (x quantidade) em Dinheiro
-            if (document.getElementById('initial-pay-status').value === 'Pago') {
-                const qtyNow = parseInt(document.getElementById('child-qty').value) || 1;
-                document.getElementById('init-dinheiro').value = (pkg.price * qtyNow).toFixed(2);
-                calcInitTotal();
-            }
+            applyPackageToForm();
         }
 
-        // Atualiza a notinha do pacote considerando a quantidade atual de crianças -
-        // chamada de novo se o operador mudar a Qtd depois de já ter escolhido o pacote.
+        // Recalcula minutos/valor/notinha do pacote escolhido para a Qtd atual de
+        // crianças (o bônus de alguns pacotes muda conforme a quantidade). Chamada
+        // tanto ao escolher o pacote quanto quando o operador muda a Qtd depois.
         function refreshPackageNote() {
-            const note = document.getElementById('package-note');
+            applyPackageToForm();
+        }
+
+        function applyPackageToForm() {
             if (selectedPackageIndex === null) return;
+            const note = document.getElementById('package-note');
 
             const pkg = TIME_PACKAGES[selectedPackageIndex];
-            const totalMinutes = pkg.minutes + pkg.bonus;
             const qtyNow = parseInt(document.getElementById('child-qty').value) || 1;
+            const bonus = getPackageBonus(pkg, qtyNow);
+            const totalMinutes = pkg.minutes + bonus;
             const totalPrice = pkg.price * qtyNow;
-            const qtyText = qtyNow > 1 ? ` (${formatBRL(pkg.price)} × ${qtyNow} crianças)` : '';
 
-            note.innerText = pkg.bonus > 0
-                ? `Pacote travado em ${formatBRL(totalPrice)}${qtyText}: ${pkg.minutes} min + ${pkg.bonus} min de bônus grátis = ${totalMinutes} min no total. O valor não muda mesmo que dê bônus extra depois pelo alerta de tempo esgotado.`
+            document.getElementById('time-limit').value = totalMinutes;
+            selectedPackagePrice = pkg.price;
+
+            const qtyText = qtyNow > 1 ? ` (${formatBRL(pkg.price)} × ${qtyNow} crianças)` : '';
+            note.innerText = bonus > 0
+                ? `Pacote travado em ${formatBRL(totalPrice)}${qtyText}: ${pkg.minutes} min + ${bonus} min de bônus grátis = ${totalMinutes} min no total. O valor não muda mesmo que dê bônus extra depois pelo alerta de tempo esgotado.`
                 : `Pacote travado em ${formatBRL(totalPrice)}${qtyText} para ${pkg.minutes} min.`;
             note.classList.remove('hidden');
 
