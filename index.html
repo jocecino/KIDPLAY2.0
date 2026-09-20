@@ -119,10 +119,22 @@
                     <input type="text" id="child-name" required placeholder="Ex: Joãozinho"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                 </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Pacote de Tempo (opcional - preenche automático)</label>
+                    <div class="grid grid-cols-3 gap-2 text-xs">
+                        <button type="button" onclick="selectPackage(0, this)" class="package-btn bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg py-2 font-semibold text-gray-700 transition">5 min<br><span class="text-emerald-600">R$ 10</span></button>
+                        <button type="button" onclick="selectPackage(1, this)" class="package-btn bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg py-2 font-semibold text-gray-700 transition">10 min<br><span class="text-emerald-600">R$ 15</span></button>
+                        <button type="button" onclick="selectPackage(2, this)" class="package-btn bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg py-2 font-semibold text-gray-700 transition">20 min<br><span class="text-emerald-600">R$ 25</span></button>
+                        <button type="button" onclick="selectPackage(3, this)" class="package-btn bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg py-2 font-semibold text-gray-700 transition">30+5 bônus<br><span class="text-emerald-600">R$ 35</span></button>
+                        <button type="button" onclick="selectPackage(4, this)" class="package-btn bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg py-2 font-semibold text-gray-700 transition">40+10 bônus<br><span class="text-emerald-600">R$ 45</span></button>
+                        <button type="button" onclick="selectPackage(null, this)" class="package-btn bg-gray-50 hover:bg-gray-200 border border-gray-200 rounded-lg py-2 font-semibold text-gray-500 transition">Personalizado</button>
+                    </div>
+                    <p id="package-note" class="text-xs text-indigo-600 mt-1.5 hidden"></p>
+                </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Qtd Crianças</label>
-                        <input type="number" id="child-qty" min="1" value="1" required
+                        <input type="number" id="child-qty" min="1" value="1" required oninput="refreshPackageNote()"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                     </div>
                     <div>
@@ -362,6 +374,29 @@
         let currentCancelId = null;
         const RATE_PER_MINUTE = 1.50;
 
+        // Pacotes de tempo pré-definidos. "bonus" são minutos extras já inclusos no
+        // preço, sem cobrança adicional. O timeLimit da sessão vira minutes+bonus,
+        // mas o valor cobrado fica travado em "price" (não recalcula pelo tempo).
+        const TIME_PACKAGES = [
+            { minutes: 5, bonus: 0, price: 10 },
+            { minutes: 10, bonus: 0, price: 15 },
+            { minutes: 20, bonus: 0, price: 25 },
+            { minutes: 30, bonus: 5, price: 35 },
+            { minutes: 40, bonus: 10, price: 45 }
+        ];
+        let selectedPackagePrice = null;
+        let selectedPackageIndex = null;
+
+        // Se a sessão tem um pacote com preço travado, usa ele sempre - não importa
+        // quanto tempo passou nem quantos minutos de bônus foram dados no alarme
+        // (+2min/+5min). Sem pacote, cai no cálculo antigo por minuto.
+        function computeLockedCost(session, fallbackMinutes) {
+            if (typeof session.packagePrice === 'number' && !isNaN(session.packagePrice)) {
+                return session.packagePrice * session.qty;
+            }
+            return fallbackMinutes * RATE_PER_MINUTE * session.qty;
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             if (currentOperator) {
                 document.getElementById('login-screen').classList.add('hidden');
@@ -374,6 +409,27 @@
 
         let lastCloudSyncError = null;
         let lastCashReport = null;
+
+        function formatBRL(value) {
+            const n = Number(value) || 0;
+            return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        // Para spans onde o "R$" já é texto fixo no HTML - aqui só formata o número com vírgula.
+        function formatNumberBRL(value) {
+            const n = Number(value) || 0;
+            return n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
 
         function normalizeHistoryItem(item) {
             let rawDate = String(item.date || '').trim();
@@ -443,6 +499,18 @@
                                     localStorage.setItem('kidplay_sessions', JSON.stringify(sessions));
                                 }
                             }
+
+                            if (data.bonusPhones && typeof data.bonusPhones === 'object') {
+                                if (pendingBonusSyncCount > 0) {
+                                    // Envio de bônus em andamento - espera o próximo ciclo.
+                                } else if (Object.keys(data.bonusPhones).length === 0 && Object.keys(bonusAppliedPhones).length > 0) {
+                                    // Primeira sincronização: nuvem vazia, envia o que já tínhamos localmente.
+                                    syncBonusToCloud();
+                                } else {
+                                    bonusAppliedPhones = data.bonusPhones;
+                                    localStorage.setItem('kidplay_bonus_phones', JSON.stringify(bonusAppliedPhones));
+                                }
+                            }
                         } 
                         else if (Array.isArray(data)) {
                             history = data.map(normalizeHistoryItem);
@@ -458,13 +526,17 @@
                 });
         }
 
-        function updateSyncStatusUI(ok) {
+        function updateSyncStatusUI(ok, pendingCount) {
             const el = document.getElementById('sync-status');
             if (!el) return;
-            if (ok) {
-                el.innerHTML = `<i class="fa-solid fa-circle text-emerald-400 text-[8px]"></i> Sincronizado`;
-            } else {
+            const pending = typeof pendingCount === 'number' ? pendingCount : JSON.parse(localStorage.getItem('kidplay_pending_history') || '[]').length;
+
+            if (!ok) {
                 el.innerHTML = `<i class="fa-solid fa-circle text-red-400 text-[8px]"></i> Sem conexão`;
+            } else if (pending > 0) {
+                el.innerHTML = `<i class="fa-solid fa-circle text-amber-400 text-[8px]"></i> ${pending} registro(s) pendente(s)`;
+            } else {
+                el.innerHTML = `<i class="fa-solid fa-circle text-emerald-400 text-[8px]"></i> Sincronizado`;
             }
         }
 
@@ -475,6 +547,7 @@
         }
 
         let pendingSessionSyncCount = 0;
+        let pendingBonusSyncCount = 0;
 
         function syncSessionsToCloud() {
             if (!GOOGLE_SHEET_URL) return;
@@ -491,6 +564,24 @@
                 .catch(err => {
                     console.error("Erro ao sincronizar sessões ativas:", err);
                     pendingSessionSyncCount = Math.max(0, pendingSessionSyncCount - 1);
+                });
+        }
+
+        function syncBonusToCloud() {
+            if (!GOOGLE_SHEET_URL) return;
+            pendingBonusSyncCount++;
+            fetch(GOOGLE_SHEET_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ type: "SYNC_BONUS", bonusPhones: bonusAppliedPhones })
+            })
+                .then(() => {
+                    pendingBonusSyncCount = Math.max(0, pendingBonusSyncCount - 1);
+                })
+                .catch(err => {
+                    console.error("Erro ao sincronizar brindes de fidelidade:", err);
+                    pendingBonusSyncCount = Math.max(0, pendingBonusSyncCount - 1);
                 });
         }
 
@@ -521,16 +612,34 @@
             }
         }
 
-        function handleCheckPassword(event) {
+        async function handleCheckPassword(event) {
             event.preventDefault();
             const pass = document.getElementById('password-input').value;
-            if (pass === "2026") {
-                document.getElementById('login-form').classList.add('hidden');
-                document.getElementById('operator-form').classList.remove('hidden');
-                document.getElementById('operator-name-input').focus();
-            } else {
-                alert("Senha incorreta!");
-                document.getElementById('password-input').value = '';
+            const submitBtn = document.getElementById('login-form').querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verificando...';
+
+            try {
+                const url = GOOGLE_SHEET_URL + '?checkPassword=' + encodeURIComponent(pass) + '&_cb=' + Date.now();
+                const res = await fetch(url, { cache: 'no-store' });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const data = await res.json();
+
+                if (data.valid) {
+                    document.getElementById('login-form').classList.add('hidden');
+                    document.getElementById('operator-form').classList.remove('hidden');
+                    document.getElementById('operator-name-input').focus();
+                } else {
+                    alert("Senha incorreta!");
+                    document.getElementById('password-input').value = '';
+                }
+            } catch (err) {
+                console.error("Erro ao verificar senha:", err);
+                alert("Não foi possível verificar a senha agora. Verifique sua internet e tente novamente.");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
             }
         }
 
@@ -564,6 +673,7 @@
             document.getElementById('entry-modal').classList.add('flex');
             document.getElementById('loyalty-bonus-box').classList.add('hidden');
             document.getElementById('client-feedback').classList.add('hidden');
+            resetPackageSelection();
             toggleInitialPaymentFields();
         }
 
@@ -572,6 +682,68 @@
             document.getElementById('entry-modal').classList.remove('flex');
             document.getElementById('entry-form').reset();
             document.getElementById('loyalty-bonus-box').classList.add('hidden');
+            resetPackageSelection();
+        }
+
+        function resetPackageSelection() {
+            selectedPackagePrice = null;
+            selectedPackageIndex = null;
+            document.querySelectorAll('.package-btn').forEach(btn => btn.classList.remove('ring-2', 'ring-indigo-500', 'bg-indigo-50'));
+            const note = document.getElementById('package-note');
+            if (note) note.classList.add('hidden');
+        }
+
+        function selectPackage(index, btnEl) {
+            document.querySelectorAll('.package-btn').forEach(btn => btn.classList.remove('ring-2', 'ring-indigo-500', 'bg-indigo-50'));
+
+            if (index === null) {
+                selectedPackagePrice = null;
+                selectedPackageIndex = null;
+                document.getElementById('package-note').classList.add('hidden');
+                if (btnEl) btnEl.classList.add('ring-2', 'ring-indigo-500', 'bg-indigo-50');
+                return;
+            }
+
+            const pkg = TIME_PACKAGES[index];
+            const totalMinutes = pkg.minutes + pkg.bonus;
+            document.getElementById('time-limit').value = totalMinutes;
+            selectedPackagePrice = pkg.price;
+            selectedPackageIndex = index;
+
+            if (btnEl) btnEl.classList.add('ring-2', 'ring-indigo-500', 'bg-indigo-50');
+
+            refreshPackageNote();
+
+            // Se já estiver marcado "Já Pagou Agora", sugere o valor do pacote (x quantidade) em Dinheiro
+            if (document.getElementById('initial-pay-status').value === 'Pago') {
+                const qtyNow = parseInt(document.getElementById('child-qty').value) || 1;
+                document.getElementById('init-dinheiro').value = (pkg.price * qtyNow).toFixed(2);
+                calcInitTotal();
+            }
+        }
+
+        // Atualiza a notinha do pacote considerando a quantidade atual de crianças -
+        // chamada de novo se o operador mudar a Qtd depois de já ter escolhido o pacote.
+        function refreshPackageNote() {
+            const note = document.getElementById('package-note');
+            if (selectedPackageIndex === null) return;
+
+            const pkg = TIME_PACKAGES[selectedPackageIndex];
+            const totalMinutes = pkg.minutes + pkg.bonus;
+            const qtyNow = parseInt(document.getElementById('child-qty').value) || 1;
+            const totalPrice = pkg.price * qtyNow;
+            const qtyText = qtyNow > 1 ? ` (${formatBRL(pkg.price)} × ${qtyNow} crianças)` : '';
+
+            note.innerText = pkg.bonus > 0
+                ? `Pacote travado em ${formatBRL(totalPrice)}${qtyText}: ${pkg.minutes} min + ${pkg.bonus} min de bônus grátis = ${totalMinutes} min no total. O valor não muda mesmo que dê bônus extra depois pelo alerta de tempo esgotado.`
+                : `Pacote travado em ${formatBRL(totalPrice)}${qtyText} para ${pkg.minutes} min.`;
+            note.classList.remove('hidden');
+
+            // Se já tiver "Já Pagou Agora" marcado, mantém o valor sugerido em Dinheiro em dia com a Qtd
+            if (document.getElementById('initial-pay-status').value === 'Pago') {
+                document.getElementById('init-dinheiro').value = totalPrice.toFixed(2);
+                calcInitTotal();
+            }
         }
 
         function toggleInitialPaymentFields() {
@@ -589,7 +761,7 @@
             const d = parseFloat(document.getElementById('init-dinheiro').value) || 0;
             const db = parseFloat(document.getElementById('init-debito').value) || 0;
             const c = parseFloat(document.getElementById('init-credito').value) || 0;
-            document.getElementById('init-total-display').innerText = (p + d + db + c).toFixed(2);
+            document.getElementById('init-total-display').innerText = formatNumberBRL(p + d + db + c);
         }
 
         function searchClientByPhone(phone) {
@@ -621,8 +793,8 @@
                 feedback.className = "text-xs font-semibold mt-1 text-emerald-600";
                 feedback.classList.remove('hidden');
             } else {
-                feedback.innerText = `Cliente encontrado! Já brincou 0 vez(es).`;
-                feedback.className = "text-xs font-semibold mt-1 text-emerald-600";
+                feedback.innerText = `Cliente novo — ainda não tem visitas registradas.`;
+                feedback.className = "text-xs font-semibold mt-1 text-gray-500";
                 feedback.classList.remove('hidden');
             }
 
@@ -640,6 +812,7 @@
             if (phone) {
                 bonusAppliedPhones[phone] = (bonusAppliedPhones[phone] || 0) + 1;
                 localStorage.setItem('kidplay_bonus_phones', JSON.stringify(bonusAppliedPhones));
+                syncBonusToCloud();
             }
 
             document.getElementById('loyalty-bonus-box').classList.add('hidden');
@@ -676,10 +849,10 @@
                 
                 totalPaid = pixVal + dinheiroVal + debitoVal + creditoVal;
                 let parts = [];
-                if(pixVal > 0) parts.push(`Pix: R$ ${pixVal.toFixed(2)}`);
-                if(dinheiroVal > 0) parts.push(`Dinheiro: R$ ${dinheiroVal.toFixed(2)}`);
-                if(debitoVal > 0) parts.push(`Débito: R$ ${debitoVal.toFixed(2)}`);
-                if(creditoVal > 0) parts.push(`Crédito: R$ ${creditoVal.toFixed(2)}`);
+                if(pixVal > 0) parts.push(`Pix: ${formatBRL(pixVal)}`);
+                if(dinheiroVal > 0) parts.push(`Dinheiro: ${formatBRL(dinheiroVal)}`);
+                if(debitoVal > 0) parts.push(`Débito: ${formatBRL(debitoVal)}`);
+                if(creditoVal > 0) parts.push(`Crédito: ${formatBRL(creditoVal)}`);
                 methodDesc = parts.join(' | ') || "Pago";
             }
 
@@ -700,7 +873,8 @@
                 lastPauseStart: null,
                 alarmTriggered: false,
                 dismissedUntil: 0, // Controla o soneca (2 ou 5 min) para esta criança
-                alarmSilenced: false // "Dispensar de vez": silencia o alarme até adicionar mais tempo
+                alarmSilenced: false, // "Dispensar de vez": silencia o alarme até adicionar mais tempo
+                packagePrice: selectedPackagePrice // Se veio de um pacote fixo, trava o valor cobrado nesse número
             };
 
             sessions.push(newSession);
@@ -800,9 +974,9 @@
             const now = session.isPaused ? session.lastPauseStart : new Date().getTime();
             const activeMs = now - session.entryTime - session.pausedDuration;
             const diffMinutes = Math.max(1, Math.ceil(activeMs / (1000 * 60)));
-            const currentCost = diffMinutes * RATE_PER_MINUTE * session.qty;
+            const currentCost = computeLockedCost(session, diffMinutes);
 
-            document.getElementById('midway-pay-subtitle').innerHTML = `Criança: <strong>${session.name}</strong><br>Valor Atual Calculado: <strong class="text-indigo-600">R$ ${currentCost.toFixed(2)}</strong>`;
+            document.getElementById('midway-pay-subtitle').innerHTML = `Criança: <strong>${escapeHtml(session.name)}</strong><br>Valor Atual Calculado: <strong class="text-indigo-600">${formatBRL(currentCost)}</strong>`;
             document.getElementById('mid-pix').value = '';
             document.getElementById('mid-dinheiro').value = '';
             document.getElementById('mid-debito').value = '';
@@ -824,7 +998,7 @@
             const d = parseFloat(document.getElementById('mid-dinheiro').value) || 0;
             const db = parseFloat(document.getElementById('mid-debito').value) || 0;
             const c = parseFloat(document.getElementById('mid-credito').value) || 0;
-            document.getElementById('mid-total-display').innerText = (p + d + db + c).toFixed(2);
+            document.getElementById('mid-total-display').innerText = formatNumberBRL(p + d + db + c);
         }
 
         function confirmMidwayPayment() {
@@ -848,17 +1022,16 @@
             }
 
             let parts = [];
-            if(pixVal > 0) parts.push(`Pix: R$ ${pixVal.toFixed(2)}`);
-            if(dinheiroVal > 0) parts.push(`Dinheiro: R$ ${dinheiroVal.toFixed(2)}`);
-            if(debitoVal > 0) parts.push(`Débito: R$ ${debitoVal.toFixed(2)}`);
-            if(creditoVal > 0) parts.push(`Crédito: R$ ${creditoVal.toFixed(2)}`);
+            if(pixVal > 0) parts.push(`Pix: ${formatBRL(pixVal)}`);
+            if(dinheiroVal > 0) parts.push(`Dinheiro: ${formatBRL(dinheiroVal)}`);
+            if(debitoVal > 0) parts.push(`Débito: ${formatBRL(debitoVal)}`);
+            if(creditoVal > 0) parts.push(`Crédito: ${formatBRL(creditoVal)}`);
             const methodDesc = parts.join(' | ');
 
             const now = session.isPaused ? session.lastPauseStart : new Date().getTime();
             const activeMs = now - session.entryTime - session.pausedDuration;
             const diffMinutes = Math.max(1, Math.ceil(activeMs / (1000 * 60)));
-            const currentCost = diffMinutes * RATE_PER_MINUTE * session.qty;
-
+            const currentCost = computeLockedCost(session, diffMinutes);
             session.paymentStatus = "Pago";
             session.paidAmount = totalPaid;
             session.paymentMethod = methodDesc;
@@ -922,7 +1095,7 @@
                 const nowObj = new Date();
                 const nowMs = session.isPaused ? session.lastPauseStart : nowObj.getTime();
                 const diffMinutes = Math.floor((nowMs - session.entryTime - session.pausedDuration) / (1000 * 60));
-                const refCost = Math.max(0, diffMinutes) * RATE_PER_MINUTE * session.qty;
+                const refCost = computeLockedCost(session, Math.max(0, diffMinutes));
 
                 const cancelledRecord = {
                     date: getFormattedDate(nowObj),
@@ -966,7 +1139,7 @@
             const now = session.isPaused ? session.lastPauseStart : new Date().getTime();
             const activeMs = now - session.entryTime - session.pausedDuration;
             const diffMinutes = Math.max(1, Math.ceil(activeMs / (1000 * 60)));
-            const totalCost = diffMinutes * RATE_PER_MINUTE * session.qty;
+            const totalCost = computeLockedCost(session, diffMinutes);
             
             let remainingToPay = 0;
             if (session.paymentStatus !== 'Pago') {
@@ -974,20 +1147,20 @@
             }
 
             document.getElementById('checkout-summary').innerHTML = `
-                Criança: <strong>${session.name}</strong> (${session.qty}x)<br>
-                Ref/Responsável: <strong>${session.reference}</strong><br>
-                Celular: <strong>${session.phone || 'Não informado'}</strong><br>
+                Criança: <strong>${escapeHtml(session.name)}</strong> (${session.qty}x)<br>
+                Ref/Responsável: <strong>${escapeHtml(session.reference)}</strong><br>
+                Celular: <strong>${escapeHtml(session.phone) || 'Não informado'}</strong><br>
                 Tempo total ativo: <strong>${diffMinutes} min</strong><br>
-                Valor de Referência: <strong>R$ ${totalCost.toFixed(2)}</strong><br>
+                Valor de Referência: <strong>${formatBRL(totalCost)}</strong><br>
                 Status Anterior: <strong class="${session.paymentStatus === 'Pago' ? 'text-emerald-600' : 'text-amber-600'}">${session.paymentStatus}</strong><br>
-                Valor a Pagar Agora: <strong class="text-indigo-600">R$ ${remainingToPay.toFixed(2)}</strong>
+                Valor a Pagar Agora: <strong class="text-indigo-600">${formatBRL(remainingToPay)}</strong>
             `;
 
             document.getElementById('out-pix').value = '';
             document.getElementById('out-dinheiro').value = '';
             document.getElementById('out-debito').value = '';
             document.getElementById('out-credito').value = '';
-            document.getElementById('out-total-display').innerText = remainingToPay.toFixed(2);
+            document.getElementById('out-total-display').innerText = formatNumberBRL(remainingToPay);
             if (remainingToPay > 0) {
                 document.getElementById('out-dinheiro').value = remainingToPay.toFixed(2);
             }
@@ -1007,7 +1180,7 @@
             const d = parseFloat(document.getElementById('out-dinheiro').value) || 0;
             const db = parseFloat(document.getElementById('out-debito').value) || 0;
             const c = parseFloat(document.getElementById('out-credito').value) || 0;
-            document.getElementById('out-total-display').innerText = (p + d + db + c).toFixed(2);
+            document.getElementById('out-total-display').innerText = formatNumberBRL(p + d + db + c);
         }
 
         function confirmCheckout(event) {
@@ -1018,12 +1191,18 @@
             const creditoVal = parseFloat(document.getElementById('out-credito').value) || 0;
             
             const paidAmount = pixVal + dinheiroVal + debitoVal + creditoVal;
-            
+
+            const sessionBeingClosed = sessions.find(s => s.id === currentCheckoutId);
+            const nameForConfirm = sessionBeingClosed ? sessionBeingClosed.name : 'esta criança';
+            if (!confirm(`Confirma o fechamento de "${nameForConfirm}" com pagamento de ${formatBRL(paidAmount)} agora? Essa ação não pode ser desfeita.`)) {
+                return;
+            }
+
             let parts = [];
-            if(pixVal > 0) parts.push(`Pix: R$ ${pixVal.toFixed(2)}`);
-            if(dinheiroVal > 0) parts.push(`Dinheiro: R$ ${dinheiroVal.toFixed(2)}`);
-            if(debitoVal > 0) parts.push(`Débito: R$ ${debitoVal.toFixed(2)}`);
-            if(creditoVal > 0) parts.push(`Crédito: R$ ${creditoVal.toFixed(2)}`);
+            if(pixVal > 0) parts.push(`Pix: ${formatBRL(pixVal)}`);
+            if(dinheiroVal > 0) parts.push(`Dinheiro: ${formatBRL(dinheiroVal)}`);
+            if(debitoVal > 0) parts.push(`Débito: ${formatBRL(debitoVal)}`);
+            if(creditoVal > 0) parts.push(`Crédito: ${formatBRL(creditoVal)}`);
             const methodDesc = parts.join(' | ') || "Quitado Anteriormente";
 
             const index = sessions.findIndex(s => s.id === currentCheckoutId);
@@ -1032,7 +1211,7 @@
                 const nowObj = new Date();
                 const nowMs = session.isPaused ? session.lastPauseStart : nowObj.getTime();
                 const diffMinutes = Math.max(1, Math.ceil((nowMs - session.entryTime - session.pausedDuration) / (1000 * 60)));
-                const referenceCost = diffMinutes * RATE_PER_MINUTE * session.qty;
+                const referenceCost = computeLockedCost(session, diffMinutes);
 
                 const completedRecord = {
                     date: getFormattedDate(nowObj),
@@ -1066,14 +1245,52 @@
         }
 
         function sendRecordToSheet(record) {
-            if (GOOGLE_SHEET_URL) {
+            if (!GOOGLE_SHEET_URL) return;
+            fetch(GOOGLE_SHEET_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(record)
+            }).catch(err => {
+                console.error("Erro ao salvar na planilha, guardando para reenviar:", err);
+                queuePendingHistoryRecord(record);
+            });
+        }
+
+        // Fila de registros de histórico que falharam ao enviar (ex: sem internet no momento).
+        // Fica salva no localStorage e o app tenta reenviar sozinho a cada ciclo de sincronização,
+        // pra nunca perder um fechamento por causa de uma queda de conexão passageira.
+        function queuePendingHistoryRecord(record) {
+            const pending = JSON.parse(localStorage.getItem('kidplay_pending_history') || '[]');
+            pending.push(record);
+            localStorage.setItem('kidplay_pending_history', JSON.stringify(pending));
+            updateSyncStatusUI(false, pending.length);
+        }
+
+        function retryPendingHistoryRecords() {
+            if (!GOOGLE_SHEET_URL) return;
+            const pending = JSON.parse(localStorage.getItem('kidplay_pending_history') || '[]');
+            if (pending.length === 0) return;
+
+            const attempts = pending.map(record =>
                 fetch(GOOGLE_SHEET_URL, {
                     method: "POST",
                     mode: "no-cors",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(record)
-                }).catch(err => console.error("Erro ao salvar na planilha:", err));
-            }
+                }).then(() => ({ record, ok: true }))
+                  .catch(() => ({ record, ok: false }))
+            );
+
+            Promise.all(attempts).then(results => {
+                const stillPending = results.filter(r => !r.ok).map(r => r.record);
+                if (stillPending.length > 0) {
+                    localStorage.setItem('kidplay_pending_history', JSON.stringify(stillPending));
+                } else {
+                    localStorage.removeItem('kidplay_pending_history');
+                }
+                updateSyncStatusUI(true, stillPending.length);
+            });
         }
 
         function getFormattedDate(dateObj) {
@@ -1142,24 +1359,24 @@
                     historyHtml += `
                         <div class="flex justify-between items-center bg-white p-2 rounded border mb-2">
                             <div>
-                                <strong>${item.name}</strong> (${item.qty}x) - ${item.minutes}min<br>
-                                <span class="text-xs text-gray-500">Ref: ${item.reference} | Tel: ${item.phone || 'N/A'} | Op: ${item.operator || 'N/A'} às ${item.time}</span><br>
-                                <span class="text-xs text-indigo-600">Ref. Calc: R$ ${(item.referenceTotal || 0).toFixed(2)}</span>
+                                <strong>${escapeHtml(item.name)}</strong> (${item.qty}x) - ${item.minutes}min<br>
+                                <span class="text-xs text-gray-500">Ref: ${escapeHtml(item.reference)} | Tel: ${escapeHtml(item.phone) || 'N/A'} | Op: ${escapeHtml(item.operator) || 'N/A'} às ${escapeHtml(item.time)}</span><br>
+                                <span class="text-xs text-indigo-600">Ref. Calc: ${formatBRL((item.referenceTotal || 0))}</span>
                             </div>
                             <div class="text-right">
-                                <span class="font-bold text-emerald-600">R$ ${(item.total || 0).toFixed(2)}</span>
-                                <br><span class="text-[10px] bg-gray-100 px-1 rounded text-gray-600">${item.method || ''}</span>
+                                <span class="font-bold text-emerald-600">${formatBRL((item.total || 0))}</span>
+                                <br><span class="text-[10px] bg-gray-100 px-1 rounded text-gray-600">${escapeHtml(item.method)}</span>
                             </div>
                         </div>
                     `;
                 });
             }
 
-            document.getElementById('cash-total').innerText = `R$ ${total.toFixed(2)}`;
-            document.getElementById('total-pix').innerText = `R$ ${pixSum.toFixed(2)}`;
-            document.getElementById('total-dinheiro').innerText = `R$ ${dinheiroSum.toFixed(2)}`;
-            document.getElementById('total-debito').innerText = `R$ ${debitoSum.toFixed(2)}`;
-            document.getElementById('total-credito').innerText = `R$ ${creditoSum.toFixed(2)}`;
+            document.getElementById('cash-total').innerText = `${formatBRL(total)}`;
+            document.getElementById('total-pix').innerText = `${formatBRL(pixSum)}`;
+            document.getElementById('total-dinheiro').innerText = `${formatBRL(dinheiroSum)}`;
+            document.getElementById('total-debito').innerText = `${formatBRL(debitoSum)}`;
+            document.getElementById('total-credito').innerText = `${formatBRL(creditoSum)}`;
             document.getElementById('history-list').innerHTML = historyHtml;
 
             // Guarda o resultado calculado para poder exportar para o WhatsApp sem recalcular
@@ -1192,16 +1409,16 @@
                 r.items.forEach((item, idx) => {
                     msg += `${idx + 1}. *${item.name}* (${item.qty}x) - ${item.minutes}min\n`;
                     msg += `   Ref: ${item.reference} | Op: ${item.operator || 'N/A'} às ${item.time}\n`;
-                    msg += `   💵 R$ ${(item.total || 0).toFixed(2)} - ${item.method || ''}\n\n`;
+                    msg += `   💵 ${formatBRL((item.total || 0))} - ${item.method || ''}\n\n`;
                 });
             }
 
             msg += `━━━━━━━━━━━━━━\n`;
-            msg += `💰 *Total do Dia: R$ ${r.total.toFixed(2)}*\n`;
-            msg += `▪️ Pix: R$ ${r.pixSum.toFixed(2)}\n`;
-            msg += `▪️ Espécie: R$ ${r.dinheiroSum.toFixed(2)}\n`;
-            msg += `▪️ Débito: R$ ${r.debitoSum.toFixed(2)}\n`;
-            msg += `▪️ Crédito: R$ ${r.creditoSum.toFixed(2)}\n`;
+            msg += `💰 *Total do Dia: ${formatBRL(r.total)}*\n`;
+            msg += `▪️ Pix: ${formatBRL(r.pixSum)}\n`;
+            msg += `▪️ Espécie: ${formatBRL(r.dinheiroSum)}\n`;
+            msg += `▪️ Débito: ${formatBRL(r.debitoSum)}\n`;
+            msg += `▪️ Crédito: ${formatBRL(r.creditoSum)}\n`;
 
             const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
 
@@ -1249,7 +1466,7 @@
                 }
 
                 const diffMinutes = Math.floor(activeMs / (1000 * 60));
-                const currentCost = Math.max(1, diffMinutes) * RATE_PER_MINUTE * session.qty;
+                const currentCost = computeLockedCost(session, Math.max(1, diffMinutes));
                 
                 let timeStatusClass = "text-gray-600";
                 let alertBadge = "";
@@ -1278,7 +1495,7 @@
                                         <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
                                         <div>
                                             <strong class="block text-sm">ATENÇÃO: Tempo Esgotado!</strong>
-                                            <span class="text-xs">Tempo esgotado para: ${session.name}</span>
+                                            <span class="text-xs">Tempo esgotado para: ${escapeHtml(session.name)}</span>
                                         </div>
                                     </div>
                                     <div class="flex gap-1.5 flex-wrap">
@@ -1314,9 +1531,9 @@
                     <div>
                         <div class="flex justify-between items-start mb-3">
                             <div>
-                                <h3 class="font-bold text-lg text-gray-800">${session.name}</h3>
-                                <p class="text-xs text-indigo-600 font-medium">Ref: ${session.reference}</p>
-                                <p class="text-xs text-gray-500">Tel: ${session.phone || 'Não informado'}</p>
+                                <h3 class="font-bold text-lg text-gray-800">${escapeHtml(session.name)}</h3>
+                                <p class="text-xs text-indigo-600 font-medium">Ref: ${escapeHtml(session.reference)}</p>
+                                <p class="text-xs text-gray-500">Tel: ${escapeHtml(session.phone) || 'Não informado'}</p>
                             </div>
                             ${alertBadge}
                         </div>
@@ -1333,8 +1550,8 @@
                     <div class="border-t pt-4 space-y-3">
                         <div class="flex items-center justify-between">
                             <div>
-                                <span class="text-xs text-gray-400 block">Valor Atual</span>
-                                <span class="text-xl font-extrabold text-emerald-600">R$ ${currentCost.toFixed(2)}</span>
+                                <span class="text-xs text-gray-400 block">${typeof session.packagePrice === 'number' ? '<i class="fa-solid fa-lock mr-1"></i>Valor do Pacote (travado)' : 'Valor Atual'}</span>
+                                <span class="text-xl font-extrabold text-emerald-600">${formatBRL(currentCost)}</span>
                             </div>
                             <div class="flex gap-1.5">
                                 <button onclick="togglePauseSession(${session.id})" class="${pauseButtonClass} px-2.5 py-1.5 rounded-lg text-xs font-bold transition border">
@@ -1369,6 +1586,7 @@
         setInterval(() => {
             if (currentOperator) {
                 loadHistoryFromCloud();
+                retryPendingHistoryRecords();
             }
         }, 5000);
     </script>
