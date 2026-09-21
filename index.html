@@ -6,15 +6,25 @@
     <title>KidPlay - Ayres Diversão</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
+        @keyframes card-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .card-anim { animation: card-in .25s ease-out; }
+        .alert-anim { animation: card-in .2s ease-out; }
+    </style>
 </head>
-<body class="bg-gray-100 font-sans text-gray-800">
+<body class="bg-gradient-to-br from-slate-50 via-white to-indigo-50 text-gray-800 min-h-screen">
 
     <!-- TELA DE LOGIN -->
-    <div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
-        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md text-center">
+    <div id="login-screen" class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+        <div class="absolute -top-24 -left-24 w-72 h-72 bg-indigo-300/30 rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-24 -right-24 w-72 h-72 bg-emerald-300/30 rounded-full blur-3xl"></div>
+        <div class="bg-white/90 backdrop-blur p-8 rounded-3xl shadow-2xl shadow-indigo-200/50 border border-white w-full max-w-md text-center relative">
             <div class="mb-4">
-                <img src="https://i.ibb.co/hJxqCJK1/IMG-2768.jpg" alt="Ayres Diversões" class="w-36 h-36 mx-auto object-contain rounded-full shadow-md mb-2 bg-gray-50">
-                <h1 class="text-2xl font-bold text-gray-900">KidPlay</h1>
+                <img src="https://i.ibb.co/hJxqCJK1/IMG-2768.jpg" alt="Ayres Diversões" class="w-36 h-36 mx-auto object-contain rounded-full shadow-lg mb-2 bg-gray-50 ring-4 ring-indigo-100">
+                <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">KidPlay</h1>
                 <p class="text-indigo-600 font-medium text-sm">Ayres Diversões - A alegria de Jesus</p>
             </div>
             
@@ -22,23 +32,23 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Senha de Acesso</label>
                     <input type="password" id="password-input" placeholder="Digite a senha" required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition">
                 </div>
-                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition duration-200 shadow-md">
+                <button type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold py-3 rounded-xl transition duration-200 shadow-lg shadow-indigo-300/50 hover:shadow-xl hover:-translate-y-0.5">
                     Continuar
                 </button>
             </form>
 
             <form id="operator-form" onsubmit="handleOperatorLogin(event)" class="space-y-4 text-left hidden">
-                <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 p-3 rounded-lg text-xs mb-2">
+                <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 p-3 rounded-xl text-xs mb-2">
                     <i class="fa-solid fa-circle-check mr-1"></i> Senha correta! Agora informe quem está operando.
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Seu Nome (Operador(a))</label>
                     <input type="text" id="operator-name-input" placeholder="Ex: João / Maria" required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition">
                 </div>
-                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-lg transition duration-200 shadow-md">
+                <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-3 rounded-xl transition duration-200 shadow-lg shadow-emerald-300/50 hover:shadow-xl hover:-translate-y-0.5">
                     Entrar no Sistema
                 </button>
             </form>
@@ -47,11 +57,11 @@
 
     <!-- TELA PRINCIPAL -->
     <div id="app-screen" class="hidden min-h-screen flex flex-col">
-        <header class="bg-indigo-600 text-white shadow-md px-6 py-4 flex justify-between items-center">
+        <header class="bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-200/50 px-6 py-4 flex justify-between items-center sticky top-0 z-30">
             <div class="flex items-center space-x-3">
-                <img src="https://i.ibb.co/hJxqCJK1/IMG-2768.jpg" alt="Logo" class="w-12 h-12 object-contain bg-white rounded-full p-1">
+                <img src="https://i.ibb.co/hJxqCJK1/IMG-2768.jpg" alt="Logo" class="w-12 h-12 object-contain bg-white rounded-full p-1 shadow-md">
                 <div>
-                    <span class="text-lg font-bold block leading-tight">KidPlay</span>
+                    <span class="text-lg font-bold block leading-tight tracking-tight">KidPlay</span>
                     <span class="text-xs text-indigo-200">Ayres Diversões</span>
                 </div>
             </div>
@@ -62,7 +72,7 @@
                     <strong id="display-operator-name" class="text-sm font-semibold">Nome</strong>
                 </div>
                 <span id="sync-status" class="text-xs text-indigo-200 hidden md:inline-flex items-center gap-1"><i class="fa-solid fa-circle text-emerald-400 text-[8px]"></i> Sincronizado</span>
-                <button onclick="handleLogout()" class="bg-indigo-700 hover:bg-indigo-800 px-4 py-2 rounded-lg text-sm font-medium transition">
+                <button onclick="handleLogout()" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg text-sm font-medium transition backdrop-blur">
                     <i class="fa-solid fa-right-from-bracket mr-2"></i>Sair
                 </button>
             </div>
@@ -71,15 +81,15 @@
         <main class="flex-1 max-w-6xl w-full mx-auto p-4 md:p-6 space-y-6">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-800">Painel de Controle</h2>
+                    <h2 class="text-2xl font-bold text-gray-800 tracking-tight">Painel de Controle</h2>
                     <p class="text-sm text-gray-500">Tarifa: R$ 1,50 por minuto (por criança)</p>
                 </div>
                 <div class="flex gap-3">
-                    <button onclick="openCashModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-xl font-semibold shadow-md transition flex items-center space-x-2">
+                    <button onclick="openCashModal()" class="bg-white hover:bg-gray-50 text-blue-700 border border-blue-200 px-4 py-3 rounded-xl font-semibold shadow-sm hover:shadow-md transition flex items-center space-x-2">
                         <i class="fa-solid fa-cash-register"></i>
                         <span>Fechamento</span>
                     </button>
-                    <button onclick="openModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-3 rounded-xl font-semibold shadow-md transition flex items-center space-x-2">
+                    <button onclick="openModal()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-5 py-3 rounded-xl font-semibold shadow-lg shadow-emerald-300/40 hover:shadow-xl hover:-translate-y-0.5 transition flex items-center space-x-2">
                         <i class="fa-solid fa-plus"></i>
                         <span>Nova Entrada</span>
                     </button>
@@ -99,36 +109,33 @@
     </div>
 
     <!-- MODAL DE NOVA ENTRADA -->
-    <div id="entry-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative max-h-[90vh] overflow-y-auto">
-            <h3 class="text-xl font-bold text-gray-900 mb-4">Registrar Entrada</h3>
+    <div id="entry-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="card-anim bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-md p-6 relative max-h-[90vh] overflow-y-auto">
+            <h3 class="text-xl font-extrabold text-gray-900 mb-4 tracking-tight">Registrar Entrada</h3>
             <form id="entry-form" onsubmit="addSession(event)" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Celular (Opcional - Busca Cliente)</label>
-                    <input type="tel" id="child-phone" placeholder="(00) 00000-0000" maxlength="15" oninput="maskPhoneInput(this); searchClientByPhone(this.value)"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    <input type="tel" id="child-phone" placeholder="Ex: 11999999999" oninput="searchClientByPhone(this.value)"
+                        class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition">
                     <div id="client-feedback" class="text-xs font-semibold mt-1 hidden"></div>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Nome de Referência (Responsável)</label>
                     <input type="text" id="child-reference" required placeholder="Ex: Maria (Mãe)"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Nome da Criança</label>
                     <input type="text" id="child-name" required placeholder="Ex: Joãozinho"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition">
                 </div>
                 <div>
-                    <label class="flex items-center justify-between text-sm font-medium text-gray-700 mb-1">
-                        <span>Pacote de Tempo (opcional - preenche automático)</span>
-                        <button type="button" onclick="openPackageInfoModal()" class="text-indigo-500 hover:text-indigo-700"><i class="fa-solid fa-circle-info"></i></button>
-                    </label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Pacote de Tempo (opcional - preenche automático)</label>
                     <div class="grid grid-cols-2 gap-2 text-xs">
-                        <button type="button" onclick="selectPackage(0, this)" class="package-btn bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg py-2 font-semibold text-gray-700 transition">10 min <span class="text-[10px] text-gray-400">(bônus por qtd)</span><br><span class="text-emerald-600">R$ 15</span></button>
-                        <button type="button" onclick="selectPackage(1, this)" class="package-btn bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg py-2 font-semibold text-gray-700 transition">20 min <span class="text-[10px] text-gray-400">(bônus por qtd)</span><br><span class="text-emerald-600">R$ 30</span></button>
-                        <button type="button" onclick="selectPackage(2, this)" class="package-btn bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg py-2 font-semibold text-gray-700 transition">30+10 bônus<br><span class="text-emerald-600">R$ 45</span></button>
-                        <button type="button" onclick="selectPackage(null, this)" class="package-btn bg-gray-50 hover:bg-gray-200 border border-gray-200 rounded-lg py-2 font-semibold text-gray-500 transition">Personalizado</button>
+                        <button type="button" onclick="selectPackage(0, this)" class="package-btn bg-gray-50 hover:bg-indigo-50 hover:border-indigo-300 border border-gray-200 rounded-xl py-2.5 font-semibold text-gray-700 transition hover:-translate-y-0.5">10 min <span class="text-[10px] text-gray-400">(bônus por qtd)</span><br><span class="text-emerald-600">R$ 15</span></button>
+                        <button type="button" onclick="selectPackage(1, this)" class="package-btn bg-gray-50 hover:bg-indigo-50 hover:border-indigo-300 border border-gray-200 rounded-xl py-2.5 font-semibold text-gray-700 transition hover:-translate-y-0.5">20 min <span class="text-[10px] text-gray-400">(bônus por qtd)</span><br><span class="text-emerald-600">R$ 30</span></button>
+                        <button type="button" onclick="selectPackage(2, this)" class="package-btn bg-gray-50 hover:bg-indigo-50 hover:border-indigo-300 border border-gray-200 rounded-xl py-2.5 font-semibold text-gray-700 transition hover:-translate-y-0.5">30+10 bônus<br><span class="text-emerald-600">R$ 45</span></button>
+                        <button type="button" onclick="selectPackage(null, this)" class="package-btn bg-gray-50 hover:bg-gray-200 border border-gray-200 rounded-xl py-2.5 font-semibold text-gray-500 transition hover:-translate-y-0.5">Personalizado</button>
                     </div>
                     <p id="package-note" class="text-xs text-indigo-600 mt-1.5 hidden"></p>
                 </div>
@@ -136,12 +143,12 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Qtd Crianças</label>
                         <input type="number" id="child-qty" min="1" value="1" required oninput="refreshPackageNote()"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Minutos (Meta)</label>
                         <input type="number" id="time-limit" min="1" placeholder="Ex: 15 (Opcional)"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition">
                     </div>
                 </div>
 
@@ -160,104 +167,94 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Status de Pagamento Inicial</label>
                     <select id="initial-pay-status" onchange="toggleInitialPaymentFields()"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+                        class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition bg-white">
                         <option value="Pendente">Pagar ao Sair / Futuro</option>
                         <option value="Pago">Já Pagou Agora</option>
                     </select>
                 </div>
-                <div id="initial-payment-details" class="hidden space-y-3 bg-gray-50 p-3 rounded-lg border">
+                <div id="initial-payment-details" class="hidden space-y-3 bg-gray-50 p-3 rounded-xl border border-gray-200">
                     <p class="text-xs font-bold text-gray-600">Formas de Pagamento:</p>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block text-[11px] text-gray-500">Pix (R$)</label>
-                            <input type="number" step="0.01" id="init-pix" placeholder="0.00" oninput="calcInitTotal()" class="w-full p-1.5 border rounded text-sm">
+                            <input type="number" step="0.01" id="init-pix" placeholder="0.00" oninput="calcInitTotal()" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 focus:outline-none transition">
                         </div>
                         <div>
                             <label class="block text-[11px] text-gray-500">Dinheiro (R$)</label>
-                            <input type="number" step="0.01" id="init-dinheiro" placeholder="0.00" oninput="calcInitTotal()" class="w-full p-1.5 border rounded text-sm">
+                            <input type="number" step="0.01" id="init-dinheiro" placeholder="0.00" oninput="calcInitTotal()" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 focus:outline-none transition">
                         </div>
                         <div>
                             <label class="block text-[11px] text-gray-500">Débito (R$)</label>
-                            <input type="number" step="0.01" id="init-debito" placeholder="0.00" oninput="calcInitTotal()" class="w-full p-1.5 border rounded text-sm">
+                            <input type="number" step="0.01" id="init-debito" placeholder="0.00" oninput="calcInitTotal()" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 focus:outline-none transition">
                         </div>
                         <div>
                             <label class="block text-[11px] text-gray-500">Crédito (R$)</label>
-                            <input type="number" step="0.01" id="init-credito" placeholder="0.00" oninput="calcInitTotal()" class="w-full p-1.5 border rounded text-sm">
+                            <input type="number" step="0.01" id="init-credito" placeholder="0.00" oninput="calcInitTotal()" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 focus:outline-none transition">
                         </div>
                     </div>
                     <div class="text-right text-xs font-bold text-emerald-600 pt-1">Total Pago: R$ <span id="init-total-display">0.00</span></div>
                 </div>
                 <div class="flex space-x-3 pt-2">
-                    <button type="button" onclick="closeModal()" class="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 rounded-lg transition">Cancelar</button>
-                    <button type="submit" class="w-1/2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition">Salvar Entrada</button>
+                    <button type="button" onclick="closeModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition transition">Cancelar</button>
+                    <button type="submit" class="w-1/2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-indigo-200 hover:shadow-lg transition transition">Salvar Entrada</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- MODAL DE ADICIONAR MAIS TEMPO -->
-    <div id="add-time-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 relative">
-            <h3 class="text-lg font-bold text-gray-900 mb-3">Adicionar Mais Tempo</h3>
+    <div id="add-time-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="card-anim bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-sm p-6 relative">
+            <h3 class="text-lg font-extrabold text-gray-900 mb-3 tracking-tight">Adicionar Mais Tempo</h3>
             <p class="text-sm text-gray-500 mb-4">Quantos minutos deseja acrescentar para <strong id="add-time-child-name"></strong>?</p>
             <div class="space-y-3">
                 <input type="number" id="extra-minutes-input" min="1" value="10"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg text-center font-bold text-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                 <div class="flex space-x-3">
-                    <button type="button" onclick="closeAddTimeModal()" class="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 rounded-lg">Cancelar</button>
-                    <button type="button" onclick="confirmAddTime()" class="w-1/2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg">Adicionar</button>
+                    <button type="button" onclick="closeAddTimeModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition">Cancelar</button>
+                    <button type="button" onclick="confirmAddTime()" class="w-1/2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-indigo-200 hover:shadow-lg transition">Adicionar</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- MODAL DE EDITAR QUANTIDADE DE CRIANÇAS (mesmo com o tempo já rolando) -->
-    <!-- MODAL DE EDITAR DADOS DA CRIANÇA (Qtd, Referência/Responsável e Telefone) - funciona com o tempo já rolando -->
-    <div id="edit-child-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 relative">
-            <h3 class="text-lg font-bold text-gray-900 mb-1">Editar Dados</h3>
-            <p id="edit-child-subtitle" class="text-sm text-gray-500 mb-4"></p>
+    <div id="edit-qty-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="card-anim bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-sm p-6 relative">
+            <h3 class="text-lg font-extrabold text-gray-900 mb-3 tracking-tight">Editar Quantidade de Crianças</h3>
+            <p id="edit-qty-subtitle" class="text-sm text-gray-500 mb-4"></p>
             <div class="space-y-3">
-                <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Qtd Crianças</label>
-                    <input type="number" id="edit-child-qty" min="1" value="1"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg font-bold focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Referência/Responsável</label>
-                    <input type="text" id="edit-child-reference" placeholder="Nome do pai/mãe/responsável"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Telefone</label>
-                    <input type="tel" id="edit-child-phone" placeholder="(00) 00000-0000" maxlength="15" oninput="maskPhoneInput(this)"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                </div>
-                <p id="edit-child-note" class="text-xs text-indigo-600 hidden"></p>
-                <div class="flex space-x-3 pt-1">
-                    <button type="button" onclick="closeEditChildModal()" class="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 rounded-lg">Cancelar</button>
-                    <button type="button" onclick="confirmEditChild()" class="w-1/2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg">Salvar</button>
+                <input type="number" id="edit-qty-input" min="1" value="1"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg text-center font-bold text-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                <p id="edit-qty-note" class="text-xs text-indigo-600 hidden"></p>
+                <div class="flex space-x-3">
+                    <button type="button" onclick="closeEditQtyModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition">Cancelar</button>
+                    <button type="button" onclick="confirmEditQty()" class="w-1/2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-indigo-200 hover:shadow-lg transition">Salvar</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL DE TABELA DE PACOTES (referência rápida pra quem opera) -->
-    <div id="package-info-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 relative max-h-[85vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-3">
-                <h3 class="text-lg font-bold text-gray-900">Tabela de Pacotes</h3>
-                <button onclick="closePackageInfoModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+    <!-- MODAL DE EDITAR TELEFONE OU REFERÊNCIA/RESPONSÁVEL (mesmo com o tempo já rolando) -->
+    <div id="edit-field-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="card-anim bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-sm p-6 relative">
+            <h3 id="edit-field-title" class="text-lg font-extrabold text-gray-900 mb-3 tracking-tight">Editar</h3>
+            <p id="edit-field-subtitle" class="text-sm text-gray-500 mb-4"></p>
+            <div class="space-y-3">
+                <input type="text" id="edit-field-input"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg text-center font-bold text-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                <div class="flex space-x-3">
+                    <button type="button" onclick="closeEditFieldModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition">Cancelar</button>
+                    <button type="button" onclick="confirmEditField()" class="w-1/2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-indigo-200 hover:shadow-lg transition">Salvar</button>
+                </div>
             </div>
-            <div id="package-info-content" class="space-y-3"></div>
-            <p class="text-xs text-gray-400 mt-3">Valor final = preço do pacote × quantidade de crianças. O valor fica travado e não muda mesmo se der bônus depois pelo alerta de tempo esgotado.</p>
         </div>
     </div>
 
     <!-- MODAL DE PAGAMENTO INTERMEDIÁRIO -->
-    <div id="midway-pay-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative">
-            <h3 class="text-xl font-bold text-gray-900 mb-1">Registrar Pagamento Parcial</h3>
+    <div id="midway-pay-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="card-anim bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-md p-6 relative">
+            <h3 class="text-xl font-extrabold text-gray-900 mb-1 tracking-tight">Registrar Pagamento Parcial</h3>
             <p id="midway-pay-subtitle" class="text-sm text-gray-500 mb-4"></p>
             <div class="space-y-4">
                 <div class="grid grid-cols-2 gap-3 bg-gray-50 p-3 rounded-xl border">
@@ -283,33 +280,33 @@
                     <span id="mid-total-display" class="text-xl font-extrabold text-emerald-600">R$ 0,00</span>
                 </div>
                 <div class="flex space-x-3 pt-2">
-                    <button type="button" onclick="closeMidwayModal()" class="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 rounded-lg">Cancelar</button>
-                    <button type="button" onclick="confirmMidwayPayment()" class="w-1/2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 rounded-lg">Confirmar e Salvar</button>
+                    <button type="button" onclick="closeMidwayModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition">Cancelar</button>
+                    <button type="button" onclick="confirmMidwayPayment()" class="w-1/2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-emerald-200 hover:shadow-lg transition">Confirmar e Salvar</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- MODAL DE CANCELAMENTO -->
-    <div id="cancel-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 relative">
-            <h3 class="text-lg font-bold text-gray-900 mb-2 text-red-600">Cancelar Atendimento</h3>
+    <div id="cancel-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="card-anim bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-sm p-6 relative">
+            <h3 class="text-lg font-extrabold text-red-600 mb-2 tracking-tight">Cancelar Atendimento</h3>
             <p class="text-sm text-gray-500 mb-3">Informe o motivo do cancelamento para <strong id="cancel-child-name"></strong>:</p>
             <div class="space-y-3">
                 <textarea id="cancel-reason-input" rows="3" placeholder="Ex: Criança passou mal, desistiu, etc."
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-red-500 focus:outline-none"></textarea>
+                    class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 focus:outline-none transition"></textarea>
                 <div class="flex space-x-3">
-                    <button type="button" onclick="closeCancelModal()" class="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 rounded-lg">Voltar</button>
-                    <button type="button" onclick="confirmCancelSession()" class="w-1/2 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded-lg">Confirmar</button>
+                    <button type="button" onclick="closeCancelModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition">Voltar</button>
+                    <button type="button" onclick="confirmCancelSession()" class="w-1/2 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-red-200 hover:shadow-lg transition">Confirmar</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- MODAL DE SAÍDA E PAGAMENTO -->
-    <div id="checkout-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative">
-            <h3 class="text-xl font-bold text-gray-900 mb-2">Finalizar Brinquedo</h3>
+    <div id="checkout-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="card-anim bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-md p-6 relative">
+            <h3 class="text-xl font-extrabold text-gray-900 mb-2 tracking-tight">Finalizar Brinquedo</h3>
             <p id="checkout-summary" class="text-sm text-gray-500 mb-4"></p>
             
             <form onsubmit="confirmCheckout(event)" class="space-y-4">
@@ -318,19 +315,19 @@
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block text-[11px] text-gray-500">Pix (R$)</label>
-                            <input type="number" step="0.01" id="out-pix" placeholder="0.00" oninput="calcOutTotal()" class="w-full p-1.5 border rounded text-sm">
+                            <input type="number" step="0.01" id="out-pix" placeholder="0.00" oninput="calcOutTotal()" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 focus:outline-none transition">
                         </div>
                         <div>
                             <label class="block text-[11px] text-gray-500">Dinheiro (R$)</label>
-                            <input type="number" step="0.01" id="out-dinheiro" placeholder="0.00" oninput="calcOutTotal()" class="w-full p-1.5 border rounded text-sm">
+                            <input type="number" step="0.01" id="out-dinheiro" placeholder="0.00" oninput="calcOutTotal()" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 focus:outline-none transition">
                         </div>
                         <div>
                             <label class="block text-[11px] text-gray-500">Débito (R$)</label>
-                            <input type="number" step="0.01" id="out-debito" placeholder="0.00" oninput="calcOutTotal()" class="w-full p-1.5 border rounded text-sm">
+                            <input type="number" step="0.01" id="out-debito" placeholder="0.00" oninput="calcOutTotal()" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 focus:outline-none transition">
                         </div>
                         <div>
                             <label class="block text-[11px] text-gray-500">Crédito (R$)</label>
-                            <input type="number" step="0.01" id="out-credito" placeholder="0.00" oninput="calcOutTotal()" class="w-full p-1.5 border rounded text-sm">
+                            <input type="number" step="0.01" id="out-credito" placeholder="0.00" oninput="calcOutTotal()" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 focus:outline-none transition">
                         </div>
                     </div>
                 </div>
@@ -339,18 +336,18 @@
                     <span id="out-total-display" class="text-xl font-extrabold text-emerald-600">R$ 0,00</span>
                 </div>
                 <div class="flex space-x-3 pt-2">
-                    <button type="button" onclick="closeCheckoutModal()" class="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 rounded-lg transition">Cancelar</button>
-                    <button type="submit" class="w-1/2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 rounded-lg transition">Confirmar e Salvar</button>
+                    <button type="button" onclick="closeCheckoutModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition transition">Cancelar</button>
+                    <button type="submit" class="w-1/2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-emerald-200 hover:shadow-lg transition transition">Confirmar e Salvar</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- MODAL DE FECHAMENTO -->
-    <div id="cash-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
+    <div id="cash-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="card-anim bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-gray-900">Fechamento</h3>
+                <h3 class="text-xl font-extrabold text-gray-900 tracking-tight">Fechamento</h3>
                 <div class="flex items-center gap-3">
                     <button onclick="openCashModal()" title="Atualizar dados da planilha" class="text-gray-400 hover:text-indigo-600"><i class="fa-solid fa-rotate"></i></button>
                     <button onclick="closeCashModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -361,28 +358,28 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Escolher Data do Relatório:</label>
                     <input type="date" id="report-date-input" onchange="openCashModal()"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-gray-50 font-medium">
+                        class="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition bg-gray-50 font-medium">
                 </div>
 
-                <div class="bg-indigo-50 p-4 rounded-xl flex justify-between items-center">
+                <div class="bg-gradient-to-r from-indigo-50 to-violet-50 p-4 rounded-2xl border border-indigo-100 flex justify-between items-center">
                     <span class="font-medium text-indigo-900">Faturamento no Dia:</span>
                     <span id="cash-total" class="text-2xl font-extrabold text-indigo-600">R$ 0,00</span>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3 text-sm">
-                    <div class="bg-gray-50 p-3 rounded-lg border">
+                    <div class="bg-gray-50 p-3 rounded-xl border border-gray-200">
                         <span class="text-gray-500 block">Pix</span>
                         <strong id="total-pix" class="text-gray-800">R$ 0,00</strong>
                     </div>
-                    <div class="bg-gray-50 p-3 rounded-lg border">
+                    <div class="bg-gray-50 p-3 rounded-xl border border-gray-200">
                         <span class="text-gray-500 block">Espécie</span>
                         <strong id="total-dinheiro" class="text-gray-800">R$ 0,00</strong>
                     </div>
-                    <div class="bg-gray-50 p-3 rounded-lg border">
+                    <div class="bg-gray-50 p-3 rounded-xl border border-gray-200">
                         <span class="text-gray-500 block">Débito</span>
                         <strong id="total-debito" class="text-gray-800">R$ 0,00</strong>
                     </div>
-                    <div class="bg-gray-50 p-3 rounded-lg border">
+                    <div class="bg-gray-50 p-3 rounded-xl border border-gray-200">
                         <span class="text-gray-500 block">Crédito</span>
                         <strong id="total-credito" class="text-gray-800">R$ 0,00</strong>
                     </div>
@@ -395,11 +392,11 @@
             </div>
 
             <div class="flex gap-2 mt-5">
-                <button onclick="exportCashReportToWhatsApp()" class="w-1/2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2.5 rounded-lg transition flex items-center justify-center space-x-2">
+                <button onclick="exportCashReportToWhatsApp()" class="w-1/2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-emerald-200 hover:shadow-lg transition flex items-center justify-center space-x-2">
                     <i class="fa-brands fa-whatsapp"></i>
                     <span>Enviar</span>
                 </button>
-                <button onclick="closeCashModal()" class="w-1/2 bg-gray-800 hover:bg-gray-900 text-white font-semibold py-2.5 rounded-lg transition">Fechar Janela</button>
+                <button onclick="closeCashModal()" class="w-1/2 bg-gray-800 hover:bg-gray-900 text-white font-semibold py-2.5 rounded-xl transition">Fechar Janela</button>
             </div>
         </div>
     </div>
@@ -476,24 +473,6 @@
         function formatNumberBRL(value) {
             const n = Number(value) || 0;
             return n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        }
-
-        // Aplica máscara de telefone BR enquanto digita: (00) 00000-0000 (celular com 9º dígito)
-        // ou (00) 0000-0000 (fixo/sem 9º dígito), sem travar quem cola um número já formatado.
-        function maskPhoneInput(inputEl) {
-            let digits = inputEl.value.replace(/\D/g, '').slice(0, 11);
-
-            if (digits.length > 10) {
-                inputEl.value = digits.replace(/^(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3').trim().replace(/-$/, '');
-            } else if (digits.length > 6) {
-                inputEl.value = digits.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3').trim().replace(/-$/, '');
-            } else if (digits.length > 2) {
-                inputEl.value = digits.replace(/^(\d{2})(\d{0,5})/, '($1) $2').trim();
-            } else if (digits.length > 0) {
-                inputEl.value = `(${digits}`;
-            } else {
-                inputEl.value = '';
-            }
         }
 
         function escapeHtml(str) {
@@ -685,6 +664,20 @@
             } catch (e) {
                 console.log("Áudio bloqueado.");
             }
+            triggerVibration();
+        }
+
+        function triggerVibration() {
+            // Vibra o celular em sincronia aproximada com os beeps sonoros.
+            // Suportado em navegadores mobile (Chrome/Android). iOS Safari não
+            // suporta a Vibration API, então falha silenciosamente lá.
+            try {
+                if (navigator.vibrate) {
+                    navigator.vibrate([200, 100, 200, 100, 200, 100, 400]);
+                }
+            } catch (e) {
+                console.log("Vibração não suportada neste dispositivo.");
+            }
         }
 
         async function handleCheckPassword(event) {
@@ -766,39 +759,6 @@
             document.querySelectorAll('.package-btn').forEach(btn => btn.classList.remove('ring-2', 'ring-indigo-500', 'bg-indigo-50'));
             const note = document.getElementById('package-note');
             if (note) note.classList.add('hidden');
-        }
-
-        function openPackageInfoModal() {
-            const container = document.getElementById('package-info-content');
-            let html = '';
-
-            TIME_PACKAGES.forEach(pkg => {
-                html += `<div class="border rounded-lg p-3 bg-gray-50">
-                    <p class="font-bold text-indigo-700 text-sm">${pkg.minutes} minutos — ${formatBRL(pkg.price)} por criança</p>
-                    <ul class="text-xs mt-1.5 space-y-1 text-gray-600">`;
-
-                if (typeof pkg.bonus === 'number') {
-                    html += `<li>Bônus fixo: <strong>+${pkg.bonus} min</strong> (não varia pela quantidade) — total ${pkg.minutes + pkg.bonus} min</li>`;
-                } else if (pkg.bonusByQty) {
-                    Object.keys(pkg.bonusByQty).sort((a, b) => a - b).forEach(qty => {
-                        const bonus = pkg.bonusByQty[qty];
-                        const total = pkg.minutes + bonus;
-                        const qtyLabel = qty > 1 ? `${qty} crianças` : `${qty} criança`;
-                        html += `<li>${qtyLabel}: ${bonus > 0 ? `<strong>+${bonus} min</strong> de bônus` : 'sem bônus'} — total ${total} min, ${formatBRL(pkg.price * qty)}</li>`;
-                    });
-                }
-
-                html += `</ul></div>`;
-            });
-
-            container.innerHTML = html;
-            document.getElementById('package-info-modal').classList.remove('hidden');
-            document.getElementById('package-info-modal').classList.add('flex');
-        }
-
-        function closePackageInfoModal() {
-            document.getElementById('package-info-modal').classList.add('hidden');
-            document.getElementById('package-info-modal').classList.remove('flex');
         }
 
         function selectPackage(index, btnEl) {
@@ -1030,60 +990,53 @@
             currentAddTimeId = null;
         }
 
-        let currentEditChildId = null;
+        let currentEditQtyId = null;
 
-        function openEditChildModal(id) {
+        function openEditQtyModal(id) {
             const session = sessions.find(s => s.id === id);
             if (!session) {
                 alert("Essa criança não está mais na lista (pode já ter sido finalizada por outro operador).");
                 renderSessions();
                 return;
             }
-            currentEditChildId = id;
-            document.getElementById('edit-child-subtitle').innerHTML = `Criança: <strong>${escapeHtml(session.name)}</strong> — pode ajustar mesmo com o tempo já rolando.`;
-            document.getElementById('edit-child-qty').value = session.qty;
-            document.getElementById('edit-child-reference').value = session.reference || '';
+            currentEditQtyId = id;
+            document.getElementById('edit-qty-subtitle').innerHTML = `Criança: <strong>${escapeHtml(session.name)}</strong> — pode ajustar mesmo com o tempo já rolando.`;
+            document.getElementById('edit-qty-input').value = session.qty;
 
-            const phoneInput = document.getElementById('edit-child-phone');
-            phoneInput.value = session.phone || '';
-            maskPhoneInput(phoneInput);
-
-            const note = document.getElementById('edit-child-note');
+            const note = document.getElementById('edit-qty-note');
             if (typeof session.packageIndex === 'number' && TIME_PACKAGES[session.packageIndex]) {
-                note.innerText = "Essa entrada usa um pacote de tempo: se mudar a Qtd, o valor e o bônus de minutos são recalculados automaticamente.";
+                note.innerText = "Essa entrada usa um pacote de tempo: o valor e o bônus de minutos serão recalculados automaticamente pela nova quantidade.";
                 note.classList.remove('hidden');
             } else {
                 note.classList.add('hidden');
             }
 
-            document.getElementById('edit-child-modal').classList.remove('hidden');
-            document.getElementById('edit-child-modal').classList.add('flex');
+            document.getElementById('edit-qty-modal').classList.remove('hidden');
+            document.getElementById('edit-qty-modal').classList.add('flex');
         }
 
-        function closeEditChildModal() {
-            document.getElementById('edit-child-modal').classList.add('hidden');
-            document.getElementById('edit-child-modal').classList.remove('flex');
-            currentEditChildId = null;
+        function closeEditQtyModal() {
+            document.getElementById('edit-qty-modal').classList.add('hidden');
+            document.getElementById('edit-qty-modal').classList.remove('flex');
+            currentEditQtyId = null;
         }
 
-        function confirmEditChild() {
-            const session = sessions.find(s => s.id === currentEditChildId);
+        function confirmEditQty() {
+            const session = sessions.find(s => s.id === currentEditQtyId);
             if (!session) {
                 alert("Essa criança não está mais na lista (pode já ter sido finalizada por outro operador).");
-                closeEditChildModal();
+                closeEditQtyModal();
                 renderSessions();
                 return;
             }
 
-            const newQty = parseInt(document.getElementById('edit-child-qty').value);
+            const newQty = parseInt(document.getElementById('edit-qty-input').value);
             if (!newQty || newQty < 1) {
                 alert("Informe uma quantidade válida (mínimo 1).");
                 return;
             }
 
             session.qty = newQty;
-            session.reference = document.getElementById('edit-child-reference').value.trim();
-            session.phone = document.getElementById('edit-child-phone').value.replace(/\D/g, '');
 
             // Se veio de um pacote com bônus por quantidade, recalcula o tempo-limite
             // (o valor cobrado - packagePrice × qty - já se ajusta sozinho em computeLockedCost)
@@ -1094,7 +1047,70 @@
             }
 
             saveData();
-            closeEditChildModal();
+            closeEditQtyModal();
+        }
+
+        let currentEditFieldId = null;
+        let currentEditFieldType = null; // 'phone' ou 'reference'
+
+        function openEditFieldModal(id, type) {
+            const session = sessions.find(s => s.id === id);
+            if (!session) {
+                alert("Essa criança não está mais na lista (pode já ter sido finalizada por outro operador).");
+                renderSessions();
+                return;
+            }
+
+            currentEditFieldId = id;
+            currentEditFieldType = type;
+
+            const titleEl = document.getElementById('edit-field-title');
+            const subtitleEl = document.getElementById('edit-field-subtitle');
+            const inputEl = document.getElementById('edit-field-input');
+
+            if (type === 'phone') {
+                titleEl.innerText = "Editar Telefone";
+                subtitleEl.innerHTML = `Criança: <strong>${escapeHtml(session.name)}</strong>`;
+                inputEl.value = session.phone || '';
+                inputEl.placeholder = 'Ex: 11999999999';
+            } else {
+                titleEl.innerText = "Editar Referência/Responsável";
+                subtitleEl.innerHTML = `Criança: <strong>${escapeHtml(session.name)}</strong>`;
+                inputEl.value = session.reference || '';
+                inputEl.placeholder = 'Nome do pai/mãe/responsável';
+            }
+
+            document.getElementById('edit-field-modal').classList.remove('hidden');
+            document.getElementById('edit-field-modal').classList.add('flex');
+            inputEl.focus();
+        }
+
+        function closeEditFieldModal() {
+            document.getElementById('edit-field-modal').classList.add('hidden');
+            document.getElementById('edit-field-modal').classList.remove('flex');
+            currentEditFieldId = null;
+            currentEditFieldType = null;
+        }
+
+        function confirmEditField() {
+            const session = sessions.find(s => s.id === currentEditFieldId);
+            if (!session) {
+                alert("Essa criança não está mais na lista (pode já ter sido finalizada por outro operador).");
+                closeEditFieldModal();
+                renderSessions();
+                return;
+            }
+
+            const rawValue = document.getElementById('edit-field-input').value.trim();
+
+            if (currentEditFieldType === 'phone') {
+                session.phone = rawValue.replace(/\D/g, '');
+            } else {
+                session.reference = rawValue;
+            }
+
+            saveData();
+            closeEditFieldModal();
         }
 
         function confirmAddTime() {
@@ -1128,6 +1144,7 @@
                 session.dismissedUntil = new Date().getTime() + (minutes * 60 * 1000);
                 saveData();
             }
+            if (navigator.vibrate) navigator.vibrate(0);
         }
 
         function silenceAlertPermanently(id) {
@@ -1138,6 +1155,7 @@
                     saveData();
                 }
             }
+            if (navigator.vibrate) navigator.vibrate(0);
         }
 
         function openMidwayModal(id) {
@@ -1692,19 +1710,19 @@
                                 }
 
                                 const alertDiv = document.createElement('div');
-                                alertDiv.className = "bg-red-600 text-white px-4 py-3 rounded-xl shadow-lg space-y-2";
+                                alertDiv.className = "alert-anim bg-gradient-to-r from-red-600 to-rose-600 text-white px-4 py-3 rounded-xl shadow-lg shadow-red-300/50 space-y-2 ring-2 ring-red-300/50";
                                 alertDiv.innerHTML = `
                                     <div class="flex items-center space-x-3">
-                                        <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
+                                        <i class="fa-solid fa-triangle-exclamation text-2xl animate-pulse"></i>
                                         <div>
                                             <strong class="block text-sm">ATENÇÃO: Tempo Esgotado!</strong>
                                             <span class="text-xs">Tempo esgotado para: ${escapeHtml(session.name)}</span>
                                         </div>
                                     </div>
                                     <div class="flex gap-1.5 flex-wrap">
-                                        <button onclick="snoozeAlert(${session.id}, 2)" class="flex-1 min-w-[100px] bg-white text-red-600 font-bold px-2 py-1.5 rounded-lg text-xs shadow hover:bg-gray-100 transition"><i class="fa-solid fa-gift mr-1"></i>+2 min bônus</button>
-                                        <button onclick="snoozeAlert(${session.id}, 5)" class="flex-1 min-w-[100px] bg-white text-red-600 font-bold px-2 py-1.5 rounded-lg text-xs shadow hover:bg-gray-100 transition"><i class="fa-solid fa-gift mr-1"></i>+5 min bônus</button>
-                                        <button onclick="silenceAlertPermanently(${session.id})" class="flex-1 min-w-[100px] bg-red-900 hover:bg-black text-white font-bold px-2 py-1.5 rounded-lg text-xs shadow transition"><i class="fa-solid fa-volume-xmark mr-1"></i>Dispensar de vez</button>
+                                        <button onclick="snoozeAlert(${session.id}, 2)" class="flex-1 min-w-[100px] bg-white text-red-600 font-bold px-2 py-1.5 rounded-lg text-xs shadow hover:bg-gray-100 hover:-translate-y-0.5 transition"><i class="fa-solid fa-gift mr-1"></i>+2 min bônus</button>
+                                        <button onclick="snoozeAlert(${session.id}, 5)" class="flex-1 min-w-[100px] bg-white text-red-600 font-bold px-2 py-1.5 rounded-lg text-xs shadow hover:bg-gray-100 hover:-translate-y-0.5 transition"><i class="fa-solid fa-gift mr-1"></i>+5 min bônus</button>
+                                        <button onclick="silenceAlertPermanently(${session.id})" class="flex-1 min-w-[100px] bg-red-900 hover:bg-black text-white font-bold px-2 py-1.5 rounded-lg text-xs shadow hover:-translate-y-0.5 transition"><i class="fa-solid fa-volume-xmark mr-1"></i>Dispensar de vez</button>
                                     </div>
                                 `;
                                 alertsContainer.appendChild(alertDiv);
@@ -1729,22 +1747,19 @@
                 const pauseButtonClass = session.isPaused ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200' : 'bg-yellow-50 hover:bg-yellow-100 text-yellow-700 border-yellow-200';
 
                 const card = document.createElement('div');
-                card.className = "bg-white rounded-2xl shadow-md p-5 border border-gray-200 flex flex-col justify-between";
+                card.className = "card-anim bg-white rounded-2xl shadow-md hover:shadow-xl p-5 border border-gray-200 hover:border-indigo-200 flex flex-col justify-between transition-all duration-200 hover:-translate-y-1";
                 card.innerHTML = `
                     <div>
                         <div class="flex justify-between items-start mb-3">
                             <div>
-                                <div class="flex items-center gap-2">
-                                    <h3 class="font-bold text-lg text-gray-800">${escapeHtml(session.name)}</h3>
-                                    <button onclick="openEditChildModal(${session.id})" title="Editar Qtd, Referência e Telefone" class="text-indigo-400 hover:text-indigo-700 shrink-0"><i class="fa-solid fa-pen text-xs"></i></button>
-                                </div>
-                                <p class="text-xs text-indigo-600 font-medium">Ref: ${escapeHtml(session.reference) || 'Não informado'}</p>
-                                <p class="text-xs text-gray-500">Tel: ${escapeHtml(session.phone) || 'Não informado'}</p>
+                                <h3 class="font-bold text-lg text-gray-800">${escapeHtml(session.name)}</h3>
+                                <p class="text-xs text-indigo-600 font-medium flex items-center gap-1.5">Ref: ${escapeHtml(session.reference) || 'Não informado'}<button onclick="openEditFieldModal(${session.id}, 'reference')" class="text-indigo-400 hover:text-indigo-700 shrink-0"><i class="fa-solid fa-pen text-[10px]"></i></button></p>
+                                <p class="text-xs text-gray-500 flex items-center gap-1.5">Tel: ${escapeHtml(session.phone) || 'Não informado'}<button onclick="openEditFieldModal(${session.id}, 'phone')" class="text-gray-400 hover:text-indigo-700 shrink-0"><i class="fa-solid fa-pen text-[10px]"></i></button></p>
                             </div>
                             ${alertBadge}
                         </div>
                         <div class="space-y-2 text-sm text-gray-600 mb-4">
-                            <p><i class="fa-solid fa-users mr-2 text-indigo-500"></i>Qtd: <strong class="text-gray-800">${session.qty}</strong></p>
+                            <p class="flex items-center justify-between"><span><i class="fa-solid fa-users mr-2 text-indigo-500"></i>Qtd: <strong class="text-gray-800">${session.qty}</strong></span><button onclick="openEditQtyModal(${session.id})" class="text-indigo-500 hover:text-indigo-700 text-xs px-2 py-0.5 rounded border border-indigo-200 hover:bg-indigo-50 transition"><i class="fa-solid fa-pen mr-1"></i>Editar</button></p>
                             <p><i class="fa-solid fa-clock mr-2 text-indigo-500"></i>Entrada: <strong class="text-gray-800">${entryTimeDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</strong></p>
                             <p><i class="fa-solid fa-stopwatch mr-2 text-indigo-500"></i>Ativo: <strong class="${timeStatusClass}">${diffMinutes} min</strong></p>
                             <div class="pt-1 flex items-center justify-between">
