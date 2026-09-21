@@ -156,9 +156,9 @@
                 <div id="loyalty-bonus-box" class="hidden bg-amber-50 border border-amber-300 p-3 rounded-lg text-xs space-y-2">
                     <div class="flex items-center text-amber-800 font-bold">
                         <i class="fa-solid fa-gift mr-1.5 text-base text-amber-600"></i>
-                        <span>Cliente Fiel! Atingiu 10 Visitas!</span>
+                        <span>Cliente Fiel! Atingiu 10 Participações!</span>
                     </div>
-                    <p class="text-amber-700">Deseja aplicar o brinde de <strong>10 minutos grátis</strong>? (Isso abaterá 10 visitas do saldo do cliente).</p>
+                    <p class="text-amber-700">Deseja aplicar o brinde de <strong>10 minutos grátis</strong>? (Isso abaterá 10 participações do saldo do cliente).</p>
                     <button type="button" onclick="applyBonusMinutes()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 py-1.5 rounded transition">
                         Aplicar +10 Minutos Grátis
                     </button>
@@ -218,34 +218,31 @@
         </div>
     </div>
 
-    <!-- MODAL DE EDITAR QUANTIDADE DE CRIANÇAS (mesmo com o tempo já rolando) -->
-    <div id="edit-qty-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <!-- MODAL DE EDITAR DADOS DA CRIANÇA (referência, telefone e quantidade - mesmo com o tempo já rolando) -->
+    <div id="edit-session-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
         <div class="card-anim bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-sm p-6 relative">
-            <h3 class="text-lg font-extrabold text-gray-900 mb-3 tracking-tight">Editar Quantidade de Crianças</h3>
-            <p id="edit-qty-subtitle" class="text-sm text-gray-500 mb-4"></p>
+            <h3 class="text-lg font-extrabold text-gray-900 mb-1 tracking-tight">Editar Dados</h3>
+            <p id="edit-session-subtitle" class="text-sm text-gray-500 mb-4"></p>
             <div class="space-y-3">
-                <input type="number" id="edit-qty-input" min="1" value="1"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg text-center font-bold text-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                <p id="edit-qty-note" class="text-xs text-indigo-600 hidden"></p>
-                <div class="flex space-x-3">
-                    <button type="button" onclick="closeEditQtyModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition">Cancelar</button>
-                    <button type="button" onclick="confirmEditQty()" class="w-1/2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-indigo-200 hover:shadow-lg transition">Salvar</button>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Nome de Referência (Responsável)</label>
+                    <input type="text" id="edit-session-reference" placeholder="Ex: Maria (Mãe)"
+                        class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition">
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL DE EDITAR TELEFONE OU REFERÊNCIA/RESPONSÁVEL (mesmo com o tempo já rolando) -->
-    <div id="edit-field-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-        <div class="card-anim bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-sm p-6 relative">
-            <h3 id="edit-field-title" class="text-lg font-extrabold text-gray-900 mb-3 tracking-tight">Editar</h3>
-            <p id="edit-field-subtitle" class="text-sm text-gray-500 mb-4"></p>
-            <div class="space-y-3">
-                <input type="text" id="edit-field-input"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg text-center font-bold text-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                <div class="flex space-x-3">
-                    <button type="button" onclick="closeEditFieldModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition">Cancelar</button>
-                    <button type="button" onclick="confirmEditField()" class="w-1/2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-indigo-200 hover:shadow-lg transition">Salvar</button>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Celular</label>
+                    <input type="tel" id="edit-session-phone" placeholder="Ex: 11999999999"
+                        class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Qtd Crianças</label>
+                    <input type="number" id="edit-session-qty" min="1"
+                        class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition text-center font-bold text-lg">
+                </div>
+                <p id="edit-session-qty-note" class="text-xs text-indigo-600 hidden"></p>
+                <div class="flex space-x-3 pt-1">
+                    <button type="button" onclick="closeEditSessionModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition">Cancelar</button>
+                    <button type="button" onclick="confirmEditSessionModal()" class="w-1/2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-indigo-200 hover:shadow-lg transition">Salvar</button>
                 </div>
             </div>
         </div>
@@ -840,8 +837,12 @@
             }
 
             // Conta unificando histórico local e da nuvem
-            const clientVisits = history.filter(h => h.phone && String(h.phone).replace(/\D/g, '') === cleanPhone);
-            let visitCount = clientVisits.length;
+            // Soma a QUANTIDADE de crianças de cada atendimento (não a quantidade de vezes
+            // que o telefone aparece), pois um mesmo atendimento pode levar vários filhos de
+            // uma vez — cada criança conta como uma participação para o brinde de fidelidade.
+            // Cancelamentos não contam.
+            const clientVisits = history.filter(h => h.phone && String(h.phone).replace(/\D/g, '') === cleanPhone && !(h.name && h.name.includes('(CANCELADO')));
+            let visitCount = clientVisits.reduce((sum, h) => sum + (Number(h.qty) || 1), 0);
             
             const deductedPacks = bonusAppliedPhones[cleanPhone] || 0;
             visitCount = Math.max(0, visitCount - (deductedPacks * 10));
@@ -853,7 +854,7 @@
                 let cleanName = foundItem.name ? foundItem.name.split(' (CANCELADO')[0] : '';
                 document.getElementById('child-name').value = cleanName;
 
-                feedback.innerText = `Cliente encontrado! Já brincou ${visitCount} vez(es).`;
+                feedback.innerText = `Cliente encontrado! Já soma ${visitCount} participação(ões) (crianças).`;
                 feedback.className = "text-xs font-semibold mt-1 text-emerald-600";
                 feedback.classList.remove('hidden');
             } else {
@@ -881,14 +882,14 @@
 
             document.getElementById('loyalty-bonus-box').classList.add('hidden');
             
-            const clientVisits = history.filter(h => h.phone && String(h.phone).replace(/\D/g, '') === phone);
-            let visitCount = Math.max(0, clientVisits.length - ((bonusAppliedPhones[phone] || 0) * 10));
+            const clientVisits = history.filter(h => h.phone && String(h.phone).replace(/\D/g, '') === phone && !(h.name && h.name.includes('(CANCELADO')));
+            let visitCount = Math.max(0, clientVisits.reduce((sum, h) => sum + (Number(h.qty) || 1), 0) - ((bonusAppliedPhones[phone] || 0) * 10));
             const feedback = document.getElementById('client-feedback');
             if (feedback) {
-                feedback.innerText = `Cliente encontrado! Já brincou ${visitCount} vez(es).`;
+                feedback.innerText = `Cliente encontrado! Já soma ${visitCount} participação(ões) (crianças).`;
             }
 
-            alert("Brinde de 10 minutos grátis aplicado e 10 visitas abatidas do saldo!");
+            alert("Brinde de 10 minutos grátis aplicado e 10 participações abatidas do saldo!");
         }
 
         function addSession(event) {
@@ -990,52 +991,56 @@
             currentAddTimeId = null;
         }
 
-        let currentEditQtyId = null;
+        let currentEditSessionId = null;
 
-        function openEditQtyModal(id) {
+        function openEditSessionModal(id) {
             const session = sessions.find(s => s.id === id);
             if (!session) {
                 alert("Essa criança não está mais na lista (pode já ter sido finalizada por outro operador).");
                 renderSessions();
                 return;
             }
-            currentEditQtyId = id;
-            document.getElementById('edit-qty-subtitle').innerHTML = `Criança: <strong>${escapeHtml(session.name)}</strong> — pode ajustar mesmo com o tempo já rolando.`;
-            document.getElementById('edit-qty-input').value = session.qty;
+            currentEditSessionId = id;
+            document.getElementById('edit-session-subtitle').innerHTML = `Criança: <strong>${escapeHtml(session.name)}</strong> — pode ajustar mesmo com o tempo já rolando.`;
+            document.getElementById('edit-session-reference').value = session.reference || '';
+            document.getElementById('edit-session-phone').value = session.phone || '';
+            document.getElementById('edit-session-qty').value = session.qty;
 
-            const note = document.getElementById('edit-qty-note');
+            const note = document.getElementById('edit-session-qty-note');
             if (typeof session.packageIndex === 'number' && TIME_PACKAGES[session.packageIndex]) {
-                note.innerText = "Essa entrada usa um pacote de tempo: o valor e o bônus de minutos serão recalculados automaticamente pela nova quantidade.";
+                note.innerText = "Essa entrada usa um pacote de tempo: alterar a quantidade recalcula automaticamente o valor e o bônus de minutos.";
                 note.classList.remove('hidden');
             } else {
                 note.classList.add('hidden');
             }
 
-            document.getElementById('edit-qty-modal').classList.remove('hidden');
-            document.getElementById('edit-qty-modal').classList.add('flex');
+            document.getElementById('edit-session-modal').classList.remove('hidden');
+            document.getElementById('edit-session-modal').classList.add('flex');
         }
 
-        function closeEditQtyModal() {
-            document.getElementById('edit-qty-modal').classList.add('hidden');
-            document.getElementById('edit-qty-modal').classList.remove('flex');
-            currentEditQtyId = null;
+        function closeEditSessionModal() {
+            document.getElementById('edit-session-modal').classList.add('hidden');
+            document.getElementById('edit-session-modal').classList.remove('flex');
+            currentEditSessionId = null;
         }
 
-        function confirmEditQty() {
-            const session = sessions.find(s => s.id === currentEditQtyId);
+        function confirmEditSessionModal() {
+            const session = sessions.find(s => s.id === currentEditSessionId);
             if (!session) {
                 alert("Essa criança não está mais na lista (pode já ter sido finalizada por outro operador).");
-                closeEditQtyModal();
+                closeEditSessionModal();
                 renderSessions();
                 return;
             }
 
-            const newQty = parseInt(document.getElementById('edit-qty-input').value);
+            const newQty = parseInt(document.getElementById('edit-session-qty').value);
             if (!newQty || newQty < 1) {
                 alert("Informe uma quantidade válida (mínimo 1).");
                 return;
             }
 
+            session.reference = document.getElementById('edit-session-reference').value.trim();
+            session.phone = document.getElementById('edit-session-phone').value.trim().replace(/\D/g, '');
             session.qty = newQty;
 
             // Se veio de um pacote com bônus por quantidade, recalcula o tempo-limite
@@ -1047,70 +1052,7 @@
             }
 
             saveData();
-            closeEditQtyModal();
-        }
-
-        let currentEditFieldId = null;
-        let currentEditFieldType = null; // 'phone' ou 'reference'
-
-        function openEditFieldModal(id, type) {
-            const session = sessions.find(s => s.id === id);
-            if (!session) {
-                alert("Essa criança não está mais na lista (pode já ter sido finalizada por outro operador).");
-                renderSessions();
-                return;
-            }
-
-            currentEditFieldId = id;
-            currentEditFieldType = type;
-
-            const titleEl = document.getElementById('edit-field-title');
-            const subtitleEl = document.getElementById('edit-field-subtitle');
-            const inputEl = document.getElementById('edit-field-input');
-
-            if (type === 'phone') {
-                titleEl.innerText = "Editar Telefone";
-                subtitleEl.innerHTML = `Criança: <strong>${escapeHtml(session.name)}</strong>`;
-                inputEl.value = session.phone || '';
-                inputEl.placeholder = 'Ex: 11999999999';
-            } else {
-                titleEl.innerText = "Editar Referência/Responsável";
-                subtitleEl.innerHTML = `Criança: <strong>${escapeHtml(session.name)}</strong>`;
-                inputEl.value = session.reference || '';
-                inputEl.placeholder = 'Nome do pai/mãe/responsável';
-            }
-
-            document.getElementById('edit-field-modal').classList.remove('hidden');
-            document.getElementById('edit-field-modal').classList.add('flex');
-            inputEl.focus();
-        }
-
-        function closeEditFieldModal() {
-            document.getElementById('edit-field-modal').classList.add('hidden');
-            document.getElementById('edit-field-modal').classList.remove('flex');
-            currentEditFieldId = null;
-            currentEditFieldType = null;
-        }
-
-        function confirmEditField() {
-            const session = sessions.find(s => s.id === currentEditFieldId);
-            if (!session) {
-                alert("Essa criança não está mais na lista (pode já ter sido finalizada por outro operador).");
-                closeEditFieldModal();
-                renderSessions();
-                return;
-            }
-
-            const rawValue = document.getElementById('edit-field-input').value.trim();
-
-            if (currentEditFieldType === 'phone') {
-                session.phone = rawValue.replace(/\D/g, '');
-            } else {
-                session.reference = rawValue;
-            }
-
-            saveData();
-            closeEditFieldModal();
+            closeEditSessionModal();
         }
 
         function confirmAddTime() {
@@ -1710,10 +1652,10 @@
                                 }
 
                                 const alertDiv = document.createElement('div');
-                                alertDiv.className = "alert-anim bg-gradient-to-r from-red-600 to-rose-600 text-white px-4 py-3 rounded-xl shadow-lg shadow-red-300/50 space-y-2 ring-2 ring-red-300/50";
+                                alertDiv.className = "bg-gradient-to-r from-red-600 to-rose-600 text-white px-4 py-3 rounded-xl shadow-lg shadow-red-300/50 space-y-2 ring-2 ring-red-300/50";
                                 alertDiv.innerHTML = `
                                     <div class="flex items-center space-x-3">
-                                        <i class="fa-solid fa-triangle-exclamation text-2xl animate-pulse"></i>
+                                        <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
                                         <div>
                                             <strong class="block text-sm">ATENÇÃO: Tempo Esgotado!</strong>
                                             <span class="text-xs">Tempo esgotado para: ${escapeHtml(session.name)}</span>
@@ -1747,19 +1689,22 @@
                 const pauseButtonClass = session.isPaused ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200' : 'bg-yellow-50 hover:bg-yellow-100 text-yellow-700 border-yellow-200';
 
                 const card = document.createElement('div');
-                card.className = "card-anim bg-white rounded-2xl shadow-md hover:shadow-xl p-5 border border-gray-200 hover:border-indigo-200 flex flex-col justify-between transition-all duration-200 hover:-translate-y-1";
+                card.className = "bg-white rounded-2xl shadow-md hover:shadow-xl p-5 border border-gray-200 hover:border-indigo-200 flex flex-col justify-between transition-shadow duration-200";
                 card.innerHTML = `
                     <div>
                         <div class="flex justify-between items-start mb-3">
                             <div>
-                                <h3 class="font-bold text-lg text-gray-800">${escapeHtml(session.name)}</h3>
-                                <p class="text-xs text-indigo-600 font-medium flex items-center gap-1.5">Ref: ${escapeHtml(session.reference) || 'Não informado'}<button onclick="openEditFieldModal(${session.id}, 'reference')" class="text-indigo-400 hover:text-indigo-700 shrink-0"><i class="fa-solid fa-pen text-[10px]"></i></button></p>
-                                <p class="text-xs text-gray-500 flex items-center gap-1.5">Tel: ${escapeHtml(session.phone) || 'Não informado'}<button onclick="openEditFieldModal(${session.id}, 'phone')" class="text-gray-400 hover:text-indigo-700 shrink-0"><i class="fa-solid fa-pen text-[10px]"></i></button></p>
+                                <div class="flex items-center gap-1.5">
+                                    <h3 class="font-bold text-lg text-gray-800">${escapeHtml(session.name)}</h3>
+                                    <button onclick="openEditSessionModal(${session.id})" title="Editar referência, telefone e quantidade" class="text-indigo-400 hover:text-indigo-700 shrink-0"><i class="fa-solid fa-pen text-[11px]"></i></button>
+                                </div>
+                                <p class="text-xs text-indigo-600 font-medium">Ref: ${escapeHtml(session.reference) || 'Não informado'}</p>
+                                <p class="text-xs text-gray-500">Tel: ${escapeHtml(session.phone) || 'Não informado'}</p>
                             </div>
                             ${alertBadge}
                         </div>
                         <div class="space-y-2 text-sm text-gray-600 mb-4">
-                            <p class="flex items-center justify-between"><span><i class="fa-solid fa-users mr-2 text-indigo-500"></i>Qtd: <strong class="text-gray-800">${session.qty}</strong></span><button onclick="openEditQtyModal(${session.id})" class="text-indigo-500 hover:text-indigo-700 text-xs px-2 py-0.5 rounded border border-indigo-200 hover:bg-indigo-50 transition"><i class="fa-solid fa-pen mr-1"></i>Editar</button></p>
+                            <p><i class="fa-solid fa-users mr-2 text-indigo-500"></i>Qtd: <strong class="text-gray-800">${session.qty}</strong></p>
                             <p><i class="fa-solid fa-clock mr-2 text-indigo-500"></i>Entrada: <strong class="text-gray-800">${entryTimeDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</strong></p>
                             <p><i class="fa-solid fa-stopwatch mr-2 text-indigo-500"></i>Ativo: <strong class="${timeStatusClass}">${diffMinutes} min</strong></p>
                             <div class="pt-1 flex items-center justify-between">
