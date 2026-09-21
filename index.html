@@ -130,7 +130,17 @@
                         class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Pacote de Tempo (opcional - preenche automático)</label>
+                    <label class="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
+                        Pacote de Tempo (opcional - preenche automático)
+                        <button type="button" onclick="togglePackageInfo()" title="Ver tabela de bônus" class="text-indigo-400 hover:text-indigo-700 shrink-0"><i class="fa-solid fa-circle-info"></i></button>
+                    </label>
+                    <div id="package-info-table" class="hidden mb-2 bg-indigo-50 border border-indigo-200 rounded-xl p-3 text-xs space-y-1.5">
+                        <p class="font-bold text-indigo-800 mb-1"><i class="fa-solid fa-gift mr-1"></i>Tabela de Pacotes e Bônus</p>
+                        <div class="flex justify-between"><span class="text-gray-700">10 min — <strong class="text-emerald-700">R$ 15</strong></span><span class="text-gray-500">2 crianças: +5min · 3+ crianças: +10min</span></div>
+                        <div class="flex justify-between"><span class="text-gray-700">20 min — <strong class="text-emerald-700">R$ 30</strong></span><span class="text-gray-500">1 criança: +5min · 2: +10min · 3+: +15min</span></div>
+                        <div class="flex justify-between"><span class="text-gray-700">30 min — <strong class="text-emerald-700">R$ 45</strong></span><span class="text-gray-500">Bônus fixo: +10min (não varia)</span></div>
+                        <p class="text-indigo-600 pt-1 border-t border-indigo-200">O bônus de minutos é somado automático conforme a Qtd de Crianças informada abaixo.</p>
+                    </div>
                     <div class="grid grid-cols-2 gap-2 text-xs">
                         <button type="button" onclick="selectPackage(0, this)" class="package-btn bg-gray-50 hover:bg-indigo-50 hover:border-indigo-300 border border-gray-200 rounded-xl py-2.5 font-semibold text-gray-700 transition hover:-translate-y-0.5">10 min <span class="text-[10px] text-gray-400">(bônus por qtd)</span><br><span class="text-emerald-600">R$ 15</span></button>
                         <button type="button" onclick="selectPackage(1, this)" class="package-btn bg-gray-50 hover:bg-indigo-50 hover:border-indigo-300 border border-gray-200 rounded-xl py-2.5 font-semibold text-gray-700 transition hover:-translate-y-0.5">20 min <span class="text-[10px] text-gray-400">(bônus por qtd)</span><br><span class="text-emerald-600">R$ 30</span></button>
@@ -427,6 +437,10 @@
         // Calcula o bônus de um pacote para uma certa quantidade de crianças.
         // Se a quantidade for maior que a maior definida na tabela (ex: 4+),
         // usa o bônus da maior quantidade cadastrada (hoje, a de 3 crianças).
+        function togglePackageInfo() {
+            document.getElementById('package-info-table').classList.toggle('hidden');
+        }
+
         function getPackageBonus(pkg, qty) {
             if (typeof pkg.bonus === 'number') return pkg.bonus;
             if (pkg.bonusByQty) {
@@ -738,6 +752,7 @@
             document.getElementById('entry-modal').classList.add('flex');
             document.getElementById('loyalty-bonus-box').classList.add('hidden');
             document.getElementById('client-feedback').classList.add('hidden');
+            document.getElementById('package-info-table').classList.add('hidden');
             resetPackageSelection();
             toggleInitialPaymentFields();
         }
@@ -747,6 +762,7 @@
             document.getElementById('entry-modal').classList.remove('flex');
             document.getElementById('entry-form').reset();
             document.getElementById('loyalty-bonus-box').classList.add('hidden');
+            document.getElementById('package-info-table').classList.add('hidden');
             resetPackageSelection();
         }
 
