@@ -105,7 +105,7 @@
             <form id="entry-form" onsubmit="addSession(event)" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Celular (Opcional - Busca Cliente)</label>
-                    <input type="tel" id="child-phone" placeholder="Ex: 11999999999" oninput="searchClientByPhone(this.value)"
+                    <input type="tel" id="child-phone" placeholder="(00) 00000-0000" maxlength="15" oninput="maskPhoneInput(this); searchClientByPhone(this.value)"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                     <div id="client-feedback" class="text-xs font-semibold mt-1 hidden"></div>
                 </div>
@@ -120,7 +120,10 @@
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Pacote de Tempo (opcional - preenche automático)</label>
+                    <label class="flex items-center justify-between text-sm font-medium text-gray-700 mb-1">
+                        <span>Pacote de Tempo (opcional - preenche automático)</span>
+                        <button type="button" onclick="openPackageInfoModal()" class="text-indigo-500 hover:text-indigo-700"><i class="fa-solid fa-circle-info"></i></button>
+                    </label>
                     <div class="grid grid-cols-2 gap-2 text-xs">
                         <button type="button" onclick="selectPackage(0, this)" class="package-btn bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg py-2 font-semibold text-gray-700 transition">10 min <span class="text-[10px] text-gray-400">(bônus por qtd)</span><br><span class="text-emerald-600">R$ 15</span></button>
                         <button type="button" onclick="selectPackage(1, this)" class="package-btn bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg py-2 font-semibold text-gray-700 transition">20 min <span class="text-[10px] text-gray-400">(bônus por qtd)</span><br><span class="text-emerald-600">R$ 30</span></button>
@@ -209,19 +212,45 @@
     </div>
 
     <!-- MODAL DE EDITAR QUANTIDADE DE CRIANÇAS (mesmo com o tempo já rolando) -->
-    <div id="edit-qty-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
+    <!-- MODAL DE EDITAR DADOS DA CRIANÇA (Qtd, Referência/Responsável e Telefone) - funciona com o tempo já rolando -->
+    <div id="edit-child-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 relative">
-            <h3 class="text-lg font-bold text-gray-900 mb-3">Editar Quantidade de Crianças</h3>
-            <p id="edit-qty-subtitle" class="text-sm text-gray-500 mb-4"></p>
+            <h3 class="text-lg font-bold text-gray-900 mb-1">Editar Dados</h3>
+            <p id="edit-child-subtitle" class="text-sm text-gray-500 mb-4"></p>
             <div class="space-y-3">
-                <input type="number" id="edit-qty-input" min="1" value="1"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg text-center font-bold text-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                <p id="edit-qty-note" class="text-xs text-indigo-600 hidden"></p>
-                <div class="flex space-x-3">
-                    <button type="button" onclick="closeEditQtyModal()" class="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 rounded-lg">Cancelar</button>
-                    <button type="button" onclick="confirmEditQty()" class="w-1/2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg">Salvar</button>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Qtd Crianças</label>
+                    <input type="number" id="edit-child-qty" min="1" value="1"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg font-bold focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Referência/Responsável</label>
+                    <input type="text" id="edit-child-reference" placeholder="Nome do pai/mãe/responsável"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Telefone</label>
+                    <input type="tel" id="edit-child-phone" placeholder="(00) 00000-0000" maxlength="15" oninput="maskPhoneInput(this)"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <p id="edit-child-note" class="text-xs text-indigo-600 hidden"></p>
+                <div class="flex space-x-3 pt-1">
+                    <button type="button" onclick="closeEditChildModal()" class="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 rounded-lg">Cancelar</button>
+                    <button type="button" onclick="confirmEditChild()" class="w-1/2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg">Salvar</button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE TABELA DE PACOTES (referência rápida pra quem opera) -->
+    <div id="package-info-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 relative max-h-[85vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="text-lg font-bold text-gray-900">Tabela de Pacotes</h3>
+                <button onclick="closePackageInfoModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div id="package-info-content" class="space-y-3"></div>
+            <p class="text-xs text-gray-400 mt-3">Valor final = preço do pacote × quantidade de crianças. O valor fica travado e não muda mesmo se der bônus depois pelo alerta de tempo esgotado.</p>
         </div>
     </div>
 
@@ -394,8 +423,8 @@
         // sessão vira minutes+bônus, mas o valor cobrado fica travado em "price"
         // (por criança - é multiplicado pela Qtd em computeLockedCost).
         const TIME_PACKAGES = [
-            { minutes: 10, price: 15, bonusByQty: { 1: 0, 2: 2, 3: 5 } },
-            { minutes: 20, price: 30, bonusByQty: { 1: 0, 2: 5, 3: 7 } },
+            { minutes: 10, price: 15, bonusByQty: { 1: 0, 2: 5, 3: 10 } },
+            { minutes: 20, price: 30, bonusByQty: { 1: 5, 2: 10, 3: 15 } },
             { minutes: 30, price: 45, bonus: 10 } // bônus fixo, não varia pela quantidade
         ];
         let selectedPackagePrice = null;
@@ -447,6 +476,24 @@
         function formatNumberBRL(value) {
             const n = Number(value) || 0;
             return n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        // Aplica máscara de telefone BR enquanto digita: (00) 00000-0000 (celular com 9º dígito)
+        // ou (00) 0000-0000 (fixo/sem 9º dígito), sem travar quem cola um número já formatado.
+        function maskPhoneInput(inputEl) {
+            let digits = inputEl.value.replace(/\D/g, '').slice(0, 11);
+
+            if (digits.length > 10) {
+                inputEl.value = digits.replace(/^(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3').trim().replace(/-$/, '');
+            } else if (digits.length > 6) {
+                inputEl.value = digits.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3').trim().replace(/-$/, '');
+            } else if (digits.length > 2) {
+                inputEl.value = digits.replace(/^(\d{2})(\d{0,5})/, '($1) $2').trim();
+            } else if (digits.length > 0) {
+                inputEl.value = `(${digits}`;
+            } else {
+                inputEl.value = '';
+            }
         }
 
         function escapeHtml(str) {
@@ -721,6 +768,39 @@
             if (note) note.classList.add('hidden');
         }
 
+        function openPackageInfoModal() {
+            const container = document.getElementById('package-info-content');
+            let html = '';
+
+            TIME_PACKAGES.forEach(pkg => {
+                html += `<div class="border rounded-lg p-3 bg-gray-50">
+                    <p class="font-bold text-indigo-700 text-sm">${pkg.minutes} minutos — ${formatBRL(pkg.price)} por criança</p>
+                    <ul class="text-xs mt-1.5 space-y-1 text-gray-600">`;
+
+                if (typeof pkg.bonus === 'number') {
+                    html += `<li>Bônus fixo: <strong>+${pkg.bonus} min</strong> (não varia pela quantidade) — total ${pkg.minutes + pkg.bonus} min</li>`;
+                } else if (pkg.bonusByQty) {
+                    Object.keys(pkg.bonusByQty).sort((a, b) => a - b).forEach(qty => {
+                        const bonus = pkg.bonusByQty[qty];
+                        const total = pkg.minutes + bonus;
+                        const qtyLabel = qty > 1 ? `${qty} crianças` : `${qty} criança`;
+                        html += `<li>${qtyLabel}: ${bonus > 0 ? `<strong>+${bonus} min</strong> de bônus` : 'sem bônus'} — total ${total} min, ${formatBRL(pkg.price * qty)}</li>`;
+                    });
+                }
+
+                html += `</ul></div>`;
+            });
+
+            container.innerHTML = html;
+            document.getElementById('package-info-modal').classList.remove('hidden');
+            document.getElementById('package-info-modal').classList.add('flex');
+        }
+
+        function closePackageInfoModal() {
+            document.getElementById('package-info-modal').classList.add('hidden');
+            document.getElementById('package-info-modal').classList.remove('flex');
+        }
+
         function selectPackage(index, btnEl) {
             document.querySelectorAll('.package-btn').forEach(btn => btn.classList.remove('ring-2', 'ring-indigo-500', 'bg-indigo-50'));
 
@@ -950,53 +1030,60 @@
             currentAddTimeId = null;
         }
 
-        let currentEditQtyId = null;
+        let currentEditChildId = null;
 
-        function openEditQtyModal(id) {
+        function openEditChildModal(id) {
             const session = sessions.find(s => s.id === id);
             if (!session) {
                 alert("Essa criança não está mais na lista (pode já ter sido finalizada por outro operador).");
                 renderSessions();
                 return;
             }
-            currentEditQtyId = id;
-            document.getElementById('edit-qty-subtitle').innerHTML = `Criança: <strong>${escapeHtml(session.name)}</strong> — pode ajustar mesmo com o tempo já rolando.`;
-            document.getElementById('edit-qty-input').value = session.qty;
+            currentEditChildId = id;
+            document.getElementById('edit-child-subtitle').innerHTML = `Criança: <strong>${escapeHtml(session.name)}</strong> — pode ajustar mesmo com o tempo já rolando.`;
+            document.getElementById('edit-child-qty').value = session.qty;
+            document.getElementById('edit-child-reference').value = session.reference || '';
 
-            const note = document.getElementById('edit-qty-note');
+            const phoneInput = document.getElementById('edit-child-phone');
+            phoneInput.value = session.phone || '';
+            maskPhoneInput(phoneInput);
+
+            const note = document.getElementById('edit-child-note');
             if (typeof session.packageIndex === 'number' && TIME_PACKAGES[session.packageIndex]) {
-                note.innerText = "Essa entrada usa um pacote de tempo: o valor e o bônus de minutos serão recalculados automaticamente pela nova quantidade.";
+                note.innerText = "Essa entrada usa um pacote de tempo: se mudar a Qtd, o valor e o bônus de minutos são recalculados automaticamente.";
                 note.classList.remove('hidden');
             } else {
                 note.classList.add('hidden');
             }
 
-            document.getElementById('edit-qty-modal').classList.remove('hidden');
-            document.getElementById('edit-qty-modal').classList.add('flex');
+            document.getElementById('edit-child-modal').classList.remove('hidden');
+            document.getElementById('edit-child-modal').classList.add('flex');
         }
 
-        function closeEditQtyModal() {
-            document.getElementById('edit-qty-modal').classList.add('hidden');
-            document.getElementById('edit-qty-modal').classList.remove('flex');
-            currentEditQtyId = null;
+        function closeEditChildModal() {
+            document.getElementById('edit-child-modal').classList.add('hidden');
+            document.getElementById('edit-child-modal').classList.remove('flex');
+            currentEditChildId = null;
         }
 
-        function confirmEditQty() {
-            const session = sessions.find(s => s.id === currentEditQtyId);
+        function confirmEditChild() {
+            const session = sessions.find(s => s.id === currentEditChildId);
             if (!session) {
                 alert("Essa criança não está mais na lista (pode já ter sido finalizada por outro operador).");
-                closeEditQtyModal();
+                closeEditChildModal();
                 renderSessions();
                 return;
             }
 
-            const newQty = parseInt(document.getElementById('edit-qty-input').value);
+            const newQty = parseInt(document.getElementById('edit-child-qty').value);
             if (!newQty || newQty < 1) {
                 alert("Informe uma quantidade válida (mínimo 1).");
                 return;
             }
 
             session.qty = newQty;
+            session.reference = document.getElementById('edit-child-reference').value.trim();
+            session.phone = document.getElementById('edit-child-phone').value.replace(/\D/g, '');
 
             // Se veio de um pacote com bônus por quantidade, recalcula o tempo-limite
             // (o valor cobrado - packagePrice × qty - já se ajusta sozinho em computeLockedCost)
@@ -1007,7 +1094,7 @@
             }
 
             saveData();
-            closeEditQtyModal();
+            closeEditChildModal();
         }
 
         function confirmAddTime() {
@@ -1647,14 +1734,17 @@
                     <div>
                         <div class="flex justify-between items-start mb-3">
                             <div>
-                                <h3 class="font-bold text-lg text-gray-800">${escapeHtml(session.name)}</h3>
-                                <p class="text-xs text-indigo-600 font-medium">Ref: ${escapeHtml(session.reference)}</p>
+                                <div class="flex items-center gap-2">
+                                    <h3 class="font-bold text-lg text-gray-800">${escapeHtml(session.name)}</h3>
+                                    <button onclick="openEditChildModal(${session.id})" title="Editar Qtd, Referência e Telefone" class="text-indigo-400 hover:text-indigo-700 shrink-0"><i class="fa-solid fa-pen text-xs"></i></button>
+                                </div>
+                                <p class="text-xs text-indigo-600 font-medium">Ref: ${escapeHtml(session.reference) || 'Não informado'}</p>
                                 <p class="text-xs text-gray-500">Tel: ${escapeHtml(session.phone) || 'Não informado'}</p>
                             </div>
                             ${alertBadge}
                         </div>
                         <div class="space-y-2 text-sm text-gray-600 mb-4">
-                            <p class="flex items-center justify-between"><span><i class="fa-solid fa-users mr-2 text-indigo-500"></i>Qtd: <strong class="text-gray-800">${session.qty}</strong></span><button onclick="openEditQtyModal(${session.id})" class="text-indigo-500 hover:text-indigo-700 text-xs px-2 py-0.5 rounded border border-indigo-200 hover:bg-indigo-50 transition"><i class="fa-solid fa-pen mr-1"></i>Editar</button></p>
+                            <p><i class="fa-solid fa-users mr-2 text-indigo-500"></i>Qtd: <strong class="text-gray-800">${session.qty}</strong></p>
                             <p><i class="fa-solid fa-clock mr-2 text-indigo-500"></i>Entrada: <strong class="text-gray-800">${entryTimeDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</strong></p>
                             <p><i class="fa-solid fa-stopwatch mr-2 text-indigo-500"></i>Ativo: <strong class="${timeStatusClass}">${diffMinutes} min</strong></p>
                             <div class="pt-1 flex items-center justify-between">
