@@ -115,7 +115,7 @@
             <form id="entry-form" onsubmit="addSession(event)" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Celular (Opcional - Busca Cliente)</label>
-                    <input type="tel" id="child-phone" placeholder="Ex: 11999999999" oninput="searchClientByPhone(this.value)"
+                    <input type="tel" id="child-phone" placeholder="(00) 00000-0000" maxlength="15" oninput="maskPhoneInput(this); searchClientByPhone(this.value)"
                         class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition">
                     <div id="client-feedback" class="text-xs font-semibold mt-1 hidden"></div>
                 </div>
@@ -241,7 +241,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-gray-600 mb-1">Celular</label>
-                    <input type="tel" id="edit-session-phone" placeholder="Ex: 11999999999"
+                    <input type="tel" id="edit-session-phone" placeholder="(00) 00000-0000" maxlength="15" oninput="maskPhoneInput(this)"
                         class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition">
                 </div>
                 <div>
@@ -484,6 +484,24 @@
         function formatNumberBRL(value) {
             const n = Number(value) || 0;
             return n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        // Aplica máscara de telefone BR enquanto digita: (00) 00000-0000 (celular com 9º dígito)
+        // ou (00) 0000-0000 (fixo/sem 9º dígito), sem travar quem cola um número já formatado.
+        function maskPhoneInput(inputEl) {
+            let digits = inputEl.value.replace(/\D/g, '').slice(0, 11);
+
+            if (digits.length > 10) {
+                inputEl.value = digits.replace(/^(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3').trim().replace(/-$/, '');
+            } else if (digits.length > 6) {
+                inputEl.value = digits.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3').trim().replace(/-$/, '');
+            } else if (digits.length > 2) {
+                inputEl.value = digits.replace(/^(\d{2})(\d{0,5})/, '($1) $2').trim();
+            } else if (digits.length > 0) {
+                inputEl.value = `(${digits}`;
+            } else {
+                inputEl.value = '';
+            }
         }
 
         function escapeHtml(str) {
@@ -955,6 +973,14 @@
                 paidDinheiro: dinheiroVal,
                 paidDebito: debitoVal,
                 paidCredito: creditoVal,
+                // Pagamentos feitos NO MEIO do tempo (parcial) já ganham sua própria linha
+                // na planilha na hora - por isso ficam separados dos "paidPix" acima (que são
+                // só do pagamento na entrada) e NÃO entram de novo na soma do registro final,
+                // pra não duplicar o valor na planilha.
+                midwayPaidPix: 0,
+                midwayPaidDinheiro: 0,
+                midwayPaidDebito: 0,
+                midwayPaidCredito: 0,
                 isPaused: false,
                 pausedDuration: 0,
                 lastPauseStart: null,
@@ -1019,7 +1045,9 @@
             currentEditSessionId = id;
             document.getElementById('edit-session-subtitle').innerHTML = `Criança: <strong>${escapeHtml(session.name)}</strong> — pode ajustar mesmo com o tempo já rolando.`;
             document.getElementById('edit-session-reference').value = session.reference || '';
-            document.getElementById('edit-session-phone').value = session.phone || '';
+            const phoneInputEl = document.getElementById('edit-session-phone');
+            phoneInputEl.value = session.phone || '';
+            maskPhoneInput(phoneInputEl);
             document.getElementById('edit-session-qty').value = session.qty;
 
             const note = document.getElementById('edit-session-qty-note');
@@ -1130,7 +1158,11 @@
             const diffMinutes = Math.max(1, Math.ceil(activeMs / (1000 * 60)));
             const currentCost = computeLockedCost(session, diffMinutes);
 
-            document.getElementById('midway-pay-subtitle').innerHTML = `Criança: <strong>${escapeHtml(session.name)}</strong><br>Valor Atual Calculado: <strong class="text-indigo-600">${formatBRL(currentCost)}</strong>`;
+            const previouslyPaid = (session.paidPix || 0) + (session.paidDinheiro || 0) + (session.paidDebito || 0) + (session.paidCredito || 0)
+                + (session.midwayPaidPix || 0) + (session.midwayPaidDinheiro || 0) + (session.midwayPaidDebito || 0) + (session.midwayPaidCredito || 0);
+            const remaining = Math.max(0, currentCost - previouslyPaid);
+
+            document.getElementById('midway-pay-subtitle').innerHTML = `Criança: <strong>${escapeHtml(session.name)}</strong><br>Valor Atual Calculado: <strong class="text-indigo-600">${formatBRL(currentCost)}</strong>${previouslyPaid > 0 ? `<br>Já pago: <strong class="text-emerald-600">${formatBRL(previouslyPaid)}</strong> — Falta: <strong class="text-amber-600">${formatBRL(remaining)}</strong>` : ''}`;
             document.getElementById('mid-pix').value = '';
             document.getElementById('mid-dinheiro').value = '';
             document.getElementById('mid-debito').value = '';
@@ -1187,11 +1219,12 @@
             const diffMinutes = Math.max(1, Math.ceil(activeMs / (1000 * 60)));
             const currentCost = computeLockedCost(session, diffMinutes);
             session.paymentStatus = "Pago";
-            session.paidPix = (session.paidPix || 0) + pixVal;
-            session.paidDinheiro = (session.paidDinheiro || 0) + dinheiroVal;
-            session.paidDebito = (session.paidDebito || 0) + debitoVal;
-            session.paidCredito = (session.paidCredito || 0) + creditoVal;
-            session.paidAmount = session.paidPix + session.paidDinheiro + session.paidDebito + session.paidCredito;
+            session.midwayPaidPix = (session.midwayPaidPix || 0) + pixVal;
+            session.midwayPaidDinheiro = (session.midwayPaidDinheiro || 0) + dinheiroVal;
+            session.midwayPaidDebito = (session.midwayPaidDebito || 0) + debitoVal;
+            session.midwayPaidCredito = (session.midwayPaidCredito || 0) + creditoVal;
+            session.paidAmount = (session.paidPix || 0) + (session.paidDinheiro || 0) + (session.paidDebito || 0) + (session.paidCredito || 0)
+                + session.midwayPaidPix + session.midwayPaidDinheiro + session.midwayPaidDebito + session.midwayPaidCredito;
             session.paymentMethod = methodDesc;
             saveData();
             closeMidwayModal();
@@ -1299,7 +1332,8 @@
             const diffMinutes = Math.max(1, Math.ceil(activeMs / (1000 * 60)));
             const totalCost = computeLockedCost(session, diffMinutes);
 
-            const previouslyPaid = (session.paidPix || 0) + (session.paidDinheiro || 0) + (session.paidDebito || 0) + (session.paidCredito || 0);
+            const previouslyPaid = (session.paidPix || 0) + (session.paidDinheiro || 0) + (session.paidDebito || 0) + (session.paidCredito || 0)
+                + (session.midwayPaidPix || 0) + (session.midwayPaidDinheiro || 0) + (session.midwayPaidDebito || 0) + (session.midwayPaidCredito || 0);
             const remainingToPay = Math.max(0, totalCost - previouslyPaid);
 
             document.getElementById('checkout-summary').innerHTML = `
@@ -1354,9 +1388,10 @@
                 return;
             }
 
-            // Soma o que já tinha sido pago antes (no início ou num pagamento parcial)
-            // com o que está sendo cobrado agora - assim o registro final nunca fica
-            // com o valor vazio quando a criança já pagou tudo no começo.
+            // Soma o que foi pago NA ENTRADA com o que está sendo cobrado agora.
+            // Pagamentos PARCIAIS (feitos no meio do tempo) ficam de fora daqui de propósito:
+            // eles já geraram sua própria linha "(Parcial)" na planilha no momento em que
+            // foram feitos, então somar de novo aqui duplicaria o valor.
             const previousPix = sessionBeingClosed.paidPix || 0;
             const previousDinheiro = sessionBeingClosed.paidDinheiro || 0;
             const previousDebito = sessionBeingClosed.paidDebito || 0;
@@ -1368,11 +1403,18 @@
             const finalCredito = previousCredito + creditoVal;
             const finalTotal = finalPix + finalDinheiro + finalDebito + finalCredito;
 
+            // Só pra mostrar pro operador o valor REAL da visita inteira (entrada + parcial +
+            // agora). O registro gravado (completedRecord) não repete o parcial, que já tem
+            // sua própria linha - isso aqui é só de exibição no aviso de confirmação.
+            const midwayTotal = (sessionBeingClosed.midwayPaidPix || 0) + (sessionBeingClosed.midwayPaidDinheiro || 0)
+                + (sessionBeingClosed.midwayPaidDebito || 0) + (sessionBeingClosed.midwayPaidCredito || 0);
+            const fullVisitTotal = finalTotal + midwayTotal;
+
             const collectingNow = pixVal + dinheiroVal + debitoVal + creditoVal;
             const nameForConfirm = sessionBeingClosed.name;
             const confirmMsg = collectingNow > 0
-                ? `Confirma o fechamento de "${nameForConfirm}" cobrando ${formatBRL(collectingNow)} agora (total da sessão: ${formatBRL(finalTotal)})? Essa ação não pode ser desfeita.`
-                : `Confirma o fechamento de "${nameForConfirm}"? Nada a cobrar agora (já quitado antes: ${formatBRL(finalTotal)}). Essa ação não pode ser desfeita.`;
+                ? `Confirma o fechamento de "${nameForConfirm}" cobrando ${formatBRL(collectingNow)} agora (total da visita: ${formatBRL(fullVisitTotal)})? Essa ação não pode ser desfeita.`
+                : `Confirma o fechamento de "${nameForConfirm}"? Nada a cobrar agora (total da visita já quitado: ${formatBRL(fullVisitTotal)}). Essa ação não pode ser desfeita.`;
             if (!confirm(confirmMsg)) {
                 return;
             }
