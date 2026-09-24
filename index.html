@@ -1155,7 +1155,7 @@
 
             const now = session.isPaused ? session.lastPauseStart : new Date().getTime();
             const activeMs = now - session.entryTime - session.pausedDuration;
-            const diffMinutes = Math.max(1, Math.ceil(activeMs / (1000 * 60)));
+            const diffMinutes = Math.max(1, Math.floor(activeMs / (1000 * 60)));
             const currentCost = computeLockedCost(session, diffMinutes);
 
             const previouslyPaid = (session.paidPix || 0) + (session.paidDinheiro || 0) + (session.paidDebito || 0) + (session.paidCredito || 0)
@@ -1216,7 +1216,7 @@
 
             const now = session.isPaused ? session.lastPauseStart : new Date().getTime();
             const activeMs = now - session.entryTime - session.pausedDuration;
-            const diffMinutes = Math.max(1, Math.ceil(activeMs / (1000 * 60)));
+            const diffMinutes = Math.max(1, Math.floor(activeMs / (1000 * 60)));
             const currentCost = computeLockedCost(session, diffMinutes);
             session.paymentStatus = "Pago";
             session.midwayPaidPix = (session.midwayPaidPix || 0) + pixVal;
@@ -1329,7 +1329,7 @@
 
             const now = session.isPaused ? session.lastPauseStart : new Date().getTime();
             const activeMs = now - session.entryTime - session.pausedDuration;
-            const diffMinutes = Math.max(1, Math.ceil(activeMs / (1000 * 60)));
+            const diffMinutes = Math.max(1, Math.floor(activeMs / (1000 * 60)));
             const totalCost = computeLockedCost(session, diffMinutes);
 
             const previouslyPaid = (session.paidPix || 0) + (session.paidDinheiro || 0) + (session.paidDebito || 0) + (session.paidCredito || 0)
@@ -1431,7 +1431,7 @@
                 const session = sessions[index];
                 const nowObj = new Date();
                 const nowMs = session.isPaused ? session.lastPauseStart : nowObj.getTime();
-                const diffMinutes = Math.max(1, Math.ceil((nowMs - session.entryTime - session.pausedDuration) / (1000 * 60)));
+                const diffMinutes = Math.max(1, Math.floor((nowMs - session.entryTime - session.pausedDuration) / (1000 * 60)));
                 const referenceCost = computeLockedCost(session, diffMinutes);
 
                 const completedRecord = {
