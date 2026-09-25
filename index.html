@@ -288,7 +288,7 @@
                 </div>
                 <div class="flex space-x-3 pt-2">
                     <button type="button" onclick="closeMidwayModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition">Cancelar</button>
-                    <button type="button" onclick="confirmMidwayPayment()" class="w-1/2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-emerald-200 hover:shadow-lg transition">Confirmar e Salvar</button>
+                    <button type="button" id="midway-confirm-btn" onclick="confirmMidwayPayment()" class="w-1/2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-emerald-200 hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed">Confirmar e Salvar</button>
                 </div>
             </div>
         </div>
@@ -304,7 +304,7 @@
                     class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 focus:outline-none transition"></textarea>
                 <div class="flex space-x-3">
                     <button type="button" onclick="closeCancelModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition">Voltar</button>
-                    <button type="button" onclick="confirmCancelSession()" class="w-1/2 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-red-200 hover:shadow-lg transition">Confirmar</button>
+                    <button type="button" id="cancel-confirm-btn" onclick="confirmCancelSession()" class="w-1/2 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-red-200 hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed">Confirmar</button>
                 </div>
             </div>
         </div>
@@ -344,9 +344,7 @@
                 </div>
                 <div class="flex space-x-3 pt-2">
                     <button type="button" onclick="closeCheckoutModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition transition">Cancelar</button>
-                    <button type="submit" class="w-1/2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-emerald-200 hover:shadow-lg transition transition">Confirmar e Salvar</button>
-                </div>
-            </form>
+                    <button type="submit" id="checkout-confirm-btn" class="w-1/2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-emerald-200 hover:shadow-lg transition transition disabled:opacity-50 disabled:cursor-not-allowed">Confirmar e Salvar</button>
         </div>
     </div>
 
@@ -502,6 +500,16 @@
             } else {
                 inputEl.value = '';
             }
+        }
+
+        // Gera um ID único por registro. Vai junto no envio pra planilha, e o Apps Script
+        // usa ele pra não gravar a mesma linha duas vezes se o app reenviar por causa de
+        // internet lenta/instável (a resposta se perde, mas o registro já tinha chegado).
+        function generateRecordId() {
+            if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+                return window.crypto.randomUUID();
+            }
+            return Date.now() + '-' + Math.random().toString(36).slice(2, 10);
         }
 
         function escapeHtml(str) {
@@ -1169,6 +1177,12 @@
             document.getElementById('mid-credito').value = '';
             document.getElementById('mid-total-display').innerText = '0.00';
 
+            const midwayBtn = document.getElementById('midway-confirm-btn');
+            if (midwayBtn) {
+                midwayBtn.disabled = false;
+                midwayBtn.innerText = "Confirmar e Salvar";
+            }
+
             document.getElementById('midway-pay-modal').classList.remove('hidden');
             document.getElementById('midway-pay-modal').classList.add('flex');
         }
@@ -1188,6 +1202,9 @@
         }
 
         function confirmMidwayPayment() {
+            const btn = document.getElementById('midway-confirm-btn');
+            if (btn && btn.disabled) return; // já está enviando, ignora clique duplicado
+
             const session = sessions.find(s => s.id === currentMidwayId);
             if (!session) {
                 alert("Essa criança não está mais na lista (pode já ter sido finalizada por outro operador).");
@@ -1205,6 +1222,11 @@
             if (totalPaid <= 0) {
                 alert("Informe pelo menos um valor pago.");
                 return;
+            }
+
+            if (btn) {
+                btn.disabled = true;
+                btn.innerText = "Salvando...";
             }
 
             let parts = [];
@@ -1231,6 +1253,7 @@
 
             const nowObj = new Date();
             const record = {
+                recordId: generateRecordId(),
                 date: getFormattedDate(nowObj),
                 time: nowObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
                 name: `${session.name} (Parcial)`,
@@ -1263,6 +1286,13 @@
             }
             document.getElementById('cancel-child-name').innerText = session.name;
             document.getElementById('cancel-reason-input').value = '';
+
+            const cancelBtn = document.getElementById('cancel-confirm-btn');
+            if (cancelBtn) {
+                cancelBtn.disabled = false;
+                cancelBtn.innerText = "Confirmar";
+            }
+
             document.getElementById('cancel-modal').classList.remove('hidden');
             document.getElementById('cancel-modal').classList.add('flex');
         }
@@ -1274,6 +1304,9 @@
         }
 
         function confirmCancelSession() {
+            const btn = document.getElementById('cancel-confirm-btn');
+            if (btn && btn.disabled) return; // já está enviando, ignora clique duplicado
+
             const reason = document.getElementById('cancel-reason-input').value.trim();
             if (!reason) {
                 alert("Por favor, digite o motivo do cancelamento.");
@@ -1282,6 +1315,11 @@
 
             const index = sessions.findIndex(s => s.id === currentCancelId);
             if (index !== -1) {
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerText = "Salvando...";
+                }
+
                 const session = sessions[index];
                 const nowObj = new Date();
                 const nowMs = session.isPaused ? session.lastPauseStart : nowObj.getTime();
@@ -1289,6 +1327,7 @@
                 const refCost = computeLockedCost(session, Math.max(0, diffMinutes));
 
                 const cancelledRecord = {
+                    recordId: generateRecordId(),
                     date: getFormattedDate(nowObj),
                     time: nowObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
                     name: `${session.name} (CANCELADO: ${reason})`,
@@ -1355,6 +1394,12 @@
                 document.getElementById('out-dinheiro').value = remainingToPay.toFixed(2);
             }
 
+            const checkoutBtn = document.getElementById('checkout-confirm-btn');
+            if (checkoutBtn) {
+                checkoutBtn.disabled = false;
+                checkoutBtn.innerText = "Confirmar e Salvar";
+            }
+
             document.getElementById('checkout-modal').classList.remove('hidden');
             document.getElementById('checkout-modal').classList.add('flex');
         }
@@ -1375,6 +1420,9 @@
 
         function confirmCheckout(event) {
             event.preventDefault();
+            const btn = document.getElementById('checkout-confirm-btn');
+            if (btn && btn.disabled) return; // já está enviando, ignora clique/submit duplicado
+
             const pixVal = parseFloat(document.getElementById('out-pix').value) || 0;
             const dinheiroVal = parseFloat(document.getElementById('out-dinheiro').value) || 0;
             const debitoVal = parseFloat(document.getElementById('out-debito').value) || 0;
@@ -1428,6 +1476,11 @@
 
             const index = sessions.findIndex(s => s.id === currentCheckoutId);
             if (index !== -1) {
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerText = "Salvando...";
+                }
+
                 const session = sessions[index];
                 const nowObj = new Date();
                 const nowMs = session.isPaused ? session.lastPauseStart : nowObj.getTime();
@@ -1435,6 +1488,7 @@
                 const referenceCost = computeLockedCost(session, diffMinutes);
 
                 const completedRecord = {
+                    recordId: generateRecordId(),
                     date: getFormattedDate(nowObj),
                     time: nowObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
                     name: session.name,
