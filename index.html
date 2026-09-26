@@ -85,7 +85,7 @@
                     <p class="text-sm text-gray-500">Tarifa: R$ 1,50 por minuto (por criança)</p>
                 </div>
                 <div class="flex gap-3">
-                    <button onclick="requestCashAccess()" class="bg-white hover:bg-gray-50 text-blue-700 border border-blue-200 px-4 py-3 rounded-xl font-semibold shadow-sm hover:shadow-md transition flex items-center space-x-2">
+                    <button onclick="openCashModal()" class="bg-white hover:bg-gray-50 text-blue-700 border border-blue-200 px-4 py-3 rounded-xl font-semibold shadow-sm hover:shadow-md transition flex items-center space-x-2">
                         <i class="fa-solid fa-cash-register"></i>
                         <span>Fechamento</span>
                     </button>
@@ -349,22 +349,6 @@
     </div>
 
     <!-- MODAL DE SENHA DO FECHAMENTO (restringe acesso ao caixa) -->
-    <div id="cash-password-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-        <div class="card-anim bg-white rounded-2xl shadow-2xl w-full max-w-xs p-6 relative text-center">
-            <i class="fa-solid fa-lock text-3xl text-blue-600 mb-2"></i>
-            <h3 class="text-lg font-bold text-gray-900 mb-1">Acesso ao Fechamento</h3>
-            <p class="text-sm text-gray-500 mb-4">Digite a senha para ver o caixa do dia.</p>
-            <form onsubmit="confirmCashPassword(event)" class="space-y-3">
-                <input type="password" id="cash-password-input" placeholder="Senha" autocomplete="off"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-xl text-center focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                <div class="flex space-x-3">
-                    <button type="button" onclick="closeCashPasswordModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition">Cancelar</button>
-                    <button type="submit" id="cash-password-confirm-btn" class="w-1/2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed">Acessar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <!-- MODAL DE FECHAMENTO -->
     <div id="cash-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
         <div class="card-anim bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
@@ -388,22 +372,52 @@
                     <span id="cash-total" class="text-2xl font-extrabold text-indigo-600">R$ 0,00</span>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3 text-sm">
-                    <div class="bg-gray-50 p-3 rounded-xl border border-gray-200">
-                        <span class="text-gray-500 block">Pix</span>
-                        <strong id="total-pix" class="text-gray-800">R$ 0,00</strong>
+                <!-- KPIs -->
+                <div class="grid grid-cols-2 gap-3 text-center">
+                    <div class="bg-amber-50 p-3 rounded-2xl border border-amber-100">
+                        <span class="text-[11px] text-amber-700 font-semibold block"><i class="fa-solid fa-stopwatch mr-1"></i>Minutos Totais</span>
+                        <span id="cash-minutes" class="text-lg font-extrabold text-amber-600">0 min</span>
                     </div>
-                    <div class="bg-gray-50 p-3 rounded-xl border border-gray-200">
-                        <span class="text-gray-500 block">Espécie</span>
-                        <strong id="total-dinheiro" class="text-gray-800">R$ 0,00</strong>
+                    <div class="bg-teal-50 p-3 rounded-2xl border border-teal-100">
+                        <span class="text-[11px] text-teal-700 font-semibold block"><i class="fa-solid fa-receipt mr-1"></i>Ticket Médio</span>
+                        <span id="cash-avg" class="text-lg font-extrabold text-teal-600">R$ 0,00</span>
                     </div>
-                    <div class="bg-gray-50 p-3 rounded-xl border border-gray-200">
-                        <span class="text-gray-500 block">Débito</span>
-                        <strong id="total-debito" class="text-gray-800">R$ 0,00</strong>
+                </div>
+
+                <!-- Gráfico de formas de pagamento -->
+                <div class="bg-gray-50 p-4 rounded-2xl border border-gray-200 flex flex-col sm:flex-row items-center gap-5">
+                    <div class="relative w-28 h-28 shrink-0">
+                        <div id="cash-donut" class="w-28 h-28 rounded-full transition-all duration-500" style="background: conic-gradient(#e5e7eb 0deg 360deg);"></div>
+                        <div class="absolute inset-2.5 bg-gray-50 rounded-full flex flex-col items-center justify-center">
+                            <span id="cash-donut-count" class="text-xl font-extrabold text-gray-800">0</span>
+                            <span class="text-[10px] text-gray-400 font-medium -mt-0.5">atend.</span>
+                        </div>
                     </div>
-                    <div class="bg-gray-50 p-3 rounded-xl border border-gray-200">
-                        <span class="text-gray-500 block">Crédito</span>
-                        <strong id="total-credito" class="text-gray-800">R$ 0,00</strong>
+                    <div class="flex-1 w-full space-y-2 text-sm">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-indigo-500 shrink-0"></span>
+                            <span class="text-gray-600 flex-1">Pix</span>
+                            <strong id="total-pix" class="text-gray-800">R$ 0,00</strong>
+                            <span id="pct-pix" class="text-gray-400 w-10 text-right text-xs">0%</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
+                            <span class="text-gray-600 flex-1">Espécie</span>
+                            <strong id="total-dinheiro" class="text-gray-800">R$ 0,00</strong>
+                            <span id="pct-dinheiro" class="text-gray-400 w-10 text-right text-xs">0%</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0"></span>
+                            <span class="text-gray-600 flex-1">Débito</span>
+                            <strong id="total-debito" class="text-gray-800">R$ 0,00</strong>
+                            <span id="pct-debito" class="text-gray-400 w-10 text-right text-xs">0%</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-rose-500 shrink-0"></span>
+                            <span class="text-gray-600 flex-1">Crédito</span>
+                            <strong id="total-credito" class="text-gray-800">R$ 0,00</strong>
+                            <span id="pct-credito" class="text-gray-400 w-10 text-right text-xs">0%</span>
+                        </div>
                     </div>
                 </div>
 
@@ -731,54 +745,6 @@
                 }
             } catch (e) {
                 console.log("Vibração não suportada neste dispositivo.");
-            }
-        }
-
-        function requestCashAccess() {
-            document.getElementById('cash-password-input').value = '';
-            const btn = document.getElementById('cash-password-confirm-btn');
-            if (btn) {
-                btn.disabled = false;
-                btn.innerText = "Acessar";
-            }
-            document.getElementById('cash-password-modal').classList.remove('hidden');
-            document.getElementById('cash-password-modal').classList.add('flex');
-            document.getElementById('cash-password-input').focus();
-        }
-
-        function closeCashPasswordModal() {
-            document.getElementById('cash-password-modal').classList.add('hidden');
-            document.getElementById('cash-password-modal').classList.remove('flex');
-        }
-
-        async function confirmCashPassword(event) {
-            event.preventDefault();
-            const pass = document.getElementById('cash-password-input').value;
-            const btn = document.getElementById('cash-password-confirm-btn');
-            const originalBtnText = btn.innerText;
-            btn.disabled = true;
-            btn.innerText = "Verificando...";
-
-            try {
-                const url = GOOGLE_SHEET_URL + '?checkPassword=' + encodeURIComponent(pass) + '&scope=fechamento&_cb=' + Date.now();
-                const res = await fetch(url, { cache: 'no-store' });
-                if (!res.ok) throw new Error('HTTP ' + res.status);
-                const data = await res.json();
-
-                if (data.valid) {
-                    closeCashPasswordModal();
-                    openCashModal();
-                } else {
-                    alert("Senha incorreta!");
-                    document.getElementById('cash-password-input').value = '';
-                    document.getElementById('cash-password-input').focus();
-                }
-            } catch (err) {
-                console.error("Erro ao verificar senha do Fechamento:", err);
-                alert("Não foi possível verificar a senha agora. Verifique sua internet e tente novamente.");
-            } finally {
-                btn.disabled = false;
-                btn.innerText = originalBtnText;
             }
         }
 
@@ -1662,6 +1628,13 @@
             document.getElementById('total-dinheiro').innerText = 'R$ 0,00';
             document.getElementById('total-debito').innerText = 'R$ 0,00';
             document.getElementById('total-credito').innerText = 'R$ 0,00';
+            document.getElementById('cash-minutes').innerText = '0 min';
+            document.getElementById('cash-avg').innerText = 'R$ 0,00';
+            document.getElementById('cash-donut-count').innerText = '0';
+            document.getElementById('cash-donut').style.background = 'conic-gradient(#e5e7eb 0deg 360deg)';
+            ['pct-pix', 'pct-dinheiro', 'pct-debito', 'pct-credito'].forEach(id => {
+                document.getElementById(id).innerText = '0%';
+            });
             document.getElementById('history-list').innerHTML = `<p class="text-gray-400 text-center py-4"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Buscando dados atualizados da planilha...</p>`;
 
             loadHistoryFromCloud().then(() => {
@@ -1722,6 +1695,37 @@
             document.getElementById('total-debito').innerText = `${formatBRL(debitoSum)}`;
             document.getElementById('total-credito').innerText = `${formatBRL(creditoSum)}`;
             document.getElementById('history-list').innerHTML = historyHtml;
+
+            // --- KPIs e gráfico de formas de pagamento ---
+            const totalMinutes = filteredHistory.reduce((sum, item) => sum + (Number(item.minutes) || 0), 0);
+            const atendimentosCount = filteredHistory.length;
+            const avgTicket = atendimentosCount > 0 ? total / atendimentosCount : 0;
+
+            document.getElementById('cash-minutes').innerText = `${totalMinutes} min`;
+            document.getElementById('cash-avg').innerText = formatBRL(avgTicket);
+            document.getElementById('cash-donut-count').innerText = atendimentosCount;
+
+            const paymentSegments = [
+                { key: 'pix', value: pixSum, color: '#6366f1' },
+                { key: 'dinheiro', value: dinheiroSum, color: '#10b981' },
+                { key: 'debito', value: debitoSum, color: '#f59e0b' },
+                { key: 'credito', value: creditoSum, color: '#f43f5e' }
+            ];
+
+            let cumulativeDeg = 0;
+            const gradientParts = [];
+            paymentSegments.forEach(seg => {
+                const pct = total > 0 ? (seg.value / total) * 100 : 0;
+                document.getElementById(`pct-${seg.key}`).innerText = `${Math.round(pct)}%`;
+                const segDeg = (pct / 100) * 360;
+                if (segDeg > 0) {
+                    gradientParts.push(`${seg.color} ${cumulativeDeg}deg ${cumulativeDeg + segDeg}deg`);
+                    cumulativeDeg += segDeg;
+                }
+            });
+            document.getElementById('cash-donut').style.background = gradientParts.length > 0
+                ? `conic-gradient(${gradientParts.join(', ')})`
+                : 'conic-gradient(#e5e7eb 0deg 360deg)';
 
             // Guarda o resultado calculado para poder exportar para o WhatsApp sem recalcular
             lastCashReport = {
