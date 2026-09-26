@@ -85,7 +85,7 @@
                     <p class="text-sm text-gray-500">Tarifa: R$ 1,50 por minuto (por criança)</p>
                 </div>
                 <div class="flex gap-3">
-                    <button onclick="openCashModal()" class="bg-white hover:bg-gray-50 text-blue-700 border border-blue-200 px-4 py-3 rounded-xl font-semibold shadow-sm hover:shadow-md transition flex items-center space-x-2">
+                    <button onclick="requestCashAccess()" class="bg-white hover:bg-gray-50 text-blue-700 border border-blue-200 px-4 py-3 rounded-xl font-semibold shadow-sm hover:shadow-md transition flex items-center space-x-2">
                         <i class="fa-solid fa-cash-register"></i>
                         <span>Fechamento</span>
                     </button>
@@ -345,6 +345,23 @@
                 <div class="flex space-x-3 pt-2">
                     <button type="button" onclick="closeCheckoutModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition transition">Cancelar</button>
                     <button type="submit" id="checkout-confirm-btn" class="w-1/2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-emerald-200 hover:shadow-lg transition transition disabled:opacity-50 disabled:cursor-not-allowed">Confirmar e Salvar</button>
+        </div>
+    </div>
+
+    <!-- MODAL DE SENHA DO FECHAMENTO (restringe acesso ao caixa) -->
+    <div id="cash-password-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="card-anim bg-white rounded-2xl shadow-2xl w-full max-w-xs p-6 relative text-center">
+            <i class="fa-solid fa-lock text-3xl text-blue-600 mb-2"></i>
+            <h3 class="text-lg font-bold text-gray-900 mb-1">Acesso ao Fechamento</h3>
+            <p class="text-sm text-gray-500 mb-4">Digite a senha para ver o caixa do dia.</p>
+            <form onsubmit="confirmCashPassword(event)" class="space-y-3">
+                <input type="password" id="cash-password-input" placeholder="Senha" autocomplete="off"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-xl text-center focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <div class="flex space-x-3">
+                    <button type="button" onclick="closeCashPasswordModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition">Cancelar</button>
+                    <button type="submit" id="cash-password-confirm-btn" class="w-1/2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed">Acessar</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -717,6 +734,54 @@
             }
         }
 
+        function requestCashAccess() {
+            document.getElementById('cash-password-input').value = '';
+            const btn = document.getElementById('cash-password-confirm-btn');
+            if (btn) {
+                btn.disabled = false;
+                btn.innerText = "Acessar";
+            }
+            document.getElementById('cash-password-modal').classList.remove('hidden');
+            document.getElementById('cash-password-modal').classList.add('flex');
+            document.getElementById('cash-password-input').focus();
+        }
+
+        function closeCashPasswordModal() {
+            document.getElementById('cash-password-modal').classList.add('hidden');
+            document.getElementById('cash-password-modal').classList.remove('flex');
+        }
+
+        async function confirmCashPassword(event) {
+            event.preventDefault();
+            const pass = document.getElementById('cash-password-input').value;
+            const btn = document.getElementById('cash-password-confirm-btn');
+            const originalBtnText = btn.innerText;
+            btn.disabled = true;
+            btn.innerText = "Verificando...";
+
+            try {
+                const url = GOOGLE_SHEET_URL + '?checkPassword=' + encodeURIComponent(pass) + '&scope=fechamento&_cb=' + Date.now();
+                const res = await fetch(url, { cache: 'no-store' });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const data = await res.json();
+
+                if (data.valid) {
+                    closeCashPasswordModal();
+                    openCashModal();
+                } else {
+                    alert("Senha incorreta!");
+                    document.getElementById('cash-password-input').value = '';
+                    document.getElementById('cash-password-input').focus();
+                }
+            } catch (err) {
+                console.error("Erro ao verificar senha do Fechamento:", err);
+                alert("Não foi possível verificar a senha agora. Verifique sua internet e tente novamente.");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = originalBtnText;
+            }
+        }
+
         async function handleCheckPassword(event) {
             event.preventDefault();
             const pass = document.getElementById('password-input').value;
@@ -882,8 +947,12 @@
             // Soma a QUANTIDADE de crianças de cada atendimento (não a quantidade de vezes
             // que o telefone aparece), pois um mesmo atendimento pode levar vários filhos de
             // uma vez — cada criança conta como uma participação para o brinde de fidelidade.
-            // Cancelamentos não contam.
-            const clientVisits = history.filter(h => h.phone && String(h.phone).replace(/\D/g, '') === cleanPhone && !(h.name && h.name.includes('(CANCELADO')));
+            // Cancelamentos não contam, e registros "(Parcial)" também ficam de fora: eles são
+            // só o pagamento feito no meio de UMA visita que já é contada pelo registro final
+            // dela — contar os dois inflaria a visita (2 idas viravam 4 contadas).
+            const clientVisits = history.filter(h => h.phone && String(h.phone).replace(/\D/g, '') === cleanPhone
+                && !(h.name && h.name.includes('(CANCELADO'))
+                && !(h.name && h.name.includes('(Parcial)')));
             let visitCount = clientVisits.reduce((sum, h) => sum + (Number(h.qty) || 1), 0);
             
             const deductedPacks = bonusAppliedPhones[cleanPhone] || 0;
