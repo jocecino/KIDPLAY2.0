@@ -473,7 +473,14 @@
             if (typeof session.packagePrice === 'number' && !isNaN(session.packagePrice)) {
                 return session.packagePrice * session.qty;
             }
-            return fallbackMinutes * RATE_PER_MINUTE * session.qty;
+            // Tempo livre com meta definida (ex: 5 min): trava o valor na meta.
+            // Sem isso, o valor continuava subindo com o tempo real (inclusive
+            // durante o bônus de tempo esgotado), quando deveria congelar assim
+            // como já acontece com os pacotes.
+            const minutesForCost = (session.timeLimit !== null && session.timeLimit !== undefined)
+                ? Math.min(fallbackMinutes, session.timeLimit)
+                : fallbackMinutes;
+            return minutesForCost * RATE_PER_MINUTE * session.qty;
         }
 
         window.addEventListener('DOMContentLoaded', () => {
