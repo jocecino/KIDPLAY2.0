@@ -13,9 +13,17 @@
         @keyframes card-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         .card-anim { animation: card-in .25s ease-out; }
         .alert-anim { animation: card-in .2s ease-out; }
+        /* Abas de baixo com ícones modernos (SVG de traço) */
+        .tab-btn { color:#6b7280; font-weight:500; transition: color .15s; }
+        .tab-btn .tab-ico { display:flex; align-items:center; justify-content:center; width:54px; height:30px; border-radius:999px; transition: background .15s, transform .15s; }
+        .tab-btn svg { width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+        .tab-btn.is-active { color:#a97c00; font-weight:700; }
+        .tab-btn.is-active .tab-ico { background:#fff1a8; transform: translateY(-1px); }
+        /* Perfil Funcionário: esconde tudo que mostra dinheiro nos relatórios */
+        body.staff-view .money-only { display:none !important; }
     </style>
 </head>
-<body class="bg-gradient-to-br from-slate-50 via-white to-indigo-50 text-gray-800 min-h-screen">
+<body class="bg-[#f4f5f7] text-gray-800 min-h-screen">
 
     <!-- TELA DE LOGIN -->
     <div id="login-screen" class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
@@ -57,46 +65,38 @@
 
     <!-- TELA PRINCIPAL -->
     <div id="app-screen" class="hidden min-h-screen flex flex-col">
-        <header class="bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-200/50 px-6 py-4 flex justify-between items-center sticky top-0 z-30">
-            <div class="flex items-center space-x-3">
-                <img src="https://i.ibb.co/hJxqCJK1/IMG-2768.jpg" alt="Logo" class="w-12 h-12 object-contain bg-white rounded-full p-1 shadow-md">
-                <div>
-                    <span class="text-lg font-bold block leading-tight tracking-tight">KidPlay</span>
-                    <span class="text-xs text-indigo-200">Ayres Diversões</span>
+        <header class="bg-gradient-to-r from-[#5c4a00] via-[#a88a00] to-[#fcd20e] text-white shadow-lg px-4 py-3 flex justify-between items-center sticky top-0 z-30">
+            <div class="flex items-center space-x-3 min-w-0">
+                <img src="https://i.ibb.co/hJxqCJK1/IMG-2768.jpg" alt="Logo" class="w-11 h-11 object-contain bg-white rounded-full p-0.5 shadow-md shrink-0">
+                <div class="min-w-0">
+                    <span class="text-lg font-bold block leading-tight tracking-tight truncate">Ayres Diversões</span>
+                    <span class="text-[11px] text-yellow-100/90 block truncate">Operador(a): <strong id="display-operator-name" class="font-semibold">Nome</strong></span>
                 </div>
             </div>
-            
-            <div class="flex items-center space-x-4">
-                <div class="text-right hidden sm:block">
-                    <span class="text-xs text-indigo-200 block">Operador(a) em turno:</span>
-                    <strong id="display-operator-name" class="text-sm font-semibold">Nome</strong>
-                </div>
-                <span id="role-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/20 text-white">Funcionário(a)</span>
-                <span id="sync-status" class="text-xs text-indigo-200 hidden md:inline-flex items-center gap-1"><i class="fa-solid fa-circle text-emerald-400 text-[8px]"></i> Sincronizado</span>
-                <button onclick="handleLogout()" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg text-sm font-medium transition backdrop-blur">
-                    <i class="fa-solid fa-right-from-bracket mr-2"></i>Sair
+            <div class="flex items-center gap-2 shrink-0">
+                <span id="role-badge" class="text-xs font-bold px-3 py-1.5 rounded-full bg-amber-50 text-gray-900 shadow-sm">Funcionário(a)</span>
+                <span id="sync-status" class="text-xs text-yellow-50 hidden md:inline-flex items-center gap-1"><i class="fa-solid fa-circle text-emerald-400 text-[8px]"></i> Sincronizado</span>
+                <button id="refresh-btn" onclick="manualRefresh()" title="Atualizar agora" class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/20 transition">
+                    <svg id="refresh-ico" viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg>
                 </button>
+                <button onclick="handleLogout()" class="px-2 py-2 rounded-lg text-sm font-semibold hover:bg-white/20 transition">Sair</button>
             </div>
         </header>
 
-        <main class="flex-1 max-w-6xl w-full mx-auto p-4 md:p-6 space-y-6 pb-24">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                    <h2 class="text-2xl font-bold text-gray-800 tracking-tight">Painel de Controle</h2>
-                    <p class="text-sm text-gray-500">Tarifa: R$ 1,50 por minuto (por criança)</p>
-                </div>
-                <div class="flex gap-3">
-                    <button onclick="openModal()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-5 py-3 rounded-xl font-semibold shadow-lg shadow-emerald-300/40 hover:shadow-xl hover:-translate-y-0.5 transition flex items-center space-x-2">
-                        <i class="fa-solid fa-plus"></i>
-                        <span>Nova Entrada</span>
-                    </button>
-                </div>
+        <main class="flex-1 max-w-6xl w-full mx-auto p-4 md:p-6 space-y-4 pb-28">
+            <div>
+                <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Painel de Controle</h2>
+                <p class="text-base text-gray-500">Tarifa: R$ 1,50 por minuto (por criança)</p>
             </div>
+            <button onclick="openModal()" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white py-4 rounded-2xl font-bold text-lg shadow-lg shadow-emerald-300/40 hover:shadow-xl active:scale-[0.99] transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-plus"></i><span>Nova Entrada</span>
+            </button>
+            <p class="text-gray-500 text-base"><span class="mr-1">🤸</span>Brincando agora: <strong id="playing-now" class="text-gray-800">0 crianças</strong></p>
 
             <!-- CONTAINER DE ALERTAS DE TEMPO ESGOTADO -->
             <div id="global-alerts-container" class="space-y-3"></div>
 
-            <div id="sessions-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            <div id="sessions-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
 
             <div id="empty-state" class="text-center py-16 hidden">
                 <i class="fa-solid fa-clipboard-list text-gray-300 text-5xl mb-3"></i>
@@ -105,20 +105,35 @@
         </main>
 
         <!-- BARRA DE ABAS (embaixo). Editar e Histórico só aparecem para o perfil Admin. -->
-        <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur border-t border-gray-200 shadow-[0_-4px_14px_rgba(0,0,0,0.06)] z-40 flex justify-around items-center px-1 pt-2" style="padding-bottom: max(8px, env(safe-area-inset-bottom));">
-            <button id="tab-principal" onclick="goToPrincipal()" class="tab-btn flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg text-indigo-600 font-semibold text-[11px]">
-                <i class="fa-solid fa-house text-lg"></i><span>Principal</span>
+        <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur border-t border-gray-200 shadow-[0_-4px_14px_rgba(0,0,0,0.06)] z-40 flex justify-around items-center px-2 pt-1.5" style="padding-bottom: max(8px, env(safe-area-inset-bottom));">
+            <button id="tab-principal" onclick="goToPrincipal()" class="tab-btn is-active flex flex-col items-center gap-0.5 flex-1 py-1 text-[11px]">
+                <span class="tab-ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></span><span>Principal</span>
             </button>
-            <button id="tab-relatorio" onclick="openTab('relatorio')" class="tab-btn flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg text-gray-500 font-medium text-[11px] hover:text-indigo-600">
-                <i class="fa-solid fa-chart-column text-lg"></i><span>Relatório</span>
+            <button id="tab-relatorio" onclick="openTab('relatorio')" class="tab-btn flex flex-col items-center gap-0.5 flex-1 py-1 text-[11px]">
+                <span class="tab-ico"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M8 17v-6"/><path d="M13 17V7"/><path d="M18 17v-4"/></svg></span><span>Relatório</span>
             </button>
-            <button id="tab-editar" onclick="openTab('editar')" class="tab-btn admin-only hidden flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg text-gray-500 font-medium text-[11px] hover:text-indigo-600">
-                <i class="fa-solid fa-pen-to-square text-lg"></i><span>Editar</span>
+            <button id="tab-editar" onclick="openTab('editar')" class="tab-btn admin-only hidden flex flex-col items-center gap-0.5 flex-1 py-1 text-[11px]">
+                <span class="tab-ico"><svg viewBox="0 0 24 24"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"/></svg></span><span>Editar</span>
             </button>
-            <button id="tab-historico" onclick="openTab('historico')" class="tab-btn admin-only hidden flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg text-gray-500 font-medium text-[11px] hover:text-indigo-600">
-                <i class="fa-solid fa-clock-rotate-left text-lg"></i><span>Histórico</span>
+            <button id="tab-historico" onclick="openTab('historico')" class="tab-btn admin-only hidden flex flex-col items-center gap-0.5 flex-1 py-1 text-[11px]">
+                <span class="tab-ico"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg></span><span>Histórico</span>
             </button>
         </nav>
+    </div>
+
+    <!-- MODAL: BÔNUS DE TEMPO -->
+    <div id="bonus-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="card-anim bg-white rounded-3xl shadow-2xl w-full max-w-xs p-6 text-center">
+            <div class="text-4xl mb-1">🎁</div>
+            <h3 class="text-lg font-extrabold text-gray-900">Dar bônus de tempo</h3>
+            <p id="bonus-modal-name" class="text-sm text-gray-500 mb-1"></p>
+            <p class="text-xs text-gray-500 mb-4">Tempo extra sem cobrança: o valor cobrado não muda.</p>
+            <div class="grid grid-cols-2 gap-2 mb-3">
+                <button onclick="applyBonus(2)" class="bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold py-3 rounded-2xl transition">+2 min</button>
+                <button onclick="applyBonus(5)" class="bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold py-3 rounded-2xl transition">+5 min</button>
+            </div>
+            <button onclick="closeBonusModal()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition">Voltar</button>
+        </div>
     </div>
 
     <!-- MODAL: EDITAR REGISTROS JÁ SALVOS (admin) -->
@@ -315,9 +330,14 @@
     <!-- MODAL DE EDITAR DADOS DA CRIANÇA (referência, telefone e quantidade - mesmo com o tempo já rolando) -->
     <div id="edit-session-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
         <div class="card-anim bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-sm p-6 relative">
-            <h3 class="text-lg font-extrabold text-gray-900 mb-1 tracking-tight">Editar Dados</h3>
+            <h3 class="text-xl font-extrabold text-gray-900 mb-1 tracking-tight">Editar dados</h3>
             <p id="edit-session-subtitle" class="text-sm text-gray-500 mb-4"></p>
             <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Nome da Criança</label>
+                    <input type="text" id="edit-session-name" placeholder="Nome da criança"
+                        class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 focus:outline-none transition">
+                </div>
                 <div>
                     <label class="block text-xs font-medium text-gray-600 mb-1">Nome de Referência (Responsável)</label>
                     <input type="text" id="edit-session-reference" placeholder="Ex: Maria (Mãe)"
@@ -336,7 +356,7 @@
                 <p id="edit-session-qty-note" class="text-xs text-indigo-600 hidden"></p>
                 <div class="flex space-x-3 pt-1">
                     <button type="button" onclick="closeEditSessionModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition">Cancelar</button>
-                    <button type="button" onclick="confirmEditSessionModal()" class="w-1/2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-indigo-200 hover:shadow-lg transition">Salvar</button>
+                    <button type="button" onclick="confirmEditSessionModal()" class="w-1/2 bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-bold py-2.5 rounded-xl shadow-md transition">Salvar</button>
                 </div>
             </div>
         </div>
@@ -438,7 +458,7 @@
     <div id="cash-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
         <div class="card-anim bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-extrabold text-gray-900 tracking-tight">Relatórios</h3>
+                <h3 id="report-title" class="text-xl font-extrabold text-gray-900 tracking-tight">Relatórios</h3>
                 <div class="flex items-center gap-3">
                     <button onclick="openCashModal()" title="Atualizar dados da planilha" class="text-gray-400 hover:text-indigo-600"><i class="fa-solid fa-rotate"></i></button>
                     <button onclick="closeCashModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -464,25 +484,33 @@
                 </div>
                 <p id="report-range-label" class="text-xs text-gray-500 -mt-2"></p>
 
-                <div class="bg-gradient-to-r from-indigo-50 to-violet-50 p-4 rounded-2xl border border-indigo-100 flex justify-between items-center">
-                    <span id="cash-total-label" class="font-medium text-indigo-900">Faturamento (Hoje):</span>
-                    <span id="cash-total" class="text-2xl font-extrabold text-indigo-600">R$ 0,00</span>
+                <div class="money-only bg-gradient-to-r from-yellow-50 to-amber-50 p-4 rounded-2xl border border-yellow-200 flex justify-between items-center">
+                    <span id="cash-total-label" class="font-medium text-amber-900">Faturamento (Hoje):</span>
+                    <span id="cash-total" class="text-2xl font-extrabold text-amber-600">R$ 0,00</span>
                 </div>
 
-                <!-- KPIs -->
-                <div class="grid grid-cols-2 gap-3 text-center">
+                <!-- KPIs de atendimento (todos os perfis, sem valores) -->
+                <div class="grid grid-cols-3 gap-2 text-center">
+                    <div class="bg-yellow-50 p-3 rounded-2xl border border-yellow-100">
+                        <span class="text-[11px] text-yellow-700 font-semibold block">Atendimentos</span>
+                        <span id="cash-atend" class="text-xl font-extrabold text-yellow-600">0</span>
+                    </div>
+                    <div class="bg-sky-50 p-3 rounded-2xl border border-sky-100">
+                        <span class="text-[11px] text-sky-700 font-semibold block">Crianças</span>
+                        <span id="cash-children" class="text-xl font-extrabold text-sky-600">0</span>
+                    </div>
                     <div class="bg-amber-50 p-3 rounded-2xl border border-amber-100">
-                        <span class="text-[11px] text-amber-700 font-semibold block"><i class="fa-solid fa-stopwatch mr-1"></i>Minutos Totais</span>
-                        <span id="cash-minutes" class="text-lg font-extrabold text-amber-600">0 min</span>
+                        <span class="text-[11px] text-amber-700 font-semibold block">Minutos</span>
+                        <span id="cash-minutes" class="text-xl font-extrabold text-amber-600">0 min</span>
                     </div>
-                    <div class="bg-teal-50 p-3 rounded-2xl border border-teal-100">
-                        <span class="text-[11px] text-teal-700 font-semibold block"><i class="fa-solid fa-receipt mr-1"></i>Ticket Médio</span>
-                        <span id="cash-avg" class="text-lg font-extrabold text-teal-600">R$ 0,00</span>
-                    </div>
+                </div>
+                <div class="money-only bg-teal-50 p-3 rounded-2xl border border-teal-100 flex justify-between items-center">
+                    <span class="text-[11px] text-teal-700 font-semibold"><i class="fa-solid fa-receipt mr-1"></i>Ticket Médio</span>
+                    <span id="cash-avg" class="text-lg font-extrabold text-teal-600">R$ 0,00</span>
                 </div>
 
                 <!-- Gráfico de formas de pagamento -->
-                <div class="bg-gray-50 p-4 rounded-2xl border border-gray-200 flex flex-col sm:flex-row items-center gap-5">
+                <div class="money-only bg-gray-50 p-4 rounded-2xl border border-gray-200 flex flex-col sm:flex-row items-center gap-5">
                     <div class="relative w-28 h-28 shrink-0">
                         <div id="cash-donut" class="w-28 h-28 rounded-full transition-all duration-500" style="background: conic-gradient(#e5e7eb 0deg 360deg);"></div>
                         <div class="absolute inset-2.5 bg-gray-50 rounded-full flex flex-col items-center justify-center">
@@ -525,7 +553,7 @@
             </div>
 
             <div class="mt-5 space-y-2">
-                <div class="flex gap-2">
+                <div class="money-only flex gap-2">
                     <button onclick="exportCashReportToWhatsApp('resumo')" class="w-1/2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-emerald-200 hover:shadow-lg transition flex items-center justify-center space-x-2">
                         <i class="fa-brands fa-whatsapp"></i>
                         <span>Resumo</span>
@@ -624,13 +652,26 @@
         function applyRoleUI() {
             const isAdmin = currentRole === 'admin';
             document.querySelectorAll('.admin-only').forEach(el => el.classList.toggle('hidden', !isAdmin));
+            // Funcionário não vê valores nos relatórios (ver .money-only no CSS)
+            document.body.classList.toggle('staff-view', !isAdmin);
             const badge = document.getElementById('role-badge');
             if (badge) {
                 badge.innerText = isAdmin ? 'Admin' : 'Funcionário(a)';
                 badge.className = isAdmin
-                    ? 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-400 text-amber-900'
-                    : 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/20 text-white';
+                    ? 'text-xs font-bold px-3 py-1.5 rounded-full bg-amber-50 text-gray-900 shadow-sm'
+                    : 'text-xs font-bold px-3 py-1.5 rounded-full bg-white/30 text-white shadow-sm';
             }
+            const title = document.getElementById('report-title');
+            if (title) title.innerText = isAdmin ? 'Relatórios' : 'Atendimentos por Período';
+        }
+
+        function manualRefresh() {
+            const ico = document.getElementById('refresh-ico');
+            if (ico) ico.classList.add('animate-spin');
+            Promise.resolve(loadHistoryFromCloud()).then(() => {
+                renderSessions();
+                if (ico) setTimeout(() => ico.classList.remove('animate-spin'), 400);
+            });
         }
 
         let lastCloudSyncError = null;
@@ -1270,6 +1311,7 @@
             }
             currentEditSessionId = id;
             document.getElementById('edit-session-subtitle').innerHTML = `Criança: <strong>${escapeHtml(session.name)}</strong> — pode ajustar mesmo com o tempo já rolando.`;
+            document.getElementById('edit-session-name').value = session.name || '';
             document.getElementById('edit-session-reference').value = session.reference || '';
             const phoneInputEl = document.getElementById('edit-session-phone');
             phoneInputEl.value = session.phone || '';
@@ -1309,6 +1351,12 @@
                 return;
             }
 
+            const newName = document.getElementById('edit-session-name').value.trim();
+            if (!newName) {
+                alert("O nome da criança não pode ficar vazio.");
+                return;
+            }
+            session.name = newName;
             session.reference = document.getElementById('edit-session-reference').value.trim();
             session.phone = document.getElementById('edit-session-phone').value.trim().replace(/\D/g, '');
             session.qty = newQty;
@@ -1346,6 +1394,36 @@
                 saveData();
             }
             closeAddTimeModal();
+        }
+
+        function formatMMSS(ms) {
+            const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+            const m = Math.floor(totalSeconds / 60);
+            const s = totalSeconds % 60;
+            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        // ---- Bônus de tempo direto pelo card (mesmo efeito dos botões do alerta de tempo esgotado) ----
+        let currentBonusId = null;
+        function openBonusModal(id) {
+            const session = sessions.find(s => s.id === id);
+            if (!session) return;
+            currentBonusId = id;
+            document.getElementById('bonus-modal-name').innerText = session.name;
+            const m = document.getElementById('bonus-modal');
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+        }
+        function closeBonusModal() {
+            const m = document.getElementById('bonus-modal');
+            m.classList.add('hidden');
+            m.classList.remove('flex');
+            currentBonusId = null;
+        }
+        function applyBonus(minutes) {
+            if (currentBonusId === null) return;
+            snoozeAlert(currentBonusId, minutes);
+            closeBonusModal();
         }
 
         function formatCountdown(ms) {
@@ -1860,7 +1938,7 @@
                 const tab = document.getElementById('period-tab-' + p);
                 if (!tab) return;
                 tab.className = (p === period)
-                    ? 'flex-1 py-2 rounded-full transition bg-lime-400 text-gray-900 shadow'
+                    ? 'flex-1 py-2 rounded-full transition bg-yellow-400 text-gray-900 shadow'
                     : 'flex-1 py-2 rounded-full transition text-gray-500 hover:text-gray-700';
             });
             const pickerWrap = document.getElementById('report-date-picker-wrap');
@@ -1879,6 +1957,8 @@
             document.getElementById('total-debito').innerText = 'R$ 0,00';
             document.getElementById('total-credito').innerText = 'R$ 0,00';
             document.getElementById('cash-minutes').innerText = '0 min';
+            document.getElementById('cash-atend').innerText = '0';
+            document.getElementById('cash-children').innerText = '0';
             document.getElementById('cash-avg').innerText = 'R$ 0,00';
             document.getElementById('cash-donut-count').innerText = '0';
             document.getElementById('cash-donut').style.background = 'conic-gradient(#e5e7eb 0deg 360deg)';
@@ -1978,11 +2058,31 @@
             document.getElementById('total-dinheiro').innerText = `${formatBRL(dinheiroSum)}`;
             document.getElementById('total-debito').innerText = `${formatBRL(debitoSum)}`;
             document.getElementById('total-credito').innerText = `${formatBRL(creditoSum)}`;
+            // Funcionário: lista só de atendimentos (sem valores, forma de pagamento nem avisos de divergência).
+            // Linhas "(Parcial)" são só pagamentos no meio de uma visita já contada, então não entram.
+            if (currentRole !== 'admin') {
+                const staffItems = filteredHistory.filter(i => !(i.name && String(i.name).includes('(Parcial)'))).slice().reverse();
+                historyHtml = staffItems.length === 0
+                    ? `<p class="text-gray-400 text-center py-2">Nenhum atendimento neste período.</p>`
+                    : staffItems.map(item => `
+                        <div class="flex justify-between items-center bg-white p-2.5 rounded-xl border mb-2">
+                            <div class="min-w-0">
+                                <strong class="block truncate">${escapeHtml(item.name)}</strong>
+                                <span class="text-xs text-gray-500">${escapeHtml(formatDateBR(item.date))} às ${escapeHtml(item.time)} · Ref: ${escapeHtml(item.reference) || '-'} · ${item.qty}x</span>
+                            </div>
+                            <span class="shrink-0 ml-2 text-sm font-bold text-gray-700">${item.minutes} min</span>
+                        </div>`).join('');
+            }
             document.getElementById('history-list').innerHTML = historyHtml;
 
             // --- KPIs e gráfico de formas de pagamento ---
-            const totalMinutes = filteredHistory.reduce((sum, item) => sum + (Number(item.minutes) || 0), 0);
-            const atendimentosCount = filteredHistory.length;
+            // Atendimentos reais: não conta linhas "(Parcial)" (pagamento no meio da visita) nem
+            // cancelamentos - antes essas linhas inflavam minutos e quantidade de atendimentos.
+            const realVisits = filteredHistory.filter(i => !(i.name && (String(i.name).includes('(Parcial)') || String(i.name).includes('(CANCELADO'))));
+            const totalMinutes = realVisits.reduce((sum, item) => sum + (Number(item.minutes) || 0), 0);
+            const atendimentosCount = realVisits.length;
+            document.getElementById('cash-atend').innerText = atendimentosCount;
+            document.getElementById('cash-children').innerText = realVisits.reduce((sum, item) => sum + (Number(item.qty) || 1), 0);
             const avgTicket = atendimentosCount > 0 ? total / atendimentosCount : 0;
 
             document.getElementById('cash-minutes').innerText = `${totalMinutes} min`;
@@ -2091,11 +2191,7 @@
         // ================= NAVEGAÇÃO POR ABAS =================
         function setActiveTab(name) {
             document.querySelectorAll('.tab-btn').forEach(btn => {
-                const active = btn.id === 'tab-' + name;
-                btn.classList.toggle('text-indigo-600', active);
-                btn.classList.toggle('font-semibold', active);
-                btn.classList.toggle('text-gray-500', !active);
-                btn.classList.toggle('font-medium', !active);
+                btn.classList.toggle('is-active', btn.id === 'tab-' + name);
             });
         }
 
@@ -2331,6 +2427,12 @@
             grid.innerHTML = '';
             alertsContainer.innerHTML = '';
 
+            const playingEl = document.getElementById('playing-now');
+            if (playingEl) {
+                const kids = sessions.reduce((sum, s) => sum + (Number(s.qty) || 1), 0);
+                playingEl.innerText = `${kids} ${kids === 1 ? 'criança' : 'crianças'}`;
+            }
+
             if (sessions.length === 0) {
                 emptyState.classList.remove('hidden');
                 return;
@@ -2403,9 +2505,9 @@
                     alertBadge = `<span class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full font-medium">Livre</span>`;
                 }
 
-                const paymentBadge = session.paymentStatus === 'Pago' 
-                    ? `<span class="bg-emerald-100 text-emerald-700 text-xs px-2 py-0.5 rounded font-semibold"><i class="fa-solid fa-check mr-1"></i>Pago</span>`
-                    : `<button onclick="openMidwayModal(${session.id})" class="bg-amber-100 hover:bg-amber-200 text-amber-800 text-xs px-2 py-0.5 rounded font-semibold transition shadow-sm"><i class="fa-solid fa-clock mr-1"></i>Pendente</button>`;
+                const paymentBadge = session.paymentStatus === 'Pago'
+                    ? `<span class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-sm px-3 py-1.5 rounded-xl font-bold"><span>✅</span>Pago</span>`
+                    : `<button onclick="openMidwayModal(${session.id})" class="inline-flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 text-sm px-3 py-1.5 rounded-xl font-bold transition"><span>⏳</span>Pendente · pagar</button>`;
 
                 // Bônus de tempo (aplicado pelos botões +2/+5 min no alerta de tempo esgotado).
                 // É só um contador visual separado: não altera session.timeLimit nem o valor cobrado.
@@ -2421,57 +2523,66 @@
                        <p class="text-[11px] text-purple-600 -mt-1"><i class="fa-solid fa-circle-info mr-1"></i>${session.bonusMinutesTotal} min de bônus aplicados no total (valor não muda: continua ${session.timeLimit ? session.timeLimit + ' min / ' : ''}${formatBRL(currentCost)}).</p>`
                     : '';
 
-                const pauseButtonText = session.isPaused ? '<i class="fa-solid fa-play mr-1"></i> Retomar' : '<i class="fa-solid fa-pause mr-1"></i> Pausar';
-                const pauseButtonClass = session.isPaused ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200' : 'bg-yellow-50 hover:bg-yellow-100 text-yellow-700 border-yellow-200';
+                const ICON_PAUSE = '<svg viewBox="0 0 24 24" class="w-4 h-4" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>';
+                const ICON_PLAY = '<svg viewBox="0 0 24 24" class="w-4 h-4" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>';
+                const ICON_PLUS = '<svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
+                const ICON_GIFT = '<svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg>';
+
+                const pauseButtonText = session.isPaused ? `${ICON_PLAY}<span>Retomar</span>` : `${ICON_PAUSE}<span>Pausar</span>`;
+                const pauseButtonClass = session.isPaused ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700' : 'bg-amber-100 hover:bg-amber-200 text-amber-800';
+
+                // Linha "Restante": contagem regressiva do pacote (só aparece se a entrada tem meta de tempo)
+                let remainingRow = '';
+                const limitNum = Number(session.timeLimit);
+                if (limitNum > 0) {
+                    const remMs = limitNum * 60000 - activeMs;
+                    remainingRow = remMs > 0
+                        ? `<p class="flex items-center gap-2"><span class="w-5 text-center">⏳</span>Restante: <strong class="text-gray-900 tabular-nums">${formatMMSS(remMs)}</strong> <span class="text-red-500 text-sm">restantes</span></p>`
+                        : `<p class="flex items-center gap-2"><span class="w-5 text-center">⏳</span>Restante: <strong class="text-red-600 tabular-nums">00:00</strong> <span class="text-red-500 text-sm">esgotado</span></p>`;
+                }
 
                 const card = document.createElement('div');
-                card.className = "bg-white rounded-2xl shadow-md hover:shadow-xl p-5 border border-gray-200 hover:border-indigo-200 flex flex-col justify-between transition-shadow duration-200";
+                card.className = "card-anim bg-white rounded-3xl shadow-md hover:shadow-lg p-5 flex flex-col gap-4 transition-shadow duration-200";
                 card.innerHTML = `
                     <div>
-                        <div class="flex justify-between items-start mb-3">
-                            <div>
+                        <div class="flex justify-between items-start gap-2 mb-3">
+                            <div class="min-w-0">
                                 <div class="flex items-center gap-1.5">
-                                    <h3 class="font-bold text-lg text-gray-800">${escapeHtml(session.name)}</h3>
-                                    <button onclick="openEditSessionModal(${session.id})" title="Editar referência, telefone e quantidade" class="text-indigo-400 hover:text-indigo-700 shrink-0"><i class="fa-solid fa-pen text-[11px]"></i></button>
+                                    <h3 class="font-extrabold text-2xl text-gray-900 truncate">${escapeHtml(session.name)}</h3>
+                                    <button onclick="openEditSessionModal(${session.id})" title="Editar nome, referência, celular e quantidade" class="text-indigo-400 hover:text-indigo-700 shrink-0 text-lg leading-none">✎</button>
                                 </div>
-                                <p class="text-xs text-indigo-600 font-medium">Ref: ${escapeHtml(session.reference) || 'Não informado'}</p>
-                                <p class="text-xs text-gray-500">Tel: ${escapeHtml(session.phone) || 'Não informado'}</p>
+                                <p class="text-lg text-indigo-600 font-bold">Ref: ${escapeHtml(session.reference) || 'Não informado'}</p>
+                                <p class="text-base text-gray-500">Tel: ${escapeHtml(session.phone) || 'Não informado'}</p>
                             </div>
-                            ${alertBadge}
+                            <div class="shrink-0">${alertBadge}</div>
                         </div>
-                        <div class="space-y-2 text-sm text-gray-600 mb-4">
-                            <p><i class="fa-solid fa-users mr-2 text-indigo-500"></i>Qtd: <strong class="text-gray-800">${session.qty}</strong></p>
-                            <p><i class="fa-solid fa-clock mr-2 text-indigo-500"></i>Entrada: <strong class="text-gray-800">${entryTimeDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</strong></p>
-                            <p><i class="fa-solid fa-stopwatch mr-2 text-indigo-500"></i>Ativo: <strong class="${timeStatusClass}">${diffMinutes} min</strong></p>
-                            <div class="pt-1 flex items-center justify-between">
-                                <span class="text-xs text-gray-500">Status:</span>
+                        <div class="space-y-2 text-lg text-gray-700">
+                            <p class="flex items-center gap-2"><span class="w-5 text-center">👥</span>Qtd: <strong class="text-gray-900">${session.qty}</strong></p>
+                            <p class="flex items-center gap-2"><span class="w-5 text-center">🕐</span>Entrada: <strong class="text-gray-900">${entryTimeDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</strong></p>
+                            <p class="flex items-center gap-2"><span class="w-5 text-center">⏱️</span>Ativo: <strong class="${timeStatusClass}">${diffMinutes} min</strong></p>
+                            ${remainingRow}
+                            <div class="pt-1 flex items-center justify-between gap-2">
+                                <span class="text-base text-gray-500">Status:</span>
                                 ${paymentBadge}
                             </div>
                             ${bonusRow}
                         </div>
                     </div>
-                    <div class="border-t pt-4 space-y-3">
-                        <div class="flex items-center justify-between">
+                    <div class="border-t border-gray-100 pt-3 space-y-3">
+                        <div class="flex items-end justify-between gap-2">
                             <div>
-                                <span class="text-xs text-gray-400 block">${typeof session.packagePrice === 'number' ? '<i class="fa-solid fa-lock mr-1"></i>Valor do Pacote (travado)' : 'Valor Atual'}</span>
-                                <span class="text-xl font-extrabold text-emerald-600">${formatBRL(currentCost)}</span>
+                                <span class="text-sm text-gray-400 block">${typeof session.packagePrice === 'number' ? '🔒 Valor do Pacote (travado)' : 'Valor Atual'}</span>
+                                <span class="text-3xl font-extrabold text-emerald-600 tabular-nums">${formatBRL(currentCost)}</span>
                             </div>
                             <div class="flex gap-1.5">
-                                <button onclick="togglePauseSession(${session.id})" class="${pauseButtonClass} px-2.5 py-1.5 rounded-lg text-xs font-bold transition border">
-                                    ${pauseButtonText}
-                                </button>
-                                <button onclick="openAddTimeModal(${session.id})" class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-2.5 py-1.5 rounded-lg text-xs font-bold transition border border-blue-200">
-                                    <i class="fa-solid fa-plus mr-1"></i> Mais
-                                </button>
+                                <button onclick="togglePauseSession(${session.id})" class="${pauseButtonClass} inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-sm font-bold transition">${pauseButtonText}</button>
+                                <button onclick="openAddTimeModal(${session.id})" class="bg-blue-50 hover:bg-blue-100 text-blue-700 inline-flex items-center gap-1 px-3 py-2.5 rounded-xl text-sm font-bold transition">${ICON_PLUS}<span>Mais</span></button>
+                                <button onclick="openBonusModal(${session.id})" title="Dar bônus de tempo (sem cobrança)" class="bg-purple-50 hover:bg-purple-100 text-purple-700 inline-flex items-center px-3 py-2.5 rounded-xl transition">${ICON_GIFT}</button>
                             </div>
                         </div>
-                        <div class="flex gap-2">
-                            <button onclick="openCancelModal(${session.id})" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-2 rounded-xl text-xs font-semibold transition">
-                                Cancelar
-                            </button>
-                            <button onclick="initCheckout(${session.id})" class="w-1/2 bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-xl text-xs font-semibold transition shadow-sm">
-                                Finalizar
-                            </button>
+                        <div class="flex gap-3">
+                            <button onclick="openCancelModal(${session.id})" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-800 py-3.5 rounded-2xl text-base font-bold transition">Cancelar</button>
+                            <button onclick="initCheckout(${session.id})" class="w-1/2 bg-red-500 hover:bg-red-600 text-white py-3.5 rounded-2xl text-base font-bold transition shadow-sm">Finalizar</button>
                         </div>
                     </div>
                 `;
