@@ -1,0 +1,2523 @@
+<html lang="pt-BR"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KidPlay - Ayres Diversão</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
+        @keyframes card-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .card-anim { animation: card-in .25s ease-out; }
+        .alert-anim { animation: card-in .2s ease-out; }
+        /* Abas de baixo com ícones modernos (SVG de traço) */
+        .tab-btn { color:#6b7280; font-weight:500; transition: color .15s; }
+        .tab-btn .tab-ico { display:flex; align-items:center; justify-content:center; width:54px; height:30px; border-radius:999px; transition: background .15s, transform .15s; }
+        .tab-btn svg { width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+        .tab-btn.is-active { color:#4338ca; font-weight:700; }
+        .tab-btn.is-active .tab-ico { background:#e0e7ff; transform: translateY(-1px); }
+        /* Perfil Funcionário: esconde tudo que mostra dinheiro nos relatórios */
+        body.staff-view .money-only { display:none !important; }
+    </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.inset-2\.5{inset:0.625rem}.-bottom-24{bottom:-6rem}.-left-24{left:-6rem}.-right-24{right:-6rem}.-top-24{top:-6rem}.bottom-0{bottom:0px}.left-0{left:0px}.right-0{right:0px}.top-0{top:0px}.z-30{z-index:30}.z-40{z-index:40}.z-50{z-index:50}.z-\[60\]{z-index:60}.mx-auto{margin-left:auto;margin-right:auto}.-mt-0\.5{margin-top:-0.125rem}.-mt-2{margin-top:-0.5rem}.mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mr-1{margin-right:0.25rem}.mr-1\.5{margin-right:0.375rem}.mt-1{margin-top:0.25rem}.mt-1\.5{margin-top:0.375rem}.mt-4{margin-top:1rem}.mt-5{margin-top:1.25rem}.block{display:block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-11{height:2.75rem}.h-2\.5{height:0.625rem}.h-28{height:7rem}.h-36{height:9rem}.h-5{height:1.25rem}.h-72{height:18rem}.h-9{height:2.25rem}.max-h-48{max-height:12rem}.max-h-\[55vh\]{max-height:55vh}.max-h-\[90vh\]{max-height:90vh}.min-h-screen{min-height:100vh}.w-1\/2{width:50%}.w-10{width:2.5rem}.w-11{width:2.75rem}.w-2\.5{width:0.625rem}.w-28{width:7rem}.w-36{width:9rem}.w-5{width:1.25rem}.w-72{width:18rem}.w-9{width:2.25rem}.w-full{width:100%}.min-w-0{min-width:0px}.max-w-6xl{max-width:72rem}.max-w-lg{max-width:32rem}.max-w-md{max-width:28rem}.max-w-sm{max-width:24rem}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.justify-around{justify-content:space-around}.gap-0\.5{gap:0.125rem}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-5{gap:1.25rem}.space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.5rem * var(--tw-space-x-reverse));margin-left:calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-3 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.75rem * var(--tw-space-x-reverse));margin-left:calc(0.75rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-1\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.375rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.375rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-2\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.625rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.rounded-3xl{border-radius:1.5rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-t{border-top-width:1px}.border-amber-100{--tw-border-opacity:1;border-color:rgb(254 243 199 / var(--tw-border-opacity, 1))}.border-amber-300{--tw-border-opacity:1;border-color:rgb(252 211 77 / var(--tw-border-opacity, 1))}.border-emerald-200{--tw-border-opacity:1;border-color:rgb(167 243 208 / var(--tw-border-opacity, 1))}.border-gray-100{--tw-border-opacity:1;border-color:rgb(243 244 246 / var(--tw-border-opacity, 1))}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.border-indigo-100{--tw-border-opacity:1;border-color:rgb(224 231 255 / var(--tw-border-opacity, 1))}.border-indigo-200{--tw-border-opacity:1;border-color:rgb(199 210 254 / var(--tw-border-opacity, 1))}.border-sky-100{--tw-border-opacity:1;border-color:rgb(224 242 254 / var(--tw-border-opacity, 1))}.border-teal-100{--tw-border-opacity:1;border-color:rgb(204 251 241 / var(--tw-border-opacity, 1))}.border-white{--tw-border-opacity:1;border-color:rgb(255 255 255 / var(--tw-border-opacity, 1))}.bg-amber-50{--tw-bg-opacity:1;background-color:rgb(255 251 235 / var(--tw-bg-opacity, 1))}.bg-amber-500{--tw-bg-opacity:1;background-color:rgb(245 158 11 / var(--tw-bg-opacity, 1))}.bg-amber-600{--tw-bg-opacity:1;background-color:rgb(217 119 6 / var(--tw-bg-opacity, 1))}.bg-black\/60{background-color:rgb(0 0 0 / 0.6)}.bg-black\/70{background-color:rgb(0 0 0 / 0.7)}.bg-emerald-300\/30{background-color:rgb(110 231 183 / 0.3)}.bg-emerald-50{--tw-bg-opacity:1;background-color:rgb(236 253 245 / var(--tw-bg-opacity, 1))}.bg-emerald-500{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.bg-gray-100{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-gray-800{--tw-bg-opacity:1;background-color:rgb(31 41 55 / var(--tw-bg-opacity, 1))}.bg-indigo-300\/30{background-color:rgb(165 180 252 / 0.3)}.bg-indigo-50{--tw-bg-opacity:1;background-color:rgb(238 242 255 / var(--tw-bg-opacity, 1))}.bg-indigo-500{--tw-bg-opacity:1;background-color:rgb(99 102 241 / var(--tw-bg-opacity, 1))}.bg-red-50{--tw-bg-opacity:1;background-color:rgb(254 242 242 / var(--tw-bg-opacity, 1))}.bg-rose-500{--tw-bg-opacity:1;background-color:rgb(244 63 94 / var(--tw-bg-opacity, 1))}.bg-sky-50{--tw-bg-opacity:1;background-color:rgb(240 249 255 / var(--tw-bg-opacity, 1))}.bg-teal-50{--tw-bg-opacity:1;background-color:rgb(240 253 250 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-white\/90{background-color:rgb(255 255 255 / 0.9)}.bg-white\/95{background-color:rgb(255 255 255 / 0.95)}.bg-gradient-to-br{background-image:linear-gradient(to bottom right, var(--tw-gradient-stops))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-blue-800{--tw-gradient-from:#1e40af var(--tw-gradient-from-position);--tw-gradient-to:rgb(30 64 175 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-emerald-500{--tw-gradient-from:#10b981 var(--tw-gradient-from-position);--tw-gradient-to:rgb(16 185 129 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-emerald-600{--tw-gradient-from:#059669 var(--tw-gradient-from-position);--tw-gradient-to:rgb(5 150 105 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-indigo-50{--tw-gradient-from:#eef2ff var(--tw-gradient-from-position);--tw-gradient-to:rgb(238 242 255 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-indigo-600{--tw-gradient-from:#4f46e5 var(--tw-gradient-from-position);--tw-gradient-to:rgb(79 70 229 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-red-600{--tw-gradient-from:#dc2626 var(--tw-gradient-from-position);--tw-gradient-to:rgb(220 38 38 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-slate-50{--tw-gradient-from:#f8fafc var(--tw-gradient-from-position);--tw-gradient-to:rgb(248 250 252 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.via-blue-600{--tw-gradient-to:rgb(37 99 235 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), #2563eb var(--tw-gradient-via-position), var(--tw-gradient-to)}.via-white{--tw-gradient-to:rgb(255 255 255 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), #fff var(--tw-gradient-via-position), var(--tw-gradient-to)}.to-indigo-50{--tw-gradient-to:#eef2ff var(--tw-gradient-to-position)}.to-rose-600{--tw-gradient-to:#e11d48 var(--tw-gradient-to-position)}.to-sky-500{--tw-gradient-to:#0ea5e9 var(--tw-gradient-to-position)}.to-teal-500{--tw-gradient-to:#14b8a6 var(--tw-gradient-to-position)}.to-teal-600{--tw-gradient-to:#0d9488 var(--tw-gradient-to-position)}.to-violet-50{--tw-gradient-to:#f5f3ff var(--tw-gradient-to-position)}.to-violet-600{--tw-gradient-to:#7c3aed var(--tw-gradient-to-position)}.object-contain{object-fit:contain}.p-0\.5{padding:0.125rem}.p-1{padding:0.25rem}.p-2{padding:0.5rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-1{padding-left:0.25rem;padding-right:0.25rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-3\.5{padding-left:0.875rem;padding-right:0.875rem}.px-4{padding-left:1rem;padding-right:1rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-16{padding-top:4rem;padding-bottom:4rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.pb-28{padding-bottom:7rem}.pt-1{padding-top:0.25rem}.pt-1\.5{padding-top:0.375rem}.pt-2{padding-top:0.5rem}.text-left{text-align:left}.text-center{text-align:center}.text-right{text-align:right}.text-2xl{font-size:1.5rem;line-height:2rem}.text-5xl{font-size:3rem;line-height:1}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-\[8px\]{font-size:8px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-semibold{font-weight:600}.leading-tight{line-height:1.25}.tracking-tight{letter-spacing:-0.025em}.text-amber-600{--tw-text-opacity:1;color:rgb(217 119 6 / var(--tw-text-opacity, 1))}.text-amber-700{--tw-text-opacity:1;color:rgb(180 83 9 / var(--tw-text-opacity, 1))}.text-amber-800{--tw-text-opacity:1;color:rgb(146 64 14 / var(--tw-text-opacity, 1))}.text-blue-100{--tw-text-opacity:1;color:rgb(219 234 254 / var(--tw-text-opacity, 1))}.text-blue-50{--tw-text-opacity:1;color:rgb(239 246 255 / var(--tw-text-opacity, 1))}.text-emerald-400{--tw-text-opacity:1;color:rgb(52 211 153 / var(--tw-text-opacity, 1))}.text-emerald-600{--tw-text-opacity:1;color:rgb(5 150 105 / var(--tw-text-opacity, 1))}.text-emerald-700{--tw-text-opacity:1;color:rgb(4 120 87 / var(--tw-text-opacity, 1))}.text-emerald-800{--tw-text-opacity:1;color:rgb(6 95 70 / var(--tw-text-opacity, 1))}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-gray-900{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.text-indigo-400{--tw-text-opacity:1;color:rgb(129 140 248 / var(--tw-text-opacity, 1))}.text-indigo-600{--tw-text-opacity:1;color:rgb(79 70 229 / var(--tw-text-opacity, 1))}.text-indigo-700{--tw-text-opacity:1;color:rgb(67 56 202 / var(--tw-text-opacity, 1))}.text-indigo-800{--tw-text-opacity:1;color:rgb(55 48 163 / var(--tw-text-opacity, 1))}.text-indigo-900{--tw-text-opacity:1;color:rgb(49 46 129 / var(--tw-text-opacity, 1))}.text-red-600{--tw-text-opacity:1;color:rgb(220 38 38 / var(--tw-text-opacity, 1))}.text-sky-600{--tw-text-opacity:1;color:rgb(2 132 199 / var(--tw-text-opacity, 1))}.text-sky-700{--tw-text-opacity:1;color:rgb(3 105 161 / var(--tw-text-opacity, 1))}.text-teal-600{--tw-text-opacity:1;color:rgb(13 148 136 / var(--tw-text-opacity, 1))}.text-teal-700{--tw-text-opacity:1;color:rgb(15 118 110 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_-4px_14px_rgba\(0\2c 0\2c 0\2c 0\.06\)\]{--tw-shadow:0 -4px 14px rgba(0,0,0,0.06);--tw-shadow-colored:0 -4px 14px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-emerald-200{--tw-shadow-color:#a7f3d0;--tw-shadow:var(--tw-shadow-colored)}.shadow-emerald-300\/40{--tw-shadow-color:rgb(110 231 183 / 0.4);--tw-shadow:var(--tw-shadow-colored)}.shadow-emerald-300\/50{--tw-shadow-color:rgb(110 231 183 / 0.5);--tw-shadow:var(--tw-shadow-colored)}.shadow-indigo-200{--tw-shadow-color:#c7d2fe;--tw-shadow:var(--tw-shadow-colored)}.shadow-indigo-200\/50{--tw-shadow-color:rgb(199 210 254 / 0.5);--tw-shadow:var(--tw-shadow-colored)}.shadow-indigo-300\/50{--tw-shadow-color:rgb(165 180 252 / 0.5);--tw-shadow:var(--tw-shadow-colored)}.shadow-red-200{--tw-shadow-color:#fecaca;--tw-shadow:var(--tw-shadow-colored)}.ring-4{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(4px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.ring-indigo-100{--tw-ring-opacity:1;--tw-ring-color:rgb(224 231 255 / var(--tw-ring-opacity, 1))}.blur-3xl{--tw-blur:blur(64px);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.backdrop-blur{--tw-backdrop-blur:blur(8px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-200{transition-duration:200ms}.duration-500{transition-duration:500ms}.hover\:-translate-y-0\.5:hover{--tw-translate-y:-0.125rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.hover\:border-indigo-300:hover{--tw-border-opacity:1;border-color:rgb(165 180 252 / var(--tw-border-opacity, 1))}.hover\:bg-amber-700:hover{--tw-bg-opacity:1;background-color:rgb(180 83 9 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-200:hover{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-900:hover{--tw-bg-opacity:1;background-color:rgb(17 24 39 / var(--tw-bg-opacity, 1))}.hover\:bg-indigo-50:hover{--tw-bg-opacity:1;background-color:rgb(238 242 255 / var(--tw-bg-opacity, 1))}.hover\:bg-red-100:hover{--tw-bg-opacity:1;background-color:rgb(254 226 226 / var(--tw-bg-opacity, 1))}.hover\:bg-white\/20:hover{background-color:rgb(255 255 255 / 0.2)}.hover\:from-emerald-600:hover{--tw-gradient-from:#059669 var(--tw-gradient-from-position);--tw-gradient-to:rgb(5 150 105 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.hover\:from-emerald-700:hover{--tw-gradient-from:#047857 var(--tw-gradient-from-position);--tw-gradient-to:rgb(4 120 87 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.hover\:from-indigo-700:hover{--tw-gradient-from:#4338ca var(--tw-gradient-from-position);--tw-gradient-to:rgb(67 56 202 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.hover\:from-red-700:hover{--tw-gradient-from:#b91c1c var(--tw-gradient-from-position);--tw-gradient-to:rgb(185 28 28 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.hover\:to-rose-700:hover{--tw-gradient-to:#be123c var(--tw-gradient-to-position)}.hover\:to-teal-600:hover{--tw-gradient-to:#0d9488 var(--tw-gradient-to-position)}.hover\:to-teal-700:hover{--tw-gradient-to:#0f766e var(--tw-gradient-to-position)}.hover\:to-violet-700:hover{--tw-gradient-to:#6d28d9 var(--tw-gradient-to-position)}.hover\:text-gray-600:hover{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.hover\:text-indigo-600:hover{--tw-text-opacity:1;color:rgb(79 70 229 / var(--tw-text-opacity, 1))}.hover\:text-indigo-700:hover{--tw-text-opacity:1;color:rgb(67 56 202 / var(--tw-text-opacity, 1))}.hover\:shadow-lg:hover{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.hover\:shadow-xl:hover{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.focus\:border-indigo-400:focus{--tw-border-opacity:1;border-color:rgb(129 140 248 / var(--tw-border-opacity, 1))}.focus\:border-indigo-500:focus{--tw-border-opacity:1;border-color:rgb(99 102 241 / var(--tw-border-opacity, 1))}.focus\:border-red-500:focus{--tw-border-opacity:1;border-color:rgb(239 68 68 / var(--tw-border-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-indigo-400:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(129 140 248 / var(--tw-ring-opacity, 1))}.focus\:ring-indigo-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(99 102 241 / var(--tw-ring-opacity, 1))}.focus\:ring-red-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(239 68 68 / var(--tw-ring-opacity, 1))}.active\:scale-\[0\.99\]:active{--tw-scale-x:0.99;--tw-scale-y:0.99;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.disabled\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\:opacity-50:disabled{opacity:0.5}@media (min-width: 640px){.sm\:flex-row{flex-direction:row}}@media (min-width: 768px){.md\:inline-flex{display:inline-flex}.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.md\:p-6{padding:1.5rem}}@media (min-width: 1024px){.lg\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}}</style></head>
+<body class="bg-gradient-to-br from-slate-50 via-white to-indigo-50 text-gray-800 min-h-screen">
+
+    <!-- TELA DE LOGIN -->
+    <div id="login-screen" class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+        <div class="absolute -top-24 -left-24 w-72 h-72 bg-indigo-300/30 rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-24 -right-24 w-72 h-72 bg-emerald-300/30 rounded-full blur-3xl"></div>
+        <div class="bg-white/90 backdrop-blur p-8 rounded-3xl shadow-2xl shadow-indigo-200/50 border border-white w-full max-w-md text-center relative">
+            <div class="mb-4">
+                <img src="https://i.ibb.co/hJxqCJK1/IMG-2768.jpg" alt="Ayres Diversões" class="w-36 h-36 mx-auto object-contain rounded-full shadow-lg mb-2 bg-gray-50 ring-4 ring-indigo-100">
+                <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">KidPlay</h1>
+                <p class="text-indigo-600 font-medium text-sm">Ayres Diversões - A alegria de Jesus</p>
+            </div>
+            
+            <form id="login-form" onsubmit="handleCheckPassword(event)" class="space-y-4 text-left">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Senha de Acesso</label>
+                    <input type="password" id="password-input" placeholder="Digite a senha" required="" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition">
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold py-3 rounded-xl transition duration-200 shadow-lg shadow-indigo-300/50 hover:shadow-xl hover:-translate-y-0.5">
+                    Continuar
+                </button>
+            </form>
+
+            <form id="operator-form" onsubmit="handleOperatorLogin(event)" class="space-y-4 text-left hidden">
+                <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 p-3 rounded-xl text-xs mb-2">
+                    <i class="fa-solid fa-circle-check mr-1"></i> Senha correta! Agora informe quem está operando.
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Seu Nome (Operador(a))</label>
+                    <input type="text" id="operator-name-input" placeholder="Ex: João / Maria" required="" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition">
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-3 rounded-xl transition duration-200 shadow-lg shadow-emerald-300/50 hover:shadow-xl hover:-translate-y-0.5">
+                    Entrar no Sistema
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- TELA PRINCIPAL -->
+    <div id="app-screen" class="min-h-screen flex flex-col hidden">
+        <header class="bg-gradient-to-r from-blue-800 via-blue-600 to-sky-500 text-white shadow-lg px-4 py-3 flex justify-between items-center sticky top-0 z-30">
+            <div class="flex items-center space-x-3 min-w-0">
+                <img src="https://i.ibb.co/hJxqCJK1/IMG-2768.jpg" alt="Logo" class="w-11 h-11 object-contain bg-white rounded-full p-0.5 shadow-md shrink-0">
+                <div class="min-w-0">
+                    <span class="text-lg font-bold block leading-tight tracking-tight truncate">Ayres Diversões</span>
+                    <span class="text-[11px] text-blue-100 block truncate">Operador(a): <strong id="display-operator-name" class="font-semibold">Jocecino</strong></span>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+                <span id="sync-status" class="text-xs text-blue-50 hidden md:inline-flex items-center gap-1"><i class="fa-solid fa-circle text-emerald-400 text-[8px]"></i> Sincronizado</span>
+                <button id="refresh-btn" onclick="manualRefresh()" title="Atualizar agora" class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/20 transition">
+                    <svg id="refresh-ico" viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"></path><path d="M21 3v6h-6"></path></svg>
+                </button>
+                <button onclick="handleLogout()" class="px-2 py-2 rounded-lg text-sm font-semibold hover:bg-white/20 transition">Sair</button>
+            </div>
+        </header>
+
+        <main class="flex-1 max-w-6xl w-full mx-auto p-4 md:p-6 pb-28">
+          <!-- CONTAINER DE ALERTAS DE TEMPO ESGOTADO (fora das telas, aparece em qualquer uma) -->
+          <div id="global-alerts-container" class="space-y-3 mb-4"></div>
+
+          <div id="view-principal" class="space-y-4">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-900 tracking-tight">Painel de Controle</h2>
+                <p class="text-sm text-gray-500">Tarifa: R$ 1,50 por minuto (por criança)</p>
+            </div>
+            <button onclick="openModal()" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white py-3 rounded-2xl font-bold text-base shadow-lg shadow-emerald-300/40 hover:shadow-xl active:scale-[0.99] transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-plus"></i><span>Nova Entrada</span>
+            </button>
+            <p class="text-gray-500 text-sm"><span class="mr-1">🤸</span>Brincando agora: <strong id="playing-now" class="text-gray-800">0 crianças</strong></p>
+
+            <div id="sessions-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+
+            <div id="empty-state" class="text-center py-16">
+                <i class="fa-solid fa-clipboard-list text-gray-300 text-5xl mb-3"></i>
+                <p class="text-gray-500 font-medium">Nenhuma criança registrada no momento.</p>
+            </div>
+          </div>
+
+        </main>
+
+        <!-- BARRA DE ABAS (embaixo). Editar só aparece para o perfil Admin. -->
+        <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur border-t border-gray-200 shadow-[0_-4px_14px_rgba(0,0,0,0.06)] z-40 flex justify-around items-center px-2 pt-1.5" style="padding-bottom: max(8px, env(safe-area-inset-bottom));">
+            <button id="tab-principal" onclick="goToPrincipal()" class="tab-btn is-active flex flex-col items-center gap-0.5 flex-1 py-1 text-[11px]">
+                <span class="tab-ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"></rect><rect x="14" y="3" width="7" height="5" rx="1.5"></rect><rect x="14" y="12" width="7" height="9" rx="1.5"></rect><rect x="3" y="16" width="7" height="5" rx="1.5"></rect></svg></span><span>Principal</span>
+            </button>
+            <button id="tab-relatorio" onclick="openTab('relatorio')" class="tab-btn flex flex-col items-center gap-0.5 flex-1 py-1 text-[11px]">
+                <span class="tab-ico"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"></path><path d="M8 17v-6"></path><path d="M13 17V7"></path><path d="M18 17v-4"></path></svg></span><span>Relatório</span>
+            </button>
+            <button id="tab-editar" onclick="openTab('editar')" class="tab-btn admin-only flex flex-col items-center gap-0.5 flex-1 py-1 text-[11px]">
+                <span class="tab-ico"><svg viewBox="0 0 24 24"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"></path></svg></span><span>Editar</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- MODAL: EDITAR REGISTROS JÁ SALVOS (admin) -->
+    <div id="edit-records-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="card-anim bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="text-xl font-extrabold text-gray-900 tracking-tight">Editar Registros</h3>
+                <button onclick="goToPrincipal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <p class="text-xs text-gray-500 mb-3">Corrija ou exclua um lançamento já salvo (valor errado, nome errado...). Mostra os 50 mais recentes; use a busca para achar outro. Crianças ainda em andamento se editam pelo lápis no card da tela Principal.</p>
+            <input type="text" id="edit-records-search" placeholder="Buscar por nome, referência ou telefone..." oninput="renderEditRecordsList()" class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none transition mb-3">
+            <div id="edit-records-list" class="space-y-2 max-h-[55vh] overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <!-- MODAL: EDITAR UM REGISTRO -->
+    <div id="edit-one-record-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4 z-[60]">
+        <div class="card-anim bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 relative max-h-[90vh] overflow-y-auto">
+            <h3 class="text-lg font-bold text-gray-900 mb-3">Editar Registro</h3>
+            <div class="space-y-2.5 text-sm">
+                <div><label class="block text-xs font-medium text-gray-600 mb-1">Nome</label>
+                    <input type="text" id="er-name" class="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="block text-xs font-medium text-gray-600 mb-1">Data</label>
+                        <input type="date" id="er-date" class="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></div>
+                    <div><label class="block text-xs font-medium text-gray-600 mb-1">Hora</label>
+                        <input type="time" id="er-time" class="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></div>
+                </div>
+                <div><label class="block text-xs font-medium text-gray-600 mb-1">Referência/Responsável</label>
+                    <input type="text" id="er-reference" class="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></div>
+                <div><label class="block text-xs font-medium text-gray-600 mb-1">Telefone</label>
+                    <input type="tel" id="er-phone" maxlength="15" oninput="maskPhoneInput(this)" class="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="block text-xs font-medium text-gray-600 mb-1">Qtd</label>
+                        <input type="number" id="er-qty" min="1" class="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></div>
+                    <div><label class="block text-xs font-medium text-gray-600 mb-1">Minutos</label>
+                        <input type="number" id="er-minutes" min="0" class="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="block text-xs font-medium text-gray-600 mb-1">Pix (R$)</label>
+                        <input type="number" step="0.01" id="er-pix" oninput="recalcEditRecordTotal()" class="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></div>
+                    <div><label class="block text-xs font-medium text-gray-600 mb-1">Dinheiro (R$)</label>
+                        <input type="number" step="0.01" id="er-dinheiro" oninput="recalcEditRecordTotal()" class="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></div>
+                    <div><label class="block text-xs font-medium text-gray-600 mb-1">Débito (R$)</label>
+                        <input type="number" step="0.01" id="er-debito" oninput="recalcEditRecordTotal()" class="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></div>
+                    <div><label class="block text-xs font-medium text-gray-600 mb-1">Crédito (R$)</label>
+                        <input type="number" step="0.01" id="er-credito" oninput="recalcEditRecordTotal()" class="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></div>
+                </div>
+                <p class="text-xs text-gray-500">Total: <strong id="er-total-display" class="text-indigo-600">R$ 0,00</strong> (soma dos valores acima)</p>
+            </div>
+            <div class="flex gap-2 mt-4">
+                <button type="button" onclick="deleteEditingRecord()" title="Excluir registro" class="px-3.5 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl font-semibold text-sm transition"><i class="fa-solid fa-trash"></i></button>
+                <button type="button" onclick="closeEditOneRecordModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition">Cancelar</button>
+                <button type="button" id="er-save-btn" onclick="saveEditingRecord()" class="flex-1 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold py-2.5 rounded-xl shadow-md transition disabled:opacity-50">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE NOVA ENTRADA -->
+    <div id="entry-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="card-anim bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-md p-6 relative max-h-[90vh] overflow-y-auto">
+            <h3 class="text-xl font-extrabold text-gray-900 mb-4 tracking-tight">Registrar Entrada</h3>
+            <form id="entry-form" onsubmit="addSession(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Celular (Opcional - Busca Cliente)</label>
+                    <input type="tel" id="child-phone" placeholder="(00) 00000-0000" maxlength="15" oninput="maskPhoneInput(this); searchClientByPhone(this.value)" class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition">
+                    <div id="client-feedback" class="text-xs font-semibold mt-1 hidden"></div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nome de Referência (Responsável)</label>
+                    <input type="text" id="child-reference" required="" placeholder="Ex: Maria (Mãe)" class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nome da Criança</label>
+                    <input type="text" id="child-name" required="" placeholder="Ex: Joãozinho" class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition">
+                </div>
+                <div>
+                    <label class="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
+                        Pacote de Tempo (opcional - preenche automático)
+                        <button type="button" onclick="togglePackageInfo()" title="Ver tabela de bônus" class="text-indigo-400 hover:text-indigo-700 shrink-0"><i class="fa-solid fa-circle-info"></i></button>
+                    </label>
+                    <div id="package-info-table" class="hidden mb-2 bg-indigo-50 border border-indigo-200 rounded-xl p-3 text-xs space-y-1.5">
+                        <p class="font-bold text-indigo-800 mb-1"><i class="fa-solid fa-gift mr-1"></i>Tabela de Pacotes</p>
+                        <div class="flex justify-between"><span class="text-gray-700">10 min — <strong class="text-emerald-700">R$ 15</strong></span><span class="text-gray-500">Sem bônus</span></div>
+                        <div class="flex justify-between"><span class="text-gray-700">20 min — <strong class="text-emerald-700">R$ 30</strong></span><span class="text-gray-500">Sem bônus</span></div>
+                        <div class="flex justify-between"><span class="text-gray-700">30 min — <strong class="text-emerald-700">R$ 45</strong></span><span class="text-gray-500">Bônus fixo: +10min</span></div>
+                        <p class="text-indigo-600 pt-1 border-t border-indigo-200">Valor final = preço × quantidade de crianças.</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <button type="button" onclick="selectPackage(0, this)" class="package-btn bg-gray-50 hover:bg-indigo-50 hover:border-indigo-300 border border-gray-200 rounded-xl py-2.5 font-semibold text-gray-700 transition hover:-translate-y-0.5">10 min<br><span class="text-emerald-600">R$ 15</span></button>
+                        <button type="button" onclick="selectPackage(1, this)" class="package-btn bg-gray-50 hover:bg-indigo-50 hover:border-indigo-300 border border-gray-200 rounded-xl py-2.5 font-semibold text-gray-700 transition hover:-translate-y-0.5">20 min<br><span class="text-emerald-600">R$ 30</span></button>
+                        <button type="button" onclick="selectPackage(2, this)" class="package-btn bg-gray-50 hover:bg-indigo-50 hover:border-indigo-300 border border-gray-200 rounded-xl py-2.5 font-semibold text-gray-700 transition hover:-translate-y-0.5">30+10 bônus<br><span class="text-emerald-600">R$ 45</span></button>
+                        <button type="button" onclick="selectPackage(null, this)" class="package-btn bg-gray-50 hover:bg-gray-200 border border-gray-200 rounded-xl py-2.5 font-semibold text-gray-500 transition hover:-translate-y-0.5">Personalizado</button>
+                    </div>
+                    <p id="package-note" class="text-xs text-indigo-600 mt-1.5 hidden"></p>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Qtd Crianças</label>
+                        <input type="number" id="child-qty" min="1" value="1" required="" oninput="refreshPackageNote()" class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Minutos (Meta)</label>
+                        <input type="number" id="time-limit" min="1" placeholder="Ex: 15 (Opcional)" class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition">
+                    </div>
+                </div>
+
+                <!-- ALERTA DE BRINDE DE 10 VISITAS -->
+                <div id="loyalty-bonus-box" class="hidden bg-amber-50 border border-amber-300 p-3 rounded-lg text-xs space-y-2">
+                    <div class="flex items-center text-amber-800 font-bold">
+                        <i class="fa-solid fa-gift mr-1.5 text-base text-amber-600"></i>
+                        <span>Cliente Fiel! Atingiu 10 Participações!</span>
+                    </div>
+                    <p class="text-amber-700">Deseja aplicar o brinde de <strong>10 minutos grátis</strong>? (Isso abaterá 10 participações do saldo do cliente).</p>
+                    <button type="button" onclick="applyBonusMinutes()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 py-1.5 rounded transition">
+                        Aplicar +10 Minutos Grátis
+                    </button>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Status de Pagamento Inicial</label>
+                    <select id="initial-pay-status" onchange="toggleInitialPaymentFields()" class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition bg-white">
+                        <option value="Pendente">Pagar ao Sair / Futuro</option>
+                        <option value="Pago">Já Pagou Agora</option>
+                    </select>
+                </div>
+                <div id="initial-payment-details" class="hidden space-y-3 bg-gray-50 p-3 rounded-xl border border-gray-200">
+                    <p class="text-xs font-bold text-gray-600">Formas de Pagamento:</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[11px] text-gray-500">Pix (R$)</label>
+                            <input type="number" step="0.01" id="init-pix" placeholder="0.00" oninput="calcInitTotal()" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 focus:outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-gray-500">Dinheiro (R$)</label>
+                            <input type="number" step="0.01" id="init-dinheiro" placeholder="0.00" oninput="calcInitTotal()" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 focus:outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-gray-500">Débito (R$)</label>
+                            <input type="number" step="0.01" id="init-debito" placeholder="0.00" oninput="calcInitTotal()" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 focus:outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-gray-500">Crédito (R$)</label>
+                            <input type="number" step="0.01" id="init-credito" placeholder="0.00" oninput="calcInitTotal()" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 focus:outline-none transition">
+                        </div>
+                    </div>
+                    <div class="text-right text-xs font-bold text-emerald-600 pt-1">Total Pago: R$ <span id="init-total-display">0.00</span></div>
+                </div>
+                <div class="flex space-x-3 pt-2">
+                    <button type="button" onclick="closeModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition transition">Cancelar</button>
+                    <button type="submit" id="entry-confirm-btn" class="w-1/2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-indigo-200 hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed">Salvar Entrada</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE ADICIONAR MAIS TEMPO -->
+    <div id="add-time-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="card-anim bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-sm p-6 relative">
+            <h3 class="text-lg font-extrabold text-gray-900 mb-3 tracking-tight">Adicionar Mais Tempo</h3>
+            <p class="text-sm text-gray-500 mb-4">Quantos minutos deseja acrescentar para <strong id="add-time-child-name"></strong>?</p>
+            <div class="space-y-3">
+                <input type="number" id="extra-minutes-input" min="1" value="10" class="w-full px-4 py-2 border border-gray-300 rounded-lg text-center font-bold text-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                <div class="flex space-x-3">
+                    <button type="button" onclick="closeAddTimeModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition">Cancelar</button>
+                    <button type="button" onclick="confirmAddTime()" class="w-1/2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-indigo-200 hover:shadow-lg transition">Adicionar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE EDITAR DADOS DA CRIANÇA (referência, telefone e quantidade - mesmo com o tempo já rolando) -->
+    <div id="edit-session-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="card-anim bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-sm p-6 relative">
+            <h3 class="text-xl font-extrabold text-gray-900 mb-1 tracking-tight">Editar dados</h3>
+            <p id="edit-session-subtitle" class="text-sm text-gray-500 mb-4"></p>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Nome da Criança</label>
+                    <input type="text" id="edit-session-name" placeholder="Nome da criança" class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Nome de Referência (Responsável)</label>
+                    <input type="text" id="edit-session-reference" placeholder="Ex: Maria (Mãe)" class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Celular</label>
+                    <input type="tel" id="edit-session-phone" placeholder="(00) 00000-0000" maxlength="15" oninput="maskPhoneInput(this)" class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Qtd Crianças</label>
+                    <input type="number" id="edit-session-qty" min="1" class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition text-center font-bold text-lg">
+                </div>
+                <p id="edit-session-qty-note" class="text-xs text-indigo-600 hidden"></p>
+                <div class="flex space-x-3 pt-1">
+                    <button type="button" onclick="closeEditSessionModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition">Cancelar</button>
+                    <button type="button" onclick="confirmEditSessionModal()" class="w-1/2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-indigo-200 hover:shadow-lg transition">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE PAGAMENTO INTERMEDIÁRIO -->
+    <div id="midway-pay-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="card-anim bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-md p-6 relative">
+            <h3 class="text-xl font-extrabold text-gray-900 mb-1 tracking-tight">Registrar Pagamento Parcial</h3>
+            <p id="midway-pay-subtitle" class="text-sm text-gray-500 mb-4"></p>
+            <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-3 bg-gray-50 p-3 rounded-xl border">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Pix (R$)</label>
+                        <input type="number" step="0.01" id="mid-pix" placeholder="0.00" oninput="calcMidTotal()" class="w-full px-3 py-2 border rounded-lg text-sm font-bold">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Dinheiro (R$)</label>
+                        <input type="number" step="0.01" id="mid-dinheiro" placeholder="0.00" oninput="calcMidTotal()" class="w-full px-3 py-2 border rounded-lg text-sm font-bold">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Débito (R$)</label>
+                        <input type="number" step="0.01" id="mid-debito" placeholder="0.00" oninput="calcMidTotal()" class="w-full px-3 py-2 border rounded-lg text-sm font-bold">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Crédito (R$)</label>
+                        <input type="number" step="0.01" id="mid-credito" placeholder="0.00" oninput="calcMidTotal()" class="w-full px-3 py-2 border rounded-lg text-sm font-bold">
+                    </div>
+                </div>
+                <div class="flex justify-between items-center px-1">
+                    <span class="text-sm font-medium text-gray-700">Total Pago Agora:</span>
+                    <span id="mid-total-display" class="text-xl font-extrabold text-emerald-600">R$ 0,00</span>
+                </div>
+                <div class="flex space-x-3 pt-2">
+                    <button type="button" onclick="closeMidwayModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition">Cancelar</button>
+                    <button type="button" id="midway-confirm-btn" onclick="confirmMidwayPayment()" class="w-1/2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-emerald-200 hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed">Confirmar e Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE CANCELAMENTO -->
+    <div id="cancel-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="card-anim bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-sm p-6 relative">
+            <h3 class="text-lg font-extrabold text-red-600 mb-2 tracking-tight">Cancelar Atendimento</h3>
+            <p class="text-sm text-gray-500 mb-3">Informe o motivo do cancelamento para <strong id="cancel-child-name"></strong>:</p>
+            <div class="space-y-3">
+                <textarea id="cancel-reason-input" rows="3" placeholder="Ex: Criança passou mal, desistiu, etc." class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 focus:outline-none transition"></textarea>
+                <div class="flex space-x-3">
+                    <button type="button" onclick="closeCancelModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition">Voltar</button>
+                    <button type="button" id="cancel-confirm-btn" onclick="confirmCancelSession()" class="w-1/2 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-red-200 hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE SAÍDA E PAGAMENTO -->
+    <div id="checkout-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="card-anim bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-md p-6 relative">
+            <h3 class="text-xl font-extrabold text-gray-900 mb-2 tracking-tight">Finalizar Brinquedo</h3>
+            <p id="checkout-summary" class="text-sm text-gray-500 mb-4"></p>
+            
+            <form onsubmit="confirmCheckout(event)" class="space-y-4">
+                <div class="bg-gray-50 p-3 rounded-xl border space-y-2">
+                    <p class="text-xs font-bold text-gray-700">Formas de Pagamento (Neste acerto final):</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[11px] text-gray-500">Pix (R$)</label>
+                            <input type="number" step="0.01" id="out-pix" placeholder="0.00" oninput="calcOutTotal()" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 focus:outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-gray-500">Dinheiro (R$)</label>
+                            <input type="number" step="0.01" id="out-dinheiro" placeholder="0.00" oninput="calcOutTotal()" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 focus:outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-gray-500">Débito (R$)</label>
+                            <input type="number" step="0.01" id="out-debito" placeholder="0.00" oninput="calcOutTotal()" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 focus:outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-gray-500">Crédito (R$)</label>
+                            <input type="number" step="0.01" id="out-credito" placeholder="0.00" oninput="calcOutTotal()" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 focus:outline-none transition">
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center px-1">
+                    <span class="text-sm font-medium text-gray-700">Total a Pagar Agora:</span>
+                    <span id="out-total-display" class="text-xl font-extrabold text-emerald-600">R$ 0,00</span>
+                </div>
+                <div class="flex space-x-3 pt-2">
+                    <button type="button" onclick="closeCheckoutModal()" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition">Cancelar</button>
+                    <button type="submit" id="checkout-confirm-btn" class="w-1/2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-emerald-200 hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed">Confirmar e Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE FECHAMENTO -->
+    <div id="cash-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="card-anim bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="report-title" class="text-xl font-extrabold text-gray-900 tracking-tight">Relatórios</h3>
+                <div class="flex items-center gap-3">
+                    <button onclick="openCashModal()" title="Atualizar dados da planilha" class="text-gray-400 hover:text-indigo-600"><i class="fa-solid fa-rotate"></i></button>
+                    <button onclick="closeCashModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <!-- Abas de período -->
+                <div class="bg-gray-100 p-1 rounded-full flex text-sm font-semibold">
+                    <button type="button" onclick="setReportPeriod('hoje')" id="period-tab-hoje" class="flex-1 py-2 rounded-full transition">Hoje</button>
+                    <button type="button" onclick="setReportPeriod('semana')" id="period-tab-semana" class="flex-1 py-2 rounded-full transition">Semana</button>
+                    <button type="button" onclick="setReportPeriod('mes')" id="period-tab-mes" class="flex-1 py-2 rounded-full transition">Mês</button>
+                </div>
+
+                <!-- Data específica: só faz sentido dentro da aba "Hoje" (pra conferir um dia passado) -->
+                <div id="report-date-picker-wrap">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Escolher Data:</label>
+                    <input type="date" id="report-date-input" onchange="renderCashReport()" class="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition bg-gray-50 font-medium">
+                </div>
+                <p id="report-range-label" class="text-xs text-gray-500 -mt-2"></p>
+
+                <div class="money-only bg-gradient-to-r from-indigo-50 to-violet-50 p-4 rounded-2xl border border-indigo-100 flex justify-between items-center">
+                    <span id="cash-total-label" class="font-medium text-indigo-900">Faturamento (Hoje):</span>
+                    <span id="cash-total" class="text-2xl font-extrabold text-indigo-600">R$ 0,00</span>
+                </div>
+
+                <!-- KPIs de atendimento (todos os perfis, sem valores) -->
+                <div class="grid grid-cols-3 gap-2 text-center">
+                    <div class="bg-indigo-50 p-3 rounded-2xl border border-indigo-100">
+                        <span class="text-[11px] text-indigo-700 font-semibold block">Atendimentos</span>
+                        <span id="cash-atend" class="text-xl font-extrabold text-indigo-600">0</span>
+                    </div>
+                    <div class="bg-sky-50 p-3 rounded-2xl border border-sky-100">
+                        <span class="text-[11px] text-sky-700 font-semibold block">Crianças</span>
+                        <span id="cash-children" class="text-xl font-extrabold text-sky-600">0</span>
+                    </div>
+                    <div class="bg-amber-50 p-3 rounded-2xl border border-amber-100">
+                        <span class="text-[11px] text-amber-700 font-semibold block">Minutos</span>
+                        <span id="cash-minutes" class="text-xl font-extrabold text-amber-600">0 min</span>
+                    </div>
+                </div>
+                <div class="money-only bg-teal-50 p-3 rounded-2xl border border-teal-100 flex justify-between items-center">
+                    <span class="text-[11px] text-teal-700 font-semibold"><i class="fa-solid fa-receipt mr-1"></i>Ticket Médio</span>
+                    <span id="cash-avg" class="text-lg font-extrabold text-teal-600">R$ 0,00</span>
+                </div>
+
+                <!-- Gráfico de formas de pagamento -->
+                <div class="money-only bg-gray-50 p-4 rounded-2xl border border-gray-200 flex flex-col sm:flex-row items-center gap-5">
+                    <div class="relative w-28 h-28 shrink-0">
+                        <div id="cash-donut" class="w-28 h-28 rounded-full transition-all duration-500" style="background: conic-gradient(#e5e7eb 0deg 360deg);"></div>
+                        <div class="absolute inset-2.5 bg-gray-50 rounded-full flex flex-col items-center justify-center">
+                            <span id="cash-donut-count" class="text-xl font-extrabold text-gray-800">0</span>
+                            <span class="text-[10px] text-gray-400 font-medium -mt-0.5">atend.</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 w-full space-y-2 text-sm">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-indigo-500 shrink-0"></span>
+                            <span class="text-gray-600 flex-1">Pix</span>
+                            <strong id="total-pix" class="text-gray-800">R$ 0,00</strong>
+                            <span id="pct-pix" class="text-gray-400 w-10 text-right text-xs">0%</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
+                            <span class="text-gray-600 flex-1">Espécie</span>
+                            <strong id="total-dinheiro" class="text-gray-800">R$ 0,00</strong>
+                            <span id="pct-dinheiro" class="text-gray-400 w-10 text-right text-xs">0%</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0"></span>
+                            <span class="text-gray-600 flex-1">Débito</span>
+                            <strong id="total-debito" class="text-gray-800">R$ 0,00</strong>
+                            <span id="pct-debito" class="text-gray-400 w-10 text-right text-xs">0%</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-rose-500 shrink-0"></span>
+                            <span class="text-gray-600 flex-1">Crédito</span>
+                            <strong id="total-credito" class="text-gray-800">R$ 0,00</strong>
+                            <span id="pct-credito" class="text-gray-400 w-10 text-right text-xs">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-gray-700 text-sm mb-2">Atendimentos no Período:</h4>
+                    <div id="history-list" class="max-h-48 overflow-y-auto space-y-2 border rounded-lg p-2 text-sm bg-gray-50"></div>
+                </div>
+            </div>
+
+            <div class="mt-5 space-y-2">
+                <div class="money-only flex gap-2">
+                    <button onclick="exportCashReportToWhatsApp('resumo')" class="w-1/2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-emerald-200 hover:shadow-lg transition flex items-center justify-center space-x-2">
+                        <i class="fa-brands fa-whatsapp"></i>
+                        <span>Resumo</span>
+                    </button>
+                    <button onclick="exportCashReportToWhatsApp('completo')" class="w-1/2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-emerald-200 hover:shadow-lg transition flex items-center justify-center space-x-2">
+                        <i class="fa-brands fa-whatsapp"></i>
+                        <span>Completo</span>
+                    </button>
+                </div>
+                <button onclick="closeCashModal()" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-semibold py-2.5 rounded-xl transition">Fechar Janela</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT -->
+    <script>
+        const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxl9tOw4Kk_F2uLcMKETLXUSmdl0dWR103sKaHEtboevjqZmeErFQr82QqZc2ILMF_f/exec";
+        
+        let sessions = JSON.parse(localStorage.getItem('kidplay_sessions') || '[]');
+        let history = [];
+        // Lembra se este aparelho já conseguiu sincronizar com a nuvem alguma vez (mesmo em
+        // outro dia). Só serve pra distinguir "é a primeira vez que este app roda, antes
+        // de qualquer sincronização, e preciso mandar o que já tinha salvo local" de "a
+        // nuvem está vazia porque outro operador já finalizou tudo" - ver loadHistoryFromCloud.
+        let hasSyncedSessionsBefore = localStorage.getItem('kidplay_has_synced_sessions') === '1';
+        let bonusAppliedPhones = JSON.parse(localStorage.getItem('kidplay_bonus_phones') || '{}');
+        let currentOperator = localStorage.getItem('kidplay_operator') || '';
+        let currentRole = localStorage.getItem('kidplay_role') || '';
+        let pendingRole = null; // guarda o perfil entre a tela de senha e a tela de nome do operador
+        let currentCheckoutId = null;
+        let currentAddTimeId = null;
+        let currentMidwayId = null;
+        let currentCancelId = null;
+        const RATE_PER_MINUTE = 1.50;
+
+        // Pacotes de tempo pré-definidos. O bônus (minutos extras grátis) pode ser
+        // fixo ou variar pela quantidade de crianças (bonusByQty). O timeLimit da
+        // sessão vira minutes+bônus, mas o valor cobrado fica travado em "price"
+        // (por criança - é multiplicado pela Qtd em computeLockedCost).
+        const TIME_PACKAGES = [
+            { minutes: 10, price: 15, bonus: 0 },
+            { minutes: 20, price: 30, bonus: 0 },
+            { minutes: 30, price: 45, bonus: 10 } // bônus fixo, não varia pela quantidade
+        ];
+        let selectedPackagePrice = null;
+        let selectedPackageIndex = null;
+
+        // Calcula o bônus de um pacote para uma certa quantidade de crianças.
+        // Se a quantidade for maior que a maior definida na tabela (ex: 4+),
+        // usa o bônus da maior quantidade cadastrada (hoje, a de 3 crianças).
+        function togglePackageInfo() {
+            document.getElementById('package-info-table').classList.toggle('hidden');
+        }
+
+        function getPackageBonus(pkg, qty) {
+            if (typeof pkg.bonus === 'number') return pkg.bonus;
+            if (pkg.bonusByQty) {
+                if (pkg.bonusByQty[qty] !== undefined) return pkg.bonusByQty[qty];
+                const definedQtys = Object.keys(pkg.bonusByQty).map(Number);
+                const maxDefinedQty = Math.max(...definedQtys);
+                return qty > maxDefinedQty ? pkg.bonusByQty[maxDefinedQty] : 0;
+            }
+            return 0;
+        }
+
+        // Se a sessão tem um pacote com preço travado, usa ele sempre - não importa
+        // quanto tempo passou nem quantos minutos de bônus foram dados no alarme
+        // (+2min/+5min). Sem pacote, cai no cálculo antigo por minuto.
+        function computeLockedCost(session, fallbackMinutes) {
+            if (typeof session.packagePrice === 'number' && !isNaN(session.packagePrice)) {
+                return session.packagePrice * session.qty;
+            }
+            // Tempo livre com meta definida (ex: 5 min): trava o valor na meta.
+            // Sem isso, o valor continuava subindo com o tempo real (inclusive
+            // durante o bônus de tempo esgotado), quando deveria congelar assim
+            // como já acontece com os pacotes.
+            const minutesForCost = (session.timeLimit !== null && session.timeLimit !== undefined)
+                ? Math.min(fallbackMinutes, session.timeLimit)
+                : fallbackMinutes;
+            return minutesForCost * RATE_PER_MINUTE * session.qty;
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (currentOperator) {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('app-screen').classList.remove('hidden');
+                document.getElementById('display-operator-name').innerText = currentOperator;
+                applyRoleUI();
+            }
+            loadHistoryFromCloud();
+            renderSessions();
+        });
+
+        // Mostra/esconde o que é só de admin (abas Editar Registros e Histórico) e
+        // atualiza o selo de perfil no cabeçalho.
+        function applyRoleUI() {
+            const isAdmin = currentRole === 'admin';
+            document.querySelectorAll('.admin-only').forEach(el => el.classList.toggle('hidden', !isAdmin));
+            // Funcionário não vê valores nos relatórios (ver .money-only no CSS)
+            document.body.classList.toggle('staff-view', !isAdmin);
+            const title = document.getElementById('report-title');
+            if (title) title.innerText = isAdmin ? 'Relatórios' : 'Atendimentos por Período';
+        }
+
+        function manualRefresh() {
+            const ico = document.getElementById('refresh-ico');
+            if (ico) ico.classList.add('animate-spin');
+            Promise.resolve(loadHistoryFromCloud()).then(() => {
+                renderSessions();
+                if (ico) setTimeout(() => ico.classList.remove('animate-spin'), 400);
+            });
+        }
+
+        let lastCloudSyncError = null;
+        let lastCashReport = null;
+
+        // Soma das 4 formas de pagamento de um registro (fonte de verdade do valor recebido),
+        // arredondada em centavos para evitar erros de ponto flutuante (ex: 0.1 + 0.2).
+        function paymentSum(item) {
+            const v = (Number(item.pix) || 0) + (Number(item.dinheiro) || 0)
+                    + (Number(item.debito) || 0) + (Number(item.credito) || 0);
+            return Math.round(v * 100) / 100;
+        }
+
+        function formatBRL(value) {
+            const n = Number(value) || 0;
+            return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        // Para spans onde o "R$" já é texto fixo no HTML - aqui só formata o número com vírgula.
+        function formatNumberBRL(value) {
+            const n = Number(value) || 0;
+            return n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        // Aplica máscara de telefone BR enquanto digita: (00) 00000-0000 (celular com 9º dígito)
+        // ou (00) 0000-0000 (fixo/sem 9º dígito), sem travar quem cola um número já formatado.
+        function maskPhoneInput(inputEl) {
+            let digits = inputEl.value.replace(/\D/g, '').slice(0, 11);
+
+            if (digits.length > 10) {
+                inputEl.value = digits.replace(/^(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3').trim().replace(/-$/, '');
+            } else if (digits.length > 6) {
+                inputEl.value = digits.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3').trim().replace(/-$/, '');
+            } else if (digits.length > 2) {
+                inputEl.value = digits.replace(/^(\d{2})(\d{0,5})/, '($1) $2').trim();
+            } else if (digits.length > 0) {
+                inputEl.value = `(${digits}`;
+            } else {
+                inputEl.value = '';
+            }
+        }
+
+        // Gera um ID único por registro. Vai junto no envio pra planilha, e o Apps Script
+        // usa ele pra não gravar a mesma linha duas vezes se o app reenviar por causa de
+        // internet lenta/instável (a resposta se perde, mas o registro já tinha chegado).
+        function generateRecordId() {
+            if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+                return window.crypto.randomUUID();
+            }
+            return Date.now() + '-' + Math.random().toString(36).slice(2, 10);
+        }
+
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function normalizeHistoryItem(item) {
+            let rawDate = String(item.date || '').trim();
+            if (rawDate.includes('T')) {
+                rawDate = rawDate.split('T')[0];
+            }
+            // Corrige datas vindas em formato BR (dd/mm/aaaa) da planilha
+            const brMatch = rawDate.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+            if (brMatch) {
+                rawDate = `${brMatch[3]}-${brMatch[2].padStart(2,'0')}-${brMatch[1].padStart(2,'0')}`;
+            }
+
+            let rawTime = String(item.time || '').trim();
+            if (rawTime.includes('T')) {
+                // Fallback caso a hora venha como um valor de Data/Hora completo (ISO)
+                const timePart = rawTime.split('T')[1] || '';
+                rawTime = timePart.substring(0, 5);
+            }
+
+            return {
+                date: rawDate,
+                time: rawTime,
+                name: item.name || '',
+                qty: Number(item.qty) || 1,
+                reference: item.reference || '',
+                phone: item.phone ? String(item.phone).replace(/\D/g, '') : '',
+                minutes: Number(item.minutes) || 0,
+                referenceTotal: Number(item.referenceTotal) || 0,
+                total: Number(item.total) || 0,
+                pix: Number(item.pix) || 0,
+                dinheiro: Number(item.dinheiro) || 0,
+                debito: Number(item.debito) || 0,
+                credito: Number(item.credito) || 0,
+                method: item.method || '',
+                operator: item.operator || '',
+                recordId: item.recordId ? String(item.recordId) : ''
+            };
+        }
+
+        function loadHistoryFromCloud() {
+            if (!GOOGLE_SHEET_URL) return Promise.resolve();
+            lastCloudSyncError = null;
+            // Cache-buster: evita que o navegador/rede sirva uma resposta antiga em cache
+            // para a mesma URL, o que fazia crianças já finalizadas continuarem aparecendo
+            // em outras telas mesmo depois de sincronizadas.
+            const cacheBustedUrl = GOOGLE_SHEET_URL + (GOOGLE_SHEET_URL.indexOf('?') > -1 ? '&' : '?') + '_cb=' + Date.now();
+            return fetch(cacheBustedUrl, { cache: 'no-store' })
+                .then(res => {
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    return res.json();
+                })
+                .then(data => {
+                    if (data) {
+                        if (typeof data === 'object' && !Array.isArray(data)) {
+                            if (Array.isArray(data.history)) history = data.history.map(normalizeHistoryItem);
+
+                            // Segurança: se "pendingSessionSyncCount" ficar travado em >0 por algum
+                            // motivo (ex: um POST que nunca terminou de verdade), o dispositivo
+                            // pararia de aceitar atualizações de outros operadores PARA SEMPRE -
+                            // crianças já finalizadas em outro aparelho continuariam aparecendo
+                            // aqui como ativas. Depois de 20s, trata como "travado" e ignora.
+                            const sessionSyncStuck = pendingSessionSyncCount > 0 && (Date.now() - pendingSessionSyncSince) > 20000;
+                            if (sessionSyncStuck) pendingSessionSyncCount = 0;
+
+                            if (Array.isArray(data.sessions)) {
+                                if (pendingSessionSyncCount > 0) {
+                                    // Há um envio local (POST) ainda em andamento - não sobrescreve
+                                    // agora com esta resposta, que pode estar desatualizada e apagar
+                                    // um cadastro/alteração recém-feito. O próximo ciclo pega a versão certa.
+                                } else if (!hasSyncedSessionsBefore && data.sessions.length === 0 && sessions.length > 0) {
+                                    // Primeira sincronização DESTE aparelho (nunca sincronizou antes):
+                                    // a nuvem ainda está vazia, então envia as sessões locais em vez
+                                    // de apagá-las. IMPORTANTE: só entra aqui uma vez na vida do
+                                    // aparelho. Sem o "hasSyncedSessionsBefore", um celular com uma
+                                    // sessão antiga guardada no localStorage (ex: criança já
+                                    // finalizada em OUTRO celular, nuvem corretamente vazia) ficava
+                                    // reenviando essa sessão fantasma pra nuvem pra sempre, fazendo
+                                    // ela "ressuscitar" a cada atualização - mesmo no dia seguinte.
+                                    syncSessionsToCloud();
+                                } else {
+                                    sessions = data.sessions;
+                                    localStorage.setItem('kidplay_sessions', JSON.stringify(sessions));
+                                }
+                                hasSyncedSessionsBefore = true;
+                                localStorage.setItem('kidplay_has_synced_sessions', '1');
+                            }
+
+                            if (data.bonusPhones && typeof data.bonusPhones === 'object') {
+                                if (pendingBonusSyncCount > 0) {
+                                    // Envio de bônus em andamento - espera o próximo ciclo.
+                                } else if (!hasSyncedSessionsBefore && Object.keys(data.bonusPhones).length === 0 && Object.keys(bonusAppliedPhones).length > 0) {
+                                    // Mesma regra do "hasSyncedSessionsBefore" acima: só manda o que
+                                    // tinha localmente se este aparelho nunca sincronizou antes.
+                                    syncBonusToCloud();
+                                } else {
+                                    bonusAppliedPhones = data.bonusPhones;
+                                    localStorage.setItem('kidplay_bonus_phones', JSON.stringify(bonusAppliedPhones));
+                                }
+                            }
+                        } 
+                        else if (Array.isArray(data)) {
+                            history = data.map(normalizeHistoryItem);
+                        }
+                    }
+                    renderSessions();
+                    updateSyncStatusUI(true);
+                })
+                .catch(err => {
+                    console.log("Erro ao carregar histórico da nuvem:", err);
+                    lastCloudSyncError = err;
+                    updateSyncStatusUI(false);
+                });
+        }
+
+        function updateSyncStatusUI(ok, pendingCount) {
+            const el = document.getElementById('sync-status');
+            if (!el) return;
+            const pending = typeof pendingCount === 'number' ? pendingCount : JSON.parse(localStorage.getItem('kidplay_pending_history') || '[]').length;
+
+            if (!ok) {
+                el.innerHTML = `<i class="fa-solid fa-circle text-red-400 text-[8px]"></i> Sem conexão`;
+            } else if (pending > 0) {
+                el.innerHTML = `<i class="fa-solid fa-circle text-amber-400 text-[8px]"></i> ${pending} registro(s) pendente(s)`;
+            } else {
+                el.innerHTML = `<i class="fa-solid fa-circle text-emerald-400 text-[8px]"></i> Sincronizado`;
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('kidplay_sessions', JSON.stringify(sessions));
+            syncSessionsToCloud();
+            renderSessions();
+        }
+
+        let pendingSessionSyncCount = 0;
+        let pendingBonusSyncCount = 0;
+        let pendingSessionSyncSince = 0;
+
+        function syncSessionsToCloud() {
+            if (!GOOGLE_SHEET_URL) return;
+            pendingSessionSyncCount++;
+            pendingSessionSyncSince = Date.now();
+            fetch(GOOGLE_SHEET_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ type: "SYNC_SESSIONS", sessions: sessions })
+            })
+                .then(() => {
+                    pendingSessionSyncCount = Math.max(0, pendingSessionSyncCount - 1);
+                })
+                .catch(err => {
+                    console.error("Erro ao sincronizar sessões ativas:", err);
+                    pendingSessionSyncCount = Math.max(0, pendingSessionSyncCount - 1);
+                });
+        }
+
+        function syncBonusToCloud() {
+            if (!GOOGLE_SHEET_URL) return;
+            pendingBonusSyncCount++;
+            fetch(GOOGLE_SHEET_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ type: "SYNC_BONUS", bonusPhones: bonusAppliedPhones })
+            })
+                .then(() => {
+                    pendingBonusSyncCount = Math.max(0, pendingBonusSyncCount - 1);
+                })
+                .catch(err => {
+                    console.error("Erro ao sincronizar brindes de fidelidade:", err);
+                    pendingBonusSyncCount = Math.max(0, pendingBonusSyncCount - 1);
+                });
+        }
+
+        function playAlarmSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                function playBeep(freq, time, duration) {
+                    setTimeout(() => {
+                        const oscillator = audioCtx.createOscillator();
+                        const gainNode = audioCtx.createGain();
+                        oscillator.type = 'sine';
+                        oscillator.frequency.value = freq;
+                        gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioCtx.destination);
+                        oscillator.start();
+                        oscillator.stop(audioCtx.currentTime + duration);
+                    }, time);
+                }
+                playBeep(880, 0, 0.15);
+                playBeep(1100, 200, 0.15);
+                playBeep(880, 400, 0.15);
+                playBeep(1100, 600, 0.15);
+                playBeep(1320, 800, 0.25);
+            } catch (e) {
+                console.log("Áudio bloqueado.");
+            }
+            triggerVibration();
+        }
+
+        function triggerVibration() {
+            // Vibra o celular em sincronia aproximada com os beeps sonoros.
+            // Suportado em navegadores mobile (Chrome/Android). iOS Safari não
+            // suporta a Vibration API, então falha silenciosamente lá.
+            try {
+                if (navigator.vibrate) {
+                    navigator.vibrate([200, 100, 200, 100, 200, 100, 400]);
+                }
+            } catch (e) {
+                console.log("Vibração não suportada neste dispositivo.");
+            }
+        }
+
+        async function handleCheckPassword(event) {
+            event.preventDefault();
+            const pass = document.getElementById('password-input').value;
+            const submitBtn = document.getElementById('login-form').querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verificando...';
+
+            try {
+                const url = GOOGLE_SHEET_URL + '?checkPassword=' + encodeURIComponent(pass) + '&_cb=' + Date.now();
+                const res = await fetch(url, { cache: 'no-store' });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const data = await res.json();
+
+                if (data.valid) {
+                    pendingRole = data.role;
+                    document.getElementById('login-form').classList.add('hidden');
+                    document.getElementById('operator-form').classList.remove('hidden');
+                    document.getElementById('operator-name-input').focus();
+                } else {
+                    alert("Senha incorreta!");
+                    document.getElementById('password-input').value = '';
+                }
+            } catch (err) {
+                console.error("Erro ao verificar senha:", err);
+                alert("Não foi possível verificar a senha agora. Verifique sua internet e tente novamente.");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+            }
+        }
+
+        function handleOperatorLogin(event) {
+            event.preventDefault();
+            const name = document.getElementById('operator-name-input').value.trim();
+            if (!name) return;
+
+            currentOperator = name;
+            currentRole = pendingRole || currentRole || 'funcionario';
+            localStorage.setItem('kidplay_operator', currentOperator);
+            localStorage.setItem('kidplay_role', currentRole);
+
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('app-screen').classList.remove('hidden');
+            document.getElementById('display-operator-name').innerText = currentOperator;
+            applyRoleUI();
+            renderSessions();
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('kidplay_operator');
+            localStorage.removeItem('kidplay_role');
+            currentOperator = '';
+            currentRole = '';
+            document.getElementById('app-screen').classList.add('hidden');
+            document.getElementById('login-screen').classList.remove('hidden');
+            document.getElementById('login-form').classList.remove('hidden');
+            document.getElementById('operator-form').classList.add('hidden');
+            document.getElementById('password-input').value = '';
+            document.getElementById('operator-name-input').value = '';
+        }
+
+        function openModal() {
+            document.getElementById('entry-modal').classList.remove('hidden');
+            document.getElementById('entry-modal').classList.add('flex');
+            document.getElementById('loyalty-bonus-box').classList.add('hidden');
+            document.getElementById('client-feedback').classList.add('hidden');
+            document.getElementById('package-info-table').classList.add('hidden');
+            resetPackageSelection();
+            toggleInitialPaymentFields();
+            const btn = document.getElementById('entry-confirm-btn');
+            if (btn) {
+                btn.disabled = false;
+                btn.innerText = "Salvar Entrada";
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('entry-modal').classList.add('hidden');
+            document.getElementById('entry-modal').classList.remove('flex');
+            document.getElementById('entry-form').reset();
+            document.getElementById('loyalty-bonus-box').classList.add('hidden');
+            document.getElementById('package-info-table').classList.add('hidden');
+            resetPackageSelection();
+        }
+
+        function resetPackageSelection() {
+            selectedPackagePrice = null;
+            selectedPackageIndex = null;
+            document.querySelectorAll('.package-btn').forEach(btn => btn.classList.remove('ring-2', 'ring-indigo-500', 'bg-indigo-50'));
+            const note = document.getElementById('package-note');
+            if (note) note.classList.add('hidden');
+        }
+
+        function selectPackage(index, btnEl) {
+            document.querySelectorAll('.package-btn').forEach(btn => btn.classList.remove('ring-2', 'ring-indigo-500', 'bg-indigo-50'));
+
+            if (index === null) {
+                selectedPackagePrice = null;
+                selectedPackageIndex = null;
+                document.getElementById('package-note').classList.add('hidden');
+                if (btnEl) btnEl.classList.add('ring-2', 'ring-indigo-500', 'bg-indigo-50');
+                return;
+            }
+
+            selectedPackageIndex = index;
+            if (btnEl) btnEl.classList.add('ring-2', 'ring-indigo-500', 'bg-indigo-50');
+            applyPackageToForm();
+        }
+
+        // Recalcula minutos/valor/notinha do pacote escolhido para a Qtd atual de
+        // crianças (o bônus de alguns pacotes muda conforme a quantidade). Chamada
+        // tanto ao escolher o pacote quanto quando o operador muda a Qtd depois.
+        function refreshPackageNote() {
+            applyPackageToForm();
+        }
+
+        function applyPackageToForm() {
+            if (selectedPackageIndex === null) return;
+            const note = document.getElementById('package-note');
+
+            const pkg = TIME_PACKAGES[selectedPackageIndex];
+            const qtyNow = parseInt(document.getElementById('child-qty').value) || 1;
+            const bonus = getPackageBonus(pkg, qtyNow);
+            const totalMinutes = pkg.minutes + bonus;
+            const totalPrice = pkg.price * qtyNow;
+
+            document.getElementById('time-limit').value = totalMinutes;
+            selectedPackagePrice = pkg.price;
+
+            const qtyText = qtyNow > 1 ? ` (${formatBRL(pkg.price)} × ${qtyNow} crianças)` : '';
+            note.innerText = bonus > 0
+                ? `Pacote travado em ${formatBRL(totalPrice)}${qtyText}: ${pkg.minutes} min + ${bonus} min de bônus grátis = ${totalMinutes} min no total. O valor não muda mesmo que dê bônus extra depois pelo alerta de tempo esgotado.`
+                : `Pacote travado em ${formatBRL(totalPrice)}${qtyText} para ${pkg.minutes} min.`;
+            note.classList.remove('hidden');
+
+            // Se já tiver "Já Pagou Agora" marcado, mantém o valor sugerido em Dinheiro em dia com a Qtd
+            if (document.getElementById('initial-pay-status').value === 'Pago') {
+                document.getElementById('init-dinheiro').value = totalPrice.toFixed(2);
+                calcInitTotal();
+            }
+        }
+
+        function toggleInitialPaymentFields() {
+            const status = document.getElementById('initial-pay-status').value;
+            const details = document.getElementById('initial-payment-details');
+            if (status === 'Pago') {
+                details.classList.remove('hidden');
+            } else {
+                details.classList.add('hidden');
+            }
+        }
+
+        function calcInitTotal() {
+            const p = parseFloat(document.getElementById('init-pix').value) || 0;
+            const d = parseFloat(document.getElementById('init-dinheiro').value) || 0;
+            const db = parseFloat(document.getElementById('init-debito').value) || 0;
+            const c = parseFloat(document.getElementById('init-credito').value) || 0;
+            document.getElementById('init-total-display').innerText = formatNumberBRL(p + d + db + c);
+        }
+
+        function searchClientByPhone(phone) {
+            const cleanPhone = phone.trim().replace(/\D/g, '');
+            const feedback = document.getElementById('client-feedback');
+            const bonusBox = document.getElementById('loyalty-bonus-box');
+            bonusBox.classList.add('hidden');
+
+            if (cleanPhone.length < 4) {
+                feedback.classList.add('hidden');
+                return;
+            }
+
+            // Conta unificando histórico local e da nuvem
+            // Soma a QUANTIDADE de crianças de cada atendimento (não a quantidade de vezes
+            // que o telefone aparece), pois um mesmo atendimento pode levar vários filhos de
+            // uma vez — cada criança conta como uma participação para o brinde de fidelidade.
+            // Cancelamentos não contam, e registros "(Parcial)" também ficam de fora: eles são
+            // só o pagamento feito no meio de UMA visita que já é contada pelo registro final
+            // dela — contar os dois inflaria a visita (2 idas viravam 4 contadas).
+            const clientVisits = history.filter(h => h.phone && String(h.phone).replace(/\D/g, '') === cleanPhone
+                && !(h.name && h.name.includes('(CANCELADO'))
+                && !(h.name && h.name.includes('(Parcial)')));
+            let visitCount = clientVisits.reduce((sum, h) => sum + (Number(h.qty) || 1), 0);
+            
+            const deductedPacks = bonusAppliedPhones[cleanPhone] || 0;
+            visitCount = Math.max(0, visitCount - (deductedPacks * 10));
+
+            const foundItem = clientVisits[clientVisits.length - 1];
+
+            if (foundItem) {
+                document.getElementById('child-reference').value = foundItem.reference || '';
+                let cleanName = foundItem.name ? foundItem.name.split(' (CANCELADO')[0] : '';
+                document.getElementById('child-name').value = cleanName;
+
+                feedback.innerText = `Cliente encontrado! Já soma ${visitCount} participação(ões) (crianças).`;
+                feedback.className = "text-xs font-semibold mt-1 text-emerald-600";
+                feedback.classList.remove('hidden');
+            } else {
+                feedback.innerText = `Cliente novo — ainda não tem visitas registradas.`;
+                feedback.className = "text-xs font-semibold mt-1 text-gray-500";
+                feedback.classList.remove('hidden');
+            }
+
+            if (visitCount >= 10) {
+                bonusBox.classList.remove('hidden');
+            }
+        }
+
+        function applyBonusMinutes() {
+            const phone = document.getElementById('child-phone').value.trim().replace(/\D/g, '');
+            const timeLimitInput = document.getElementById('time-limit');
+            let currentLimit = parseInt(timeLimitInput.value) || 0;
+            timeLimitInput.value = currentLimit + 10;
+            
+            if (phone) {
+                bonusAppliedPhones[phone] = (bonusAppliedPhones[phone] || 0) + 1;
+                localStorage.setItem('kidplay_bonus_phones', JSON.stringify(bonusAppliedPhones));
+                syncBonusToCloud();
+            }
+
+            document.getElementById('loyalty-bonus-box').classList.add('hidden');
+            
+            // Mesmo filtro de searchClientByPhone: exclui CANCELADO e também os registros
+            // "(Parcial)" (que são só o pagamento no meio de uma visita já contada pelo
+            // registro final dela - contar os dois duas vezes inflava a contagem aqui).
+            const clientVisits = history.filter(h => h.phone && String(h.phone).replace(/\D/g, '') === phone
+                && !(h.name && h.name.includes('(CANCELADO'))
+                && !(h.name && h.name.includes('(Parcial)')));
+            let visitCount = Math.max(0, clientVisits.reduce((sum, h) => sum + (Number(h.qty) || 1), 0) - ((bonusAppliedPhones[phone] || 0) * 10));
+            const feedback = document.getElementById('client-feedback');
+            if (feedback) {
+                feedback.innerText = `Cliente encontrado! Já soma ${visitCount} participação(ões) (crianças).`;
+            }
+
+            alert("Brinde de 10 minutos grátis aplicado e 10 participações abatidas do saldo!");
+        }
+
+        function addSession(event) {
+            event.preventDefault();
+            const btn = document.getElementById('entry-confirm-btn');
+            if (btn && btn.disabled) return; // já está salvando, ignora clique/toque duplicado
+            if (btn) {
+                btn.disabled = true;
+                btn.innerText = "Salvando...";
+            }
+
+            const phoneRaw = document.getElementById('child-phone').value.trim();
+            const phoneClean = phoneRaw.replace(/\D/g, '');
+            const reference = document.getElementById('child-reference').value.trim();
+            const name = document.getElementById('child-name').value.trim();
+            const qty = parseInt(document.getElementById('child-qty').value);
+            const limit = document.getElementById('time-limit').value ? parseInt(document.getElementById('time-limit').value) : null;
+            const payStatus = document.getElementById('initial-pay-status').value;
+            
+            let pixVal = 0, dinheiroVal = 0, debitoVal = 0, creditoVal = 0;
+            let totalPaid = 0;
+            let methodDesc = "Pendente";
+
+            if (payStatus === 'Pago') {
+                pixVal = parseFloat(document.getElementById('init-pix').value) || 0;
+                dinheiroVal = parseFloat(document.getElementById('init-dinheiro').value) || 0;
+                debitoVal = parseFloat(document.getElementById('init-debito').value) || 0;
+                creditoVal = parseFloat(document.getElementById('init-credito').value) || 0;
+                
+                totalPaid = pixVal + dinheiroVal + debitoVal + creditoVal;
+                let parts = [];
+                if(pixVal > 0) parts.push(`Pix: ${formatBRL(pixVal)}`);
+                if(dinheiroVal > 0) parts.push(`Dinheiro: ${formatBRL(dinheiroVal)}`);
+                if(debitoVal > 0) parts.push(`Débito: ${formatBRL(debitoVal)}`);
+                if(creditoVal > 0) parts.push(`Crédito: ${formatBRL(creditoVal)}`);
+                methodDesc = parts.join(' | ') || "Pago";
+            }
+
+            const nowObj = new Date();
+            const newSession = {
+                id: Date.now() * 1000 + Math.floor(Math.random() * 1000),
+                phone: phoneClean,
+                name: name,
+                reference: reference,
+                qty: qty,
+                entryTime: nowObj.getTime(),
+                timeLimit: limit,
+                paymentStatus: payStatus,
+                paidAmount: totalPaid,
+                paymentMethod: methodDesc,
+                // Guarda o detalhamento por forma de pagamento (não só o total),
+                // pra não perder o valor pago no início quando a criança finalizar depois.
+                paidPix: pixVal,
+                paidDinheiro: dinheiroVal,
+                paidDebito: debitoVal,
+                paidCredito: creditoVal,
+                // Pagamentos feitos NO MEIO do tempo (parcial) já ganham sua própria linha
+                // na planilha na hora - por isso ficam separados dos "paidPix" acima (que são
+                // só do pagamento na entrada) e NÃO entram de novo na soma do registro final,
+                // pra não duplicar o valor na planilha.
+                midwayPaidPix: 0,
+                midwayPaidDinheiro: 0,
+                midwayPaidDebito: 0,
+                midwayPaidCredito: 0,
+                isPaused: false,
+                pausedDuration: 0,
+                lastPauseStart: null,
+                alarmTriggered: false,
+                dismissedUntil: 0, // Controla o soneca (2 ou 5 min) para esta criança
+                alarmSilenced: false, // "Dispensar de vez": silencia o alarme até adicionar mais tempo
+                packagePrice: selectedPackagePrice, // Se veio de um pacote fixo, trava o valor cobrado nesse número
+                packageIndex: selectedPackageIndex // Guarda qual pacote foi usado, pra recalcular o bônus se a Qtd mudar depois
+            };
+
+            sessions.push(newSession);
+            saveData();
+            closeModal();
+        }
+
+        function togglePauseSession(id) {
+            const session = sessions.find(s => s.id === id);
+            if (!session) return;
+
+            const now = new Date().getTime();
+            if (!session.isPaused) {
+                session.isPaused = true;
+                session.lastPauseStart = now;
+            } else {
+                session.isPaused = false;
+                if (session.lastPauseStart) {
+                    session.pausedDuration += (now - session.lastPauseStart);
+                    session.lastPauseStart = null;
+                }
+            }
+            saveData();
+        }
+
+        function openAddTimeModal(id) {
+            currentAddTimeId = id;
+            const session = sessions.find(s => s.id === id);
+            if (!session) {
+                alert("Essa criança não está mais na lista (pode já ter sido finalizada por outro operador).");
+                renderSessions();
+                return;
+            }
+            document.getElementById('add-time-child-name').innerText = session.name;
+            document.getElementById('add-time-modal').classList.remove('hidden');
+            document.getElementById('add-time-modal').classList.add('flex');
+        }
+
+        function closeAddTimeModal() {
+            document.getElementById('add-time-modal').classList.add('hidden');
+            document.getElementById('add-time-modal').classList.remove('flex');
+            currentAddTimeId = null;
+        }
+
+        let currentEditSessionId = null;
+
+        function openEditSessionModal(id) {
+            const session = sessions.find(s => s.id === id);
+            if (!session) {
+                alert("Essa criança não está mais na lista (pode já ter sido finalizada por outro operador).");
+                renderSessions();
+                return;
+            }
+            currentEditSessionId = id;
+            document.getElementById('edit-session-subtitle').innerHTML = `Criança: <strong>${escapeHtml(session.name)}</strong> — pode ajustar mesmo com o tempo já rolando.`;
+            document.getElementById('edit-session-name').value = session.name || '';
+            document.getElementById('edit-session-reference').value = session.reference || '';
+            const phoneInputEl = document.getElementById('edit-session-phone');
+            phoneInputEl.value = session.phone || '';
+            maskPhoneInput(phoneInputEl);
+            document.getElementById('edit-session-qty').value = session.qty;
+
+            const note = document.getElementById('edit-session-qty-note');
+            if (typeof session.packageIndex === 'number' && TIME_PACKAGES[session.packageIndex]) {
+                note.innerText = "Essa entrada usa um pacote de tempo: alterar a quantidade recalcula automaticamente o valor cobrado (preço do pacote × Qtd).";
+                note.classList.remove('hidden');
+            } else {
+                note.classList.add('hidden');
+            }
+
+            document.getElementById('edit-session-modal').classList.remove('hidden');
+            document.getElementById('edit-session-modal').classList.add('flex');
+        }
+
+        function closeEditSessionModal() {
+            document.getElementById('edit-session-modal').classList.add('hidden');
+            document.getElementById('edit-session-modal').classList.remove('flex');
+            currentEditSessionId = null;
+        }
+
+        function confirmEditSessionModal() {
+            const session = sessions.find(s => s.id === currentEditSessionId);
+            if (!session) {
+                alert("Essa criança não está mais na lista (pode já ter sido finalizada por outro operador).");
+                closeEditSessionModal();
+                renderSessions();
+                return;
+            }
+
+            const newQty = parseInt(document.getElementById('edit-session-qty').value);
+            if (!newQty || newQty < 1) {
+                alert("Informe uma quantidade válida (mínimo 1).");
+                return;
+            }
+
+            const newName = document.getElementById('edit-session-name').value.trim();
+            if (!newName) {
+                alert("O nome da criança não pode ficar vazio.");
+                return;
+            }
+            session.name = newName;
+            session.reference = document.getElementById('edit-session-reference').value.trim();
+            session.phone = document.getElementById('edit-session-phone').value.trim().replace(/\D/g, '');
+            session.qty = newQty;
+
+            // Se veio de um pacote com bônus por quantidade, recalcula o tempo-limite
+            // (o valor cobrado - packagePrice × qty - já se ajusta sozinho em computeLockedCost)
+            if (typeof session.packageIndex === 'number' && TIME_PACKAGES[session.packageIndex]) {
+                const pkg = TIME_PACKAGES[session.packageIndex];
+                const bonus = getPackageBonus(pkg, newQty);
+                session.timeLimit = pkg.minutes + bonus;
+            }
+
+            saveData();
+            closeEditSessionModal();
+        }
+
+        function confirmAddTime() {
+            const extra = parseInt(document.getElementById('extra-minutes-input').value) || 0;
+            const session = sessions.find(s => s.id === currentAddTimeId);
+            if (!session) {
+                alert("Essa criança não está mais na lista (pode já ter sido finalizada por outro operador).");
+                closeAddTimeModal();
+                renderSessions();
+                return;
+            }
+            if (extra > 0) {
+                if (session.timeLimit) {
+                    session.timeLimit += extra;
+                } else {
+                    session.timeLimit = extra;
+                }
+                session.alarmTriggered = false;
+                session.dismissedUntil = 0; // Reseta o soneca para o alerta poder voltar se estourar de novo
+                session.alarmSilenced = false; // Se ganhou mais tempo, o alarme deve poder soar de novo no novo limite
+                saveData();
+            }
+            closeAddTimeModal();
+        }
+
+        function formatMMSS(ms) {
+            const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+            const m = Math.floor(totalSeconds / 60);
+            const s = totalSeconds % 60;
+            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        function formatCountdown(ms) {
+            const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+            const m = Math.floor(totalSeconds / 60);
+            const s = totalSeconds % 60;
+            return `${m}:${String(s).padStart(2, '0')}`;
+        }
+
+        function snoozeAlert(id, minutes) {
+            const session = sessions.find(s => s.id === id);
+            if (session) {
+                const now = new Date().getTime();
+                // Se já tem um bônus rodando, soma o tempo ao que falta; senão começa a contar agora.
+                // Isso é só um contador de tempo extra visual — não mexe no timeLimit nem no valor cobrado.
+                const currentEnd = (session.bonusActiveUntil && session.bonusActiveUntil > now) ? session.bonusActiveUntil : now;
+                session.bonusActiveUntil = currentEnd + (minutes * 60 * 1000);
+                session.bonusMinutesTotal = (session.bonusMinutesTotal || 0) + minutes;
+                // Soneca o alarme desta criança específica: some agora, e volta a soar
+                // sozinho (som + aviso) quando o tempo escolhido (bônus) terminar.
+                session.dismissedUntil = session.bonusActiveUntil;
+                saveData();
+            }
+            if (navigator.vibrate) navigator.vibrate(0);
+        }
+
+        function silenceAlertPermanently(id) {
+            const session = sessions.find(s => s.id === id);
+            if (session) {
+                if (confirm(`Silenciar o alarme de "${session.name}" até adicionar mais tempo pra ela? O card continuará mostrando "Esgotado", só o som e o aviso grande vão parar.`)) {
+                    session.alarmSilenced = true;
+                    saveData();
+                }
+            }
+            if (navigator.vibrate) navigator.vibrate(0);
+        }
+
+        function openMidwayModal(id) {
+            currentMidwayId = id;
+            const session = sessions.find(s => s.id === id);
+            if (!session) {
+                alert("Essa criança não está mais na lista (pode já ter sido finalizada por outro operador).");
+                renderSessions();
+                return;
+            }
+
+            const now = session.isPaused ? session.lastPauseStart : new Date().getTime();
+            const activeMs = now - session.entryTime - session.pausedDuration;
+            const diffMinutes = Math.max(1, Math.floor(activeMs / (1000 * 60)));
+            const currentCost = computeLockedCost(session, diffMinutes);
+
+            const previouslyPaid = (session.paidPix || 0) + (session.paidDinheiro || 0) + (session.paidDebito || 0) + (session.paidCredito || 0)
+                + (session.midwayPaidPix || 0) + (session.midwayPaidDinheiro || 0) + (session.midwayPaidDebito || 0) + (session.midwayPaidCredito || 0);
+            const remaining = Math.max(0, currentCost - previouslyPaid);
+
+            document.getElementById('midway-pay-subtitle').innerHTML = `Criança: <strong>${escapeHtml(session.name)}</strong><br>Valor Atual Calculado: <strong class="text-indigo-600">${formatBRL(currentCost)}</strong>${previouslyPaid > 0 ? `<br>Já pago: <strong class="text-emerald-600">${formatBRL(previouslyPaid)}</strong> — Falta: <strong class="text-amber-600">${formatBRL(remaining)}</strong>` : ''}`;
+            document.getElementById('mid-pix').value = '';
+            document.getElementById('mid-dinheiro').value = '';
+            document.getElementById('mid-debito').value = '';
+            document.getElementById('mid-credito').value = '';
+            document.getElementById('mid-total-display').innerText = '0.00';
+
+            const midwayBtn = document.getElementById('midway-confirm-btn');
+            if (midwayBtn) {
+                midwayBtn.disabled = false;
+                midwayBtn.innerText = "Confirmar e Salvar";
+            }
+
+            document.getElementById('midway-pay-modal').classList.remove('hidden');
+            document.getElementById('midway-pay-modal').classList.add('flex');
+        }
+
+        function closeMidwayModal() {
+            document.getElementById('midway-pay-modal').classList.add('hidden');
+            document.getElementById('midway-pay-modal').classList.remove('flex');
+            currentMidwayId = null;
+        }
+
+        function calcMidTotal() {
+            const p = parseFloat(document.getElementById('mid-pix').value) || 0;
+            const d = parseFloat(document.getElementById('mid-dinheiro').value) || 0;
+            const db = parseFloat(document.getElementById('mid-debito').value) || 0;
+            const c = parseFloat(document.getElementById('mid-credito').value) || 0;
+            document.getElementById('mid-total-display').innerText = formatNumberBRL(p + d + db + c);
+        }
+
+        function confirmMidwayPayment() {
+            const btn = document.getElementById('midway-confirm-btn');
+            if (btn && btn.disabled) return; // já está enviando, ignora clique duplicado
+
+            const session = sessions.find(s => s.id === currentMidwayId);
+            if (!session) {
+                alert("Essa criança não está mais na lista (pode já ter sido finalizada por outro operador).");
+                closeMidwayModal();
+                renderSessions();
+                return;
+            }
+
+            const pixVal = parseFloat(document.getElementById('mid-pix').value) || 0;
+            const dinheiroVal = parseFloat(document.getElementById('mid-dinheiro').value) || 0;
+            const debitoVal = parseFloat(document.getElementById('mid-debito').value) || 0;
+            const creditoVal = parseFloat(document.getElementById('mid-credito').value) || 0;
+            const totalPaid = pixVal + dinheiroVal + debitoVal + creditoVal;
+
+            if (totalPaid <= 0) {
+                alert("Informe pelo menos um valor pago.");
+                return;
+            }
+
+            if (btn) {
+                btn.disabled = true;
+                btn.innerText = "Salvando...";
+            }
+
+            let parts = [];
+            if(pixVal > 0) parts.push(`Pix: ${formatBRL(pixVal)}`);
+            if(dinheiroVal > 0) parts.push(`Dinheiro: ${formatBRL(dinheiroVal)}`);
+            if(debitoVal > 0) parts.push(`Débito: ${formatBRL(debitoVal)}`);
+            if(creditoVal > 0) parts.push(`Crédito: ${formatBRL(creditoVal)}`);
+            const methodDesc = parts.join(' | ');
+
+            const now = session.isPaused ? session.lastPauseStart : new Date().getTime();
+            const activeMs = now - session.entryTime - session.pausedDuration;
+            const diffMinutes = Math.max(1, Math.floor(activeMs / (1000 * 60)));
+            const currentCost = computeLockedCost(session, diffMinutes);
+            session.paymentStatus = "Pago";
+            session.midwayPaidPix = (session.midwayPaidPix || 0) + pixVal;
+            session.midwayPaidDinheiro = (session.midwayPaidDinheiro || 0) + dinheiroVal;
+            session.midwayPaidDebito = (session.midwayPaidDebito || 0) + debitoVal;
+            session.midwayPaidCredito = (session.midwayPaidCredito || 0) + creditoVal;
+            session.paidAmount = (session.paidPix || 0) + (session.paidDinheiro || 0) + (session.paidDebito || 0) + (session.paidCredito || 0)
+                + session.midwayPaidPix + session.midwayPaidDinheiro + session.midwayPaidDebito + session.midwayPaidCredito;
+            session.paymentMethod = methodDesc;
+            saveData();
+            closeMidwayModal();
+
+            const nowObj = new Date();
+            const record = {
+                recordId: generateRecordId(),
+                date: getFormattedDate(nowObj),
+                time: nowObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                name: `${session.name} (Parcial)`,
+                qty: session.qty,
+                reference: session.reference,
+                phone: session.phone,
+                minutes: diffMinutes,
+                referenceTotal: currentCost,
+                total: totalPaid,
+                pix: pixVal,
+                dinheiro: dinheiroVal,
+                debito: debitoVal,
+                credito: creditoVal,
+                method: methodDesc,
+                operator: currentOperator || "Desconhecido"
+            };
+            sendRecordToSheet(record);
+            history.push(record);
+
+            alert("Pagamento parcial registrado com sucesso!");
+        }
+
+        function openCancelModal(id) {
+            currentCancelId = id;
+            const session = sessions.find(s => s.id === id);
+            if (!session) {
+                alert("Essa criança não está mais na lista (pode já ter sido finalizada por outro operador).");
+                renderSessions();
+                return;
+            }
+            document.getElementById('cancel-child-name').innerText = session.name;
+            document.getElementById('cancel-reason-input').value = '';
+
+            const cancelBtn = document.getElementById('cancel-confirm-btn');
+            if (cancelBtn) {
+                cancelBtn.disabled = false;
+                cancelBtn.innerText = "Confirmar";
+            }
+
+            document.getElementById('cancel-modal').classList.remove('hidden');
+            document.getElementById('cancel-modal').classList.add('flex');
+        }
+
+        function closeCancelModal() {
+            document.getElementById('cancel-modal').classList.add('hidden');
+            document.getElementById('cancel-modal').classList.remove('flex');
+            currentCancelId = null;
+        }
+
+        function confirmCancelSession() {
+            const btn = document.getElementById('cancel-confirm-btn');
+            if (btn && btn.disabled) return; // já está enviando, ignora clique duplicado
+
+            const reason = document.getElementById('cancel-reason-input').value.trim();
+            if (!reason) {
+                alert("Por favor, digite o motivo do cancelamento.");
+                return;
+            }
+
+            const index = sessions.findIndex(s => s.id === currentCancelId);
+            if (index !== -1) {
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerText = "Salvando...";
+                }
+
+                const session = sessions[index];
+                const nowObj = new Date();
+                const nowMs = session.isPaused ? session.lastPauseStart : nowObj.getTime();
+                const diffMinutes = Math.floor((nowMs - session.entryTime - session.pausedDuration) / (1000 * 60));
+                const refCost = computeLockedCost(session, Math.max(0, diffMinutes));
+
+                const cancelledRecord = {
+                    recordId: generateRecordId(),
+                    date: getFormattedDate(nowObj),
+                    time: nowObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                    name: `${session.name} (CANCELADO: ${reason})`,
+                    qty: session.qty,
+                    reference: session.reference,
+                    phone: session.phone,
+                    minutes: diffMinutes,
+                    referenceTotal: refCost,
+                    total: 0,
+                    pix: 0,
+                    dinheiro: 0,
+                    debito: 0,
+                    credito: 0,
+                    method: "Cancelado",
+                    operator: currentOperator || "Desconhecido"
+                };
+
+                sendRecordToSheet(cancelledRecord);
+                history.push(cancelledRecord);
+                sessions.splice(index, 1);
+                saveData();
+                closeCancelModal();
+            } else {
+                alert("Essa criança já não está mais na lista (pode já ter sido finalizada por outro operador).");
+                closeCancelModal();
+                renderSessions();
+            }
+        }
+
+        function initCheckout(id) {
+            currentCheckoutId = id;
+            const session = sessions.find(s => s.id === id);
+            if (!session) {
+                alert("Essa criança não está mais na lista (pode já ter sido finalizada por outro operador).");
+                renderSessions();
+                return;
+            }
+
+            const now = session.isPaused ? session.lastPauseStart : new Date().getTime();
+            const activeMs = now - session.entryTime - session.pausedDuration;
+            const diffMinutes = Math.max(1, Math.floor(activeMs / (1000 * 60)));
+            const totalCost = computeLockedCost(session, diffMinutes);
+
+            const previouslyPaid = (session.paidPix || 0) + (session.paidDinheiro || 0) + (session.paidDebito || 0) + (session.paidCredito || 0)
+                + (session.midwayPaidPix || 0) + (session.midwayPaidDinheiro || 0) + (session.midwayPaidDebito || 0) + (session.midwayPaidCredito || 0);
+            const remainingToPay = Math.max(0, totalCost - previouslyPaid);
+
+            document.getElementById('checkout-summary').innerHTML = `
+                Criança: <strong>${escapeHtml(session.name)}</strong> (${session.qty}x)<br>
+                Ref/Responsável: <strong>${escapeHtml(session.reference)}</strong><br>
+                Celular: <strong>${escapeHtml(session.phone) || 'Não informado'}</strong><br>
+                Tempo total ativo: <strong>${diffMinutes} min</strong><br>
+                Valor de Referência: <strong>${formatBRL(totalCost)}</strong><br>
+                Status Anterior: <strong class="${session.paymentStatus === 'Pago' ? 'text-emerald-600' : 'text-amber-600'}">${session.paymentStatus}</strong>${previouslyPaid > 0 ? ` (${formatBRL(previouslyPaid)} já pago)` : ''}<br>
+                Valor a Pagar Agora: <strong class="text-indigo-600">${formatBRL(remainingToPay)}</strong>
+            `;
+
+            document.getElementById('out-pix').value = '';
+            document.getElementById('out-dinheiro').value = '';
+            document.getElementById('out-debito').value = '';
+            document.getElementById('out-credito').value = '';
+            document.getElementById('out-total-display').innerText = formatNumberBRL(remainingToPay);
+            if (remainingToPay > 0) {
+                document.getElementById('out-dinheiro').value = remainingToPay.toFixed(2);
+            }
+
+            const checkoutBtn = document.getElementById('checkout-confirm-btn');
+            if (checkoutBtn) {
+                checkoutBtn.disabled = false;
+                checkoutBtn.innerText = "Confirmar e Salvar";
+            }
+
+            document.getElementById('checkout-modal').classList.remove('hidden');
+            document.getElementById('checkout-modal').classList.add('flex');
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkout-modal').classList.add('hidden');
+            document.getElementById('checkout-modal').classList.remove('flex');
+            currentCheckoutId = null;
+        }
+
+        function calcOutTotal() {
+            const p = parseFloat(document.getElementById('out-pix').value) || 0;
+            const d = parseFloat(document.getElementById('out-dinheiro').value) || 0;
+            const db = parseFloat(document.getElementById('out-debito').value) || 0;
+            const c = parseFloat(document.getElementById('out-credito').value) || 0;
+            document.getElementById('out-total-display').innerText = formatNumberBRL(p + d + db + c);
+        }
+
+        function confirmCheckout(event) {
+            event.preventDefault();
+            const btn = document.getElementById('checkout-confirm-btn');
+            if (btn && btn.disabled) return; // já está enviando, ignora clique/submit duplicado
+
+            const pixVal = parseFloat(document.getElementById('out-pix').value) || 0;
+            const dinheiroVal = parseFloat(document.getElementById('out-dinheiro').value) || 0;
+            const debitoVal = parseFloat(document.getElementById('out-debito').value) || 0;
+            const creditoVal = parseFloat(document.getElementById('out-credito').value) || 0;
+
+            const sessionBeingClosed = sessions.find(s => s.id === currentCheckoutId);
+            if (!sessionBeingClosed) {
+                alert("Essa criança já não está mais na lista (pode já ter sido finalizada por outro operador).");
+                closeCheckoutModal();
+                renderSessions();
+                return;
+            }
+
+            // Soma o que foi pago NA ENTRADA com o que está sendo cobrado agora.
+            // Pagamentos PARCIAIS (feitos no meio do tempo) ficam de fora daqui de propósito:
+            // eles já geraram sua própria linha "(Parcial)" na planilha no momento em que
+            // foram feitos, então somar de novo aqui duplicaria o valor.
+            const previousPix = sessionBeingClosed.paidPix || 0;
+            const previousDinheiro = sessionBeingClosed.paidDinheiro || 0;
+            const previousDebito = sessionBeingClosed.paidDebito || 0;
+            const previousCredito = sessionBeingClosed.paidCredito || 0;
+
+            const finalPix = previousPix + pixVal;
+            const finalDinheiro = previousDinheiro + dinheiroVal;
+            const finalDebito = previousDebito + debitoVal;
+            const finalCredito = previousCredito + creditoVal;
+            const finalTotal = finalPix + finalDinheiro + finalDebito + finalCredito;
+
+            // Só pra mostrar pro operador o valor REAL da visita inteira (entrada + parcial +
+            // agora). O registro gravado (completedRecord) não repete o parcial, que já tem
+            // sua própria linha - isso aqui é só de exibição no aviso de confirmação.
+            const midwayTotal = (sessionBeingClosed.midwayPaidPix || 0) + (sessionBeingClosed.midwayPaidDinheiro || 0)
+                + (sessionBeingClosed.midwayPaidDebito || 0) + (sessionBeingClosed.midwayPaidCredito || 0);
+            const fullVisitTotal = finalTotal + midwayTotal;
+
+            const collectingNow = pixVal + dinheiroVal + debitoVal + creditoVal;
+            const nameForConfirm = sessionBeingClosed.name;
+            const confirmMsg = collectingNow > 0
+                ? `Confirma o fechamento de "${nameForConfirm}" cobrando ${formatBRL(collectingNow)} agora (total da visita: ${formatBRL(fullVisitTotal)})? Essa ação não pode ser desfeita.`
+                : `Confirma o fechamento de "${nameForConfirm}"? Nada a cobrar agora (total da visita já quitado: ${formatBRL(fullVisitTotal)}). Essa ação não pode ser desfeita.`;
+            if (!confirm(confirmMsg)) {
+                return;
+            }
+
+            let parts = [];
+            if(finalPix > 0) parts.push(`Pix: ${formatBRL(finalPix)}`);
+            if(finalDinheiro > 0) parts.push(`Dinheiro: ${formatBRL(finalDinheiro)}`);
+            if(finalDebito > 0) parts.push(`Débito: ${formatBRL(finalDebito)}`);
+            if(finalCredito > 0) parts.push(`Crédito: ${formatBRL(finalCredito)}`);
+            // Se não sobrou nada pra cobrar agora PORQUE já foi tudo pago no meio do
+            // atendimento (registro "(Parcial)"), não escreve "Sem pagamento registrado" -
+            // isso parecia, lendo só esta linha da planilha, que o cliente saiu sem pagar.
+            // O dinheiro está, sim, registrado: só que na linha "(Parcial)" logo acima.
+            const alreadyPaidEarlier = midwayTotal > 0 && finalTotal === 0;
+            const methodDesc = parts.join(' | ') || (alreadyPaidEarlier ? "Pago anteriormente (ver registro Parcial)" : "Sem pagamento registrado");
+
+            const index = sessions.findIndex(s => s.id === currentCheckoutId);
+            if (index !== -1) {
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerText = "Salvando...";
+                }
+
+                const session = sessions[index];
+                const nowObj = new Date();
+                const nowMs = session.isPaused ? session.lastPauseStart : nowObj.getTime();
+                const diffMinutes = Math.max(1, Math.floor((nowMs - session.entryTime - session.pausedDuration) / (1000 * 60)));
+                const referenceCost = computeLockedCost(session, diffMinutes);
+
+                const completedRecord = {
+                    recordId: generateRecordId(),
+                    date: getFormattedDate(nowObj),
+                    time: nowObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                    name: session.name,
+                    qty: session.qty,
+                    reference: session.reference,
+                    phone: session.phone,
+                    minutes: diffMinutes,
+                    referenceTotal: referenceCost,
+                    total: finalTotal,
+                    pix: finalPix,
+                    dinheiro: finalDinheiro,
+                    debito: finalDebito,
+                    credito: finalCredito,
+                    method: methodDesc,
+                    operator: currentOperator || "Desconhecido"
+                };
+
+                sendRecordToSheet(completedRecord);
+                history.push(completedRecord);
+
+                sessions.splice(index, 1);
+                saveData();
+                closeCheckoutModal();
+            } else {
+                alert("Essa criança já não está mais na lista (pode já ter sido finalizada por outro operador).");
+                closeCheckoutModal();
+                renderSessions();
+            }
+        }
+
+        function sendRecordToSheet(record) {
+            if (!GOOGLE_SHEET_URL) return;
+            fetch(GOOGLE_SHEET_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(record)
+            }).catch(err => {
+                console.error("Erro ao salvar na planilha, guardando para reenviar:", err);
+                queuePendingHistoryRecord(record);
+            });
+        }
+
+        // Fila de registros de histórico que falharam ao enviar (ex: sem internet no momento).
+        // Fica salva no localStorage e o app tenta reenviar sozinho a cada ciclo de sincronização,
+        // pra nunca perder um fechamento por causa de uma queda de conexão passageira.
+        function queuePendingHistoryRecord(record) {
+            const pending = JSON.parse(localStorage.getItem('kidplay_pending_history') || '[]');
+            pending.push(record);
+            localStorage.setItem('kidplay_pending_history', JSON.stringify(pending));
+            updateSyncStatusUI(false, pending.length);
+        }
+
+        function retryPendingHistoryRecords() {
+            if (!GOOGLE_SHEET_URL) return;
+            const pending = JSON.parse(localStorage.getItem('kidplay_pending_history') || '[]');
+            if (pending.length === 0) return;
+
+            const attempts = pending.map(record =>
+                fetch(GOOGLE_SHEET_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(record)
+                }).then(() => ({ record, ok: true }))
+                  .catch(() => ({ record, ok: false }))
+            );
+
+            Promise.all(attempts).then(results => {
+                const stillPending = results.filter(r => !r.ok).map(r => r.record);
+                if (stillPending.length > 0) {
+                    localStorage.setItem('kidplay_pending_history', JSON.stringify(stillPending));
+                } else {
+                    localStorage.removeItem('kidplay_pending_history');
+                }
+                updateSyncStatusUI(true, stillPending.length);
+            });
+        }
+
+        function getFormattedDate(dateObj) {
+            const year = dateObj.getFullYear();
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const day = String(dateObj.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // Período do relatório: 'hoje' (um dia específico, escolhido no calendário),
+        // 'semana' (segunda-feira até hoje) ou 'mes' (dia 1 até hoje).
+        let reportPeriod = 'hoje';
+
+        function toISODate(d) {
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+
+        function getReportDateRange() {
+            const today = new Date();
+
+            if (reportPeriod === 'semana') {
+                // Semana corrente: segunda-feira até hoje (padrão brasileiro de semana).
+                const dayOfWeek = today.getDay(); // 0 = domingo ... 6 = sábado
+                const diffToMonday = (dayOfWeek === 0) ? 6 : dayOfWeek - 1;
+                const monday = new Date(today);
+                monday.setDate(today.getDate() - diffToMonday);
+                return {
+                    start: toISODate(monday),
+                    end: toISODate(today),
+                    label: `Período: ${formatDateBR(toISODate(monday))} até ${formatDateBR(toISODate(today))}`
+                };
+            }
+
+            if (reportPeriod === 'mes') {
+                const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+                return {
+                    start: toISODate(firstDay),
+                    end: toISODate(today),
+                    label: `Período: ${formatDateBR(toISODate(firstDay))} até ${formatDateBR(toISODate(today))}`
+                };
+            }
+
+            // 'hoje': usa a data escolhida no calendário (padrão: hoje), um único dia.
+            const dateInput = document.getElementById('report-date-input');
+            let selected = dateInput ? dateInput.value : '';
+            if (!selected) {
+                selected = toISODate(today);
+                if (dateInput) dateInput.value = selected;
+            }
+            return { start: selected, end: selected, label: '' };
+        }
+
+        function setReportPeriod(period) {
+            reportPeriod = period;
+            ['hoje', 'semana', 'mes'].forEach(p => {
+                const tab = document.getElementById('period-tab-' + p);
+                if (!tab) return;
+                tab.className = (p === period)
+                    ? 'flex-1 py-2 rounded-full transition bg-indigo-600 text-white shadow'
+                    : 'flex-1 py-2 rounded-full transition text-gray-500 hover:text-gray-700';
+            });
+            const pickerWrap = document.getElementById('report-date-picker-wrap');
+            if (pickerWrap) pickerWrap.classList.toggle('hidden', period !== 'hoje');
+            renderCashReport();
+        }
+
+        function openCashModal() {
+            // Abre o modal imediatamente e mostra estado de carregamento,
+            // enquanto busca os dados mais recentes da planilha (não usa cache antigo).
+            document.getElementById('cash-modal').classList.remove('hidden');
+            document.getElementById('cash-modal').classList.add('flex');
+            document.getElementById('cash-total').innerText = 'R$ 0,00';
+            document.getElementById('total-pix').innerText = 'R$ 0,00';
+            document.getElementById('total-dinheiro').innerText = 'R$ 0,00';
+            document.getElementById('total-debito').innerText = 'R$ 0,00';
+            document.getElementById('total-credito').innerText = 'R$ 0,00';
+            document.getElementById('cash-minutes').innerText = '0 min';
+            document.getElementById('cash-atend').innerText = '0';
+            document.getElementById('cash-children').innerText = '0';
+            document.getElementById('cash-avg').innerText = 'R$ 0,00';
+            document.getElementById('cash-donut-count').innerText = '0';
+            document.getElementById('cash-donut').style.background = 'conic-gradient(#e5e7eb 0deg 360deg)';
+            ['pct-pix', 'pct-dinheiro', 'pct-debito', 'pct-credito'].forEach(id => {
+                document.getElementById(id).innerText = '0%';
+            });
+            document.getElementById('history-list').innerHTML = `<p class="text-gray-400 text-center py-4"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Buscando dados atualizados da planilha...</p>`;
+
+            setReportPeriod(reportPeriod); // atualiza visual das abas e mostra/esconde o calendário
+
+            loadHistoryFromCloud().then(() => {
+                renderCashReport();
+            });
+        }
+
+        function renderCashReport() {
+            if (lastCloudSyncError) {
+                document.getElementById('history-list').innerHTML = `
+                    <div class="text-center py-4 text-red-600">
+                        <i class="fa-solid fa-triangle-exclamation text-xl mb-2"></i>
+                        <p class="font-semibold text-sm">Não foi possível buscar os dados da planilha.</p>
+                        <p class="text-xs text-gray-500 mt-1">Verifique sua internet ou o link do Google Sheets, e toque em "Atualizar" para tentar de novo.</p>
+                        <button onclick="openCashModal()" class="mt-3 bg-gray-800 text-white text-xs px-3 py-1.5 rounded-lg"><i class="fa-solid fa-rotate mr-1"></i>Atualizar</button>
+                    </div>`;
+                return;
+            }
+
+            let total = 0;
+            let pixSum = 0, dinheiroSum = 0, debitoSum = 0, creditoSum = 0;
+            let historyHtml = '';
+
+            const range = getReportDateRange();
+            const filteredHistory = history.filter(item => {
+                if (!item.date) return false;
+                const d = String(item.date).trim();
+                return d >= range.start && d <= range.end; // datas em formato YYYY-MM-DD comparam certo assim
+            });
+
+            const periodLabels = { hoje: 'Hoje', semana: 'Semana', mes: 'Mês' };
+            document.getElementById('cash-total-label').innerText = `Faturamento (${periodLabels[reportPeriod] || 'Hoje'}):`;
+            document.getElementById('report-range-label').innerText = range.label;
+
+            if (filteredHistory.length === 0) {
+                historyHtml = `<p class="text-gray-400 text-center py-2">Nenhum atendimento finalizado neste período.</p>`;
+            } else {
+                const divergentRows = [];
+                filteredHistory.slice().reverse().forEach(item => {
+                    // O total do dia é a soma das formas de pagamento (Pix + Espécie + Débito + Crédito),
+                    // assim ele SEMPRE bate com o detalhamento. Antes somava a coluna "total" da planilha,
+                    // que podia ficar diferente das colunas de pagamento quando uma linha era editada
+                    // à mão na planilha (mudando um lado e esquecendo do outro).
+                    const rowSum = paymentSum(item);
+                    const rowDiverges = Math.abs((item.total || 0) - rowSum) > 0.009;
+                    if (rowDiverges) divergentRows.push({ item, rowSum });
+
+                    total += rowSum;
+                    pixSum += item.pix || 0;
+                    dinheiroSum += item.dinheiro || 0;
+                    debitoSum += item.debito || 0;
+                    creditoSum += item.credito || 0;
+
+                    historyHtml += `
+                        <div class="flex justify-between items-center bg-white p-2 rounded border mb-2 ${rowDiverges ? 'border-red-400 bg-red-50' : ''}">
+                            <div>
+                                <strong>${escapeHtml(item.name)}</strong> (${item.qty}x) - ${item.minutes}min<br>
+                                <span class="text-xs text-gray-500">Ref: ${escapeHtml(item.reference)} | Tel: ${escapeHtml(item.phone) || 'N/A'} | Op: ${escapeHtml(item.operator) || 'N/A'} às ${escapeHtml(item.time)}</span><br>
+                                <span class="text-xs text-indigo-600">Ref. Calc: ${formatBRL((item.referenceTotal || 0))}</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="font-bold text-emerald-600">${formatBRL(rowSum)}</span>
+                                <br><span class="text-[10px] bg-gray-100 px-1 rounded text-gray-600">${escapeHtml(item.method)}</span>
+                                ${rowDiverges ? `<br><span class="text-[10px] text-red-600 font-semibold">⚠ coluna Total da planilha: ${formatBRL(item.total || 0)}</span>` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                if (divergentRows.length > 0) {
+                    const diffTotal = divergentRows.reduce((s, d) => s + (d.rowSum - (d.item.total || 0)), 0);
+                    const warning = `
+                        <div class="bg-red-50 border border-red-300 text-red-700 text-xs rounded-lg p-3 mb-3">
+                            <strong><i class="fa-solid fa-triangle-exclamation mr-1"></i>${divergentRows.length} registro(s) com valores diferentes na planilha</strong><br>
+                            A coluna "total" não bate com Pix + Dinheiro + Débito + Crédito nessas linhas (diferença de ${formatBRL(Math.abs(diffTotal))} no dia). O relatório usa a soma das formas de pagamento. Confira as linhas marcadas em vermelho abaixo e corrija na planilha se preciso.
+                        </div>`;
+                    historyHtml = warning + historyHtml;
+                }
+            }
+
+            total = Math.round(total * 100) / 100;
+            pixSum = Math.round(pixSum * 100) / 100;
+            dinheiroSum = Math.round(dinheiroSum * 100) / 100;
+            debitoSum = Math.round(debitoSum * 100) / 100;
+            creditoSum = Math.round(creditoSum * 100) / 100;
+
+            document.getElementById('cash-total').innerText = `${formatBRL(total)}`;
+            document.getElementById('total-pix').innerText = `${formatBRL(pixSum)}`;
+            document.getElementById('total-dinheiro').innerText = `${formatBRL(dinheiroSum)}`;
+            document.getElementById('total-debito').innerText = `${formatBRL(debitoSum)}`;
+            document.getElementById('total-credito').innerText = `${formatBRL(creditoSum)}`;
+            // Funcionário: lista de atendimentos COM o valor de cada um (sem Ref. Calc nem avisos de divergência).
+            if (currentRole !== 'admin') {
+                historyHtml = filteredHistory.length === 0
+                    ? `<p class="text-gray-400 text-center py-2">Nenhum atendimento neste período.</p>`
+                    : filteredHistory.slice().reverse().map(item => `
+                        <div class="flex justify-between items-center bg-white p-2.5 rounded-xl border mb-2">
+                            <div class="min-w-0">
+                                <strong class="block truncate">${escapeHtml(item.name)}</strong>
+                                <span class="text-xs text-gray-500">${escapeHtml(formatDateBR(item.date))} às ${escapeHtml(item.time)} · Ref: ${escapeHtml(item.reference) || '-'} · ${item.qty}x · ${item.minutes} min</span>
+                            </div>
+                            <div class="text-right shrink-0 ml-2">
+                                <span class="font-bold text-emerald-600">${formatBRL(paymentSum(item))}</span>
+                                <br><span class="text-[10px] bg-gray-100 px-1 rounded text-gray-600">${escapeHtml(item.method)}</span>
+                            </div>
+                        </div>`).join('');
+            }
+            document.getElementById('history-list').innerHTML = historyHtml;
+
+            // --- KPIs e gráfico de formas de pagamento ---
+            // Atendimentos reais: não conta linhas "(Parcial)" (pagamento no meio da visita) nem
+            // cancelamentos - antes essas linhas inflavam minutos e quantidade de atendimentos.
+            const realVisits = filteredHistory.filter(i => !(i.name && (String(i.name).includes('(Parcial)') || String(i.name).includes('(CANCELADO'))));
+            const totalMinutes = realVisits.reduce((sum, item) => sum + (Number(item.minutes) || 0), 0);
+            const atendimentosCount = realVisits.length;
+            document.getElementById('cash-atend').innerText = atendimentosCount;
+            document.getElementById('cash-children').innerText = realVisits.reduce((sum, item) => sum + (Number(item.qty) || 1), 0);
+            const avgTicket = atendimentosCount > 0 ? total / atendimentosCount : 0;
+
+            document.getElementById('cash-minutes').innerText = `${totalMinutes} min`;
+            document.getElementById('cash-avg').innerText = formatBRL(avgTicket);
+            document.getElementById('cash-donut-count').innerText = atendimentosCount;
+
+            const paymentSegments = [
+                { key: 'pix', value: pixSum, color: '#6366f1' },
+                { key: 'dinheiro', value: dinheiroSum, color: '#10b981' },
+                { key: 'debito', value: debitoSum, color: '#f59e0b' },
+                { key: 'credito', value: creditoSum, color: '#f43f5e' }
+            ];
+
+            let cumulativeDeg = 0;
+            const gradientParts = [];
+            paymentSegments.forEach(seg => {
+                const pct = total > 0 ? (seg.value / total) * 100 : 0;
+                document.getElementById(`pct-${seg.key}`).innerText = `${Math.round(pct)}%`;
+                const segDeg = (pct / 100) * 360;
+                if (segDeg > 0) {
+                    gradientParts.push(`${seg.color} ${cumulativeDeg}deg ${cumulativeDeg + segDeg}deg`);
+                    cumulativeDeg += segDeg;
+                }
+            });
+            document.getElementById('cash-donut').style.background = gradientParts.length > 0
+                ? `conic-gradient(${gradientParts.join(', ')})`
+                : 'conic-gradient(#e5e7eb 0deg 360deg)';
+
+            // Guarda o resultado calculado para poder exportar para o WhatsApp sem recalcular.
+            // Usa "range" (início/fim do período) em vez de uma única data, já que o relatório
+            // agora pode ser de Hoje, Semana ou Mês - não só um dia.
+            lastCashReport = {
+                range,
+                items: filteredHistory.slice().reverse(),
+                total, pixSum, dinheiroSum, debitoSum, creditoSum
+            };
+        }
+
+        function formatDateBR(isoDate) {
+            const parts = String(isoDate).split('-');
+            if (parts.length !== 3) return isoDate;
+            return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+
+        function exportCashReportToWhatsApp(mode) {
+            if (!lastCashReport) {
+                alert("Os dados do Relatório ainda não foram carregados. Toque no botão de atualizar (🔄) no topo do Relatório e tente novamente.");
+                return;
+            }
+            const r = lastCashReport;
+            const isResumo = mode === 'resumo';
+
+            const periodHeaderLabels = { hoje: 'Relatório do Dia', semana: 'Relatório da Semana', mes: 'Relatório do Mês' };
+            const dateLine = (r.range.start === r.range.end)
+                ? `📅 Data: ${formatDateBR(r.range.start)}`
+                : `📅 Período: ${formatDateBR(r.range.start)} até ${formatDateBR(r.range.end)}`;
+
+            let msg = `📋 *${periodHeaderLabels[reportPeriod] || 'Relatório'}${isResumo ? ' (Resumo)' : ''} - KidPlay*\n`;
+            msg += `${dateLine}\n\n`;
+
+            if (isResumo) {
+                // Versão enxuta: só os números do dia, sem listar atendimento por atendimento.
+                const totalChildren = r.items.reduce((sum, item) => sum + (Number(item.qty) || 1), 0);
+                const totalMinutes = r.items.reduce((sum, item) => sum + (Number(item.minutes) || 0), 0);
+                msg += `👶 Crianças atendidas: ${totalChildren}\n`;
+                msg += `🧾 Atendimentos: ${r.items.length}\n`;
+                msg += `⏱️ Minutos totais: ${totalMinutes} min\n`;
+            } else if (r.items.length === 0) {
+                msg += `_Nenhum atendimento finalizado neste período._\n`;
+            } else {
+                r.items.forEach((item, idx) => {
+                    msg += `${idx + 1}. *${item.name}* (${item.qty}x) - ${item.minutes}min\n`;
+                    msg += `   Ref: ${item.reference} | Op: ${item.operator || 'N/A'} às ${item.time}\n`;
+                    msg += `   💵 ${formatBRL(paymentSum(item))} - ${item.method || ''}\n\n`;
+                });
+            }
+
+            msg += `━━━━━━━━━━━━━━\n`;
+            const totalLabel = { hoje: 'Total do Dia', semana: 'Total da Semana', mes: 'Total do Mês' };
+            msg += `💰 *${totalLabel[reportPeriod] || 'Total'}: ${formatBRL(r.total)}*\n`;
+            msg += `▪️ Pix: ${formatBRL(r.pixSum)}\n`;
+            msg += `▪️ Espécie: ${formatBRL(r.dinheiroSum)}\n`;
+            msg += `▪️ Débito: ${formatBRL(r.debitoSum)}\n`;
+            msg += `▪️ Crédito: ${formatBRL(r.creditoSum)}\n`;
+
+            const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+
+            // Usar um link clicado via JS em vez de window.open: mais confiável em
+            // navegadores de celular e WebViews (o app do WhatsApp, Instagram, etc.),
+            // onde window.open costuma ser bloqueado silenciosamente.
+            const link = document.createElement('a');
+            link.href = url;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function closeCashModal() {
+            document.getElementById('cash-modal').classList.add('hidden');
+            document.getElementById('cash-modal').classList.remove('flex');
+            setActiveTab('principal');
+        }
+
+        // ================= NAVEGAÇÃO POR ABAS =================
+        function setActiveTab(name) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.toggle('is-active', btn.id === 'tab-' + name);
+            });
+        }
+
+        function hideOverlayModal(id) {
+            const el = document.getElementById(id);
+            el.classList.add('hidden');
+            el.classList.remove('flex');
+        }
+
+        function goToPrincipal() {
+            ['cash-modal', 'edit-records-modal', 'edit-one-record-modal'].forEach(hideOverlayModal);
+            document.getElementById('view-principal').classList.remove('hidden');
+            setActiveTab('principal');
+        }
+
+        function openTab(name) {
+            // Segurança: abas de admin não abrem para funcionário, mesmo que alguém force pelo console
+            if (name === 'editar' && currentRole !== 'admin') return;
+
+            goToPrincipal();
+            setActiveTab(name);
+
+            if (name === 'relatorio') {
+                openCashModal();
+            } else if (name === 'editar') {
+                document.getElementById('edit-records-search').value = '';
+                renderEditRecordsList();
+                const m = document.getElementById('edit-records-modal');
+                m.classList.remove('hidden');
+                m.classList.add('flex');
+                loadHistoryFromCloud().then(renderEditRecordsList);
+            }
+        }
+
+        function matchesSearch(h, term) {
+            const digits = term.replace(/\D/g, '');
+            const nameMatch = h.name && String(h.name).toLowerCase().includes(term);
+            const refMatch = h.reference && String(h.reference).toLowerCase().includes(term);
+            const phoneMatch = digits.length >= 3 && h.phone && String(h.phone).replace(/\D/g, '').includes(digits);
+            return nameMatch || refMatch || phoneMatch;
+        }
+
+        // ================= EDITAR REGISTROS JÁ SALVOS (admin) =================
+        let currentEditRecordId = null;
+
+        function renderEditRecordsList() {
+            const term = document.getElementById('edit-records-search').value.trim().toLowerCase();
+            const container = document.getElementById('edit-records-list');
+
+            let items = history.slice().reverse();
+            if (term) items = items.filter(h => matchesSearch(h, term));
+            items = items.slice(0, 50);
+
+            if (items.length === 0) {
+                container.innerHTML = `<p class="text-center text-gray-400 text-sm py-6">Nenhum registro encontrado.</p>`;
+                return;
+            }
+
+            container.innerHTML = items.map(item => `
+                <div class="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-xl p-3">
+                    <div class="min-w-0">
+                        <p class="font-semibold text-gray-800 text-sm truncate">${escapeHtml(item.name)}</p>
+                        <p class="text-xs text-gray-500">${escapeHtml(formatDateBR(item.date))} ${escapeHtml(item.time)} · ${formatBRL(paymentSum(item))} · ${escapeHtml(item.method || '')}</p>
+                    </div>
+                    ${item.recordId
+                        ? `<button onclick="openEditOneRecord('${escapeHtml(item.recordId)}')" class="shrink-0 ml-2 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 text-xs font-semibold px-3 py-1.5 rounded-lg transition"><i class="fa-solid fa-pen mr-1"></i>Editar</button>`
+                        : `<span class="shrink-0 ml-2 text-[10px] text-gray-400 text-right">Antigo, sem ID<br>(edite na planilha)</span>`}
+                </div>`).join('');
+        }
+
+        function openEditOneRecord(recordId) {
+            const item = history.find(h => h.recordId === recordId);
+            if (!item) { alert("Registro não encontrado. Atualize e tente de novo."); return; }
+            currentEditRecordId = recordId;
+
+            document.getElementById('er-name').value = item.name || '';
+            document.getElementById('er-date').value = item.date || '';
+            document.getElementById('er-time').value = item.time || '';
+            document.getElementById('er-reference').value = item.reference || '';
+            const phoneEl = document.getElementById('er-phone');
+            phoneEl.value = item.phone || '';
+            maskPhoneInput(phoneEl);
+            document.getElementById('er-qty').value = item.qty || 1;
+            document.getElementById('er-minutes').value = item.minutes || 0;
+            document.getElementById('er-pix').value = item.pix || 0;
+            document.getElementById('er-dinheiro').value = item.dinheiro || 0;
+            document.getElementById('er-debito').value = item.debito || 0;
+            document.getElementById('er-credito').value = item.credito || 0;
+            recalcEditRecordTotal();
+
+            const btn = document.getElementById('er-save-btn');
+            btn.disabled = false;
+            btn.innerText = "Salvar";
+
+            const m = document.getElementById('edit-one-record-modal');
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+        }
+
+        function closeEditOneRecordModal() {
+            hideOverlayModal('edit-one-record-modal');
+            currentEditRecordId = null;
+        }
+
+        function recalcEditRecordTotal() {
+            const sum = ['er-pix', 'er-dinheiro', 'er-debito', 'er-credito']
+                .reduce((acc, id) => acc + (parseFloat(document.getElementById(id).value) || 0), 0);
+            document.getElementById('er-total-display').innerText = formatBRL(sum);
+        }
+
+        function buildMethodDesc(pix, dinheiro, debito, credito) {
+            const parts = [];
+            if (pix > 0) parts.push(`Pix: ${formatBRL(pix)}`);
+            if (dinheiro > 0) parts.push(`Dinheiro: ${formatBRL(dinheiro)}`);
+            if (debito > 0) parts.push(`Débito: ${formatBRL(debito)}`);
+            if (credito > 0) parts.push(`Crédito: ${formatBRL(credito)}`);
+            return parts.join(' | ') || "Sem pagamento registrado";
+        }
+
+        function saveEditingRecord() {
+            if (!currentEditRecordId || currentRole !== 'admin') return;
+            const btn = document.getElementById('er-save-btn');
+            if (btn.disabled) return;
+
+            const name = document.getElementById('er-name').value.trim();
+            if (!name) { alert("O nome não pode ficar vazio."); return; }
+
+            btn.disabled = true;
+            btn.innerText = "Salvando...";
+
+            const pix = parseFloat(document.getElementById('er-pix').value) || 0;
+            const dinheiro = parseFloat(document.getElementById('er-dinheiro').value) || 0;
+            const debito = parseFloat(document.getElementById('er-debito').value) || 0;
+            const credito = parseFloat(document.getElementById('er-credito').value) || 0;
+            const total = pix + dinheiro + debito + credito;
+            const original = history.find(h => h.recordId === currentEditRecordId) || {};
+
+            const updated = {
+                date: document.getElementById('er-date').value,
+                time: document.getElementById('er-time').value,
+                name: name,
+                qty: parseInt(document.getElementById('er-qty').value) || 1,
+                reference: document.getElementById('er-reference').value.trim(),
+                phone: document.getElementById('er-phone').value.replace(/\D/g, ''),
+                minutes: parseInt(document.getElementById('er-minutes').value) || 0,
+                // referenceTotal só muda junto se era igual ao total antigo; senão preserva o original
+                referenceTotal: (Number(original.referenceTotal) === paymentSum(original)) ? total : (original.referenceTotal || 0),
+                total: total,
+                pix, dinheiro, debito, credito,
+                method: buildMethodDesc(pix, dinheiro, debito, credito),
+                operator: original.operator || currentOperator
+            };
+            const recordId = currentEditRecordId;
+
+            fetch(GOOGLE_SHEET_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ type: "UPDATE_RECORD", recordId: recordId, record: updated })
+            }).then(() => {
+                const idx = history.findIndex(h => h.recordId === recordId);
+                if (idx !== -1) history[idx] = Object.assign({ recordId: recordId }, updated);
+                closeEditOneRecordModal();
+                renderEditRecordsList();
+                alert("Registro atualizado!");
+            }).catch(err => {
+                console.error("Erro ao atualizar registro:", err);
+                alert("Não foi possível salvar agora. Verifique a internet e tente de novo.");
+                btn.disabled = false;
+                btn.innerText = "Salvar";
+            });
+        }
+
+        function deleteEditingRecord() {
+            if (!currentEditRecordId || currentRole !== 'admin') return;
+            if (!confirm("Excluir este registro da planilha? Essa ação não pode ser desfeita.")) return;
+            const recordId = currentEditRecordId;
+
+            fetch(GOOGLE_SHEET_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ type: "DELETE_RECORD", recordId: recordId })
+            }).then(() => {
+                history = history.filter(h => h.recordId !== recordId);
+                closeEditOneRecordModal();
+                renderEditRecordsList();
+                alert("Registro excluído!");
+            }).catch(err => {
+                console.error("Erro ao excluir registro:", err);
+                alert("Não foi possível excluir agora. Verifique a internet e tente de novo.");
+            });
+        }
+
+        function renderSessions() {
+            const grid = document.getElementById('sessions-grid');
+            const emptyState = document.getElementById('empty-state');
+            const alertsContainer = document.getElementById('global-alerts-container');
+            const gridFrag = document.createDocumentFragment();
+            const alertsFrag = document.createDocumentFragment();
+
+            const playingEl = document.getElementById('playing-now');
+            if (playingEl) {
+                const kids = sessions.reduce((sum, s) => sum + (Number(s.qty) || 1), 0);
+                playingEl.innerText = `${kids} ${kids === 1 ? 'criança' : 'crianças'}`;
+            }
+
+            if (sessions.length === 0) {
+                grid.replaceChildren();
+                alertsContainer.replaceChildren();
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            const now = new Date().getTime();
+
+            sessions.forEach(session => {
+                const entryTimeDate = new Date(session.entryTime);
+                
+                let activeMs = 0;
+                if (session.isPaused) {
+                    activeMs = session.lastPauseStart - session.entryTime - session.pausedDuration;
+                } else {
+                    activeMs = now - session.entryTime - session.pausedDuration;
+                }
+
+                const diffMinutes = Math.floor(activeMs / (1000 * 60));
+                const currentCost = computeLockedCost(session, Math.max(1, diffMinutes));
+                
+                let timeStatusClass = "text-gray-600";
+                let alertBadge = "";
+
+                if (session.isPaused) {
+                    timeStatusClass = "text-amber-500 font-bold";
+                    alertBadge = `<span class="bg-amber-100 text-amber-700 text-xs px-2 py-1 rounded-full font-bold"><i class="fa-solid fa-pause mr-1"></i>Pausado</span>`;
+                } else if (session.timeLimit !== null && session.timeLimit !== undefined) {
+                    if (diffMinutes >= session.timeLimit) {
+                        timeStatusClass = "text-red-600 font-bold animate-pulse";
+                        alertBadge = `<span class="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-full font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Esgotado!${session.alarmSilenced ? ' <i class="fa-solid fa-volume-xmark ml-1" title="Alarme silenciado"></i>' : ''}</span>`;
+
+                        if (!session.alarmSilenced) {
+                            const isSnoozed = now <= (session.dismissedUntil || 0);
+
+                            if (!isSnoozed) {
+                                if (!session.alarmTriggered) {
+                                    session.alarmTriggered = true;
+                                    playAlarmSound();
+                                }
+
+                                const alertDiv = document.createElement('div');
+                                alertDiv.className = "bg-gradient-to-r from-red-600 to-rose-600 text-white px-4 py-3 rounded-xl shadow-lg shadow-red-300/50 space-y-2 ring-2 ring-red-300/50";
+                                alertDiv.innerHTML = `
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
+                                        <div>
+                                            <strong class="block text-sm">ATENÇÃO: Tempo Esgotado!</strong>
+                                            <span class="text-xs">Tempo esgotado para: ${escapeHtml(session.name)}</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-1.5 flex-wrap">
+                                        <button onclick="snoozeAlert(${session.id}, 2)" class="flex-1 min-w-[100px] bg-white text-red-600 font-bold px-2 py-1.5 rounded-lg text-xs shadow hover:bg-gray-100 hover:-translate-y-0.5 transition"><i class="fa-solid fa-gift mr-1"></i>+2 min bônus</button>
+                                        <button onclick="snoozeAlert(${session.id}, 5)" class="flex-1 min-w-[100px] bg-white text-red-600 font-bold px-2 py-1.5 rounded-lg text-xs shadow hover:bg-gray-100 hover:-translate-y-0.5 transition"><i class="fa-solid fa-gift mr-1"></i>+5 min bônus</button>
+                                        <button onclick="silenceAlertPermanently(${session.id})" class="flex-1 min-w-[100px] bg-red-900 hover:bg-black text-white font-bold px-2 py-1.5 rounded-lg text-xs shadow hover:-translate-y-0.5 transition"><i class="fa-solid fa-volume-xmark mr-1"></i>Dispensar de vez</button>
+                                    </div>
+                                `;
+                                alertsFrag.appendChild(alertDiv);
+                            } else {
+                                // Enquanto está em soneca, mantém o alarme "não disparado" para
+                                // que ele volte a soar (som + aviso) sozinho quando o bônus acabar.
+                                session.alarmTriggered = false;
+                            }
+                        }
+                    } else {
+                        alertBadge = `<span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium">Meta: ${session.timeLimit} min</span>`;
+                    }
+                } else {
+                    alertBadge = `<span class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full font-medium">Livre</span>`;
+                }
+
+                const paymentBadge = session.paymentStatus === 'Pago'
+                    ? `<span class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs px-2.5 py-1 rounded-lg font-bold"><span>✅</span>Pago</span>`
+                    : `<button onclick="openMidwayModal(${session.id})" class="inline-flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 text-xs px-2.5 py-1 rounded-lg font-bold transition"><span>⏳</span>Pendente · pagar</button>`;
+
+                // Bônus de tempo (aplicado pelos botões +2/+5 min no alerta de tempo esgotado).
+                // É só um contador visual separado: não altera session.timeLimit nem o valor cobrado.
+                const bonusActive = session.bonusActiveUntil && session.bonusActiveUntil > now;
+                const bonusRow = session.bonusMinutesTotal
+                    ? `<div class="pt-1 flex items-center justify-between">
+                            <span class="text-xs text-gray-500">Bônus de tempo:</span>
+                            ${bonusActive
+                                ? `<span class="bg-purple-100 text-purple-700 text-xs px-2 py-0.5 rounded font-semibold animate-pulse"><i class="fa-solid fa-gift mr-1"></i>Ativo · ${formatCountdown(session.bonusActiveUntil - now)}</span>`
+                                : `<span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded font-semibold"><i class="fa-solid fa-gift mr-1"></i>Encerrado</span>`
+                            }
+                       </div>
+                       <p class="text-[11px] text-purple-600 -mt-1"><i class="fa-solid fa-circle-info mr-1"></i>${session.bonusMinutesTotal} min de bônus aplicados no total (valor não muda: continua ${session.timeLimit ? session.timeLimit + ' min / ' : ''}${formatBRL(currentCost)}).</p>`
+                    : '';
+
+                const ICON_PAUSE = '<svg viewBox="0 0 24 24" class="w-4 h-4" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>';
+                const ICON_PLAY = '<svg viewBox="0 0 24 24" class="w-4 h-4" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>';
+                const ICON_PLUS = '<svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
+
+
+                const pauseButtonText = session.isPaused ? `${ICON_PLAY}<span>Retomar</span>` : `${ICON_PAUSE}<span>Pausar</span>`;
+                const pauseButtonClass = session.isPaused ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700' : 'bg-amber-100 hover:bg-amber-200 text-amber-800';
+
+                // Linha "Restante": contagem regressiva do pacote (só aparece se a entrada tem meta de tempo)
+                let remainingRow = '';
+                const limitNum = Number(session.timeLimit);
+                if (limitNum > 0) {
+                    const remMs = limitNum * 60000 - activeMs;
+                    remainingRow = remMs > 0
+                        ? `<p class="flex items-center gap-2"><span class="w-5 text-center">⏳</span>Restante: <strong class="text-gray-900 tabular-nums">${formatMMSS(remMs)}</strong> <span class="text-red-500 text-xs">restantes</span></p>`
+                        : `<p class="flex items-center gap-2"><span class="w-5 text-center">⏳</span>Restante: <strong class="text-red-600 tabular-nums">00:00</strong> <span class="text-red-500 text-xs">esgotado</span></p>`;
+                }
+
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl shadow-md hover:shadow-lg border border-gray-100 p-4 flex flex-col gap-3 transition-shadow duration-200";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start gap-2 mb-3">
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-1.5">
+                                    <h3 class="font-bold text-lg text-gray-900 truncate">${escapeHtml(session.name)}</h3>
+                                    <button onclick="openEditSessionModal(${session.id})" title="Editar nome, referência, celular e quantidade" class="text-indigo-400 hover:text-indigo-700 shrink-0 text-base leading-none">✎</button>
+                                </div>
+                                <p class="text-sm text-indigo-600 font-semibold">Ref: ${escapeHtml(session.reference) || 'Não informado'}</p>
+                                <p class="text-xs text-gray-500">Tel: ${escapeHtml(session.phone) || 'Não informado'}</p>
+                            </div>
+                            <div class="shrink-0">${alertBadge}</div>
+                        </div>
+                        <div class="space-y-1.5 text-sm text-gray-700">
+                            <p class="flex items-center gap-2"><span class="w-5 text-center">👥</span>Qtd: <strong class="text-gray-900">${session.qty}</strong></p>
+                            <p class="flex items-center gap-2"><span class="w-5 text-center">🕐</span>Entrada: <strong class="text-gray-900">${entryTimeDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</strong></p>
+                            <p class="flex items-center gap-2"><span class="w-5 text-center">⏱️</span>Ativo: <strong class="${timeStatusClass}">${diffMinutes} min</strong></p>
+                            ${remainingRow}
+                            <div class="pt-1 flex items-center justify-between gap-2">
+                                <span class="text-xs text-gray-500">Status:</span>
+                                ${paymentBadge}
+                            </div>
+                            ${bonusRow}
+                        </div>
+                    </div>
+                    <div class="border-t border-gray-100 pt-3 space-y-3">
+                        <div class="flex items-end justify-between gap-2">
+                            <div>
+                                <span class="text-xs text-gray-400 block">${typeof session.packagePrice === 'number' ? '🔒 Valor do Pacote (travado)' : 'Valor Atual'}</span>
+                                <span class="text-2xl font-extrabold text-emerald-600 tabular-nums">${formatBRL(currentCost)}</span>
+                            </div>
+                            <div class="flex gap-1.5">
+                                <button onclick="togglePauseSession(${session.id})" class="${pauseButtonClass} inline-flex items-center gap-1.5 px-2.5 py-2 rounded-xl text-xs font-bold transition">${pauseButtonText}</button>
+                                <button onclick="openAddTimeModal(${session.id})" class="bg-blue-50 hover:bg-blue-100 text-blue-700 inline-flex items-center gap-1 px-2.5 py-2 rounded-xl text-xs font-bold transition">${ICON_PLUS}<span>Mais</span></button>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="openCancelModal(${session.id})" class="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-xl text-sm font-semibold transition">Cancelar</button>
+                            <button onclick="initCheckout(${session.id})" class="w-1/2 bg-red-500 hover:bg-red-600 text-white py-2.5 rounded-xl text-sm font-semibold transition shadow-sm">Finalizar</button>
+                        </div>
+                    </div>
+                `;
+                gridFrag.appendChild(card);
+            });
+
+            // Troca tudo de uma vez (sem apagar antes), pra tela não piscar a cada segundo
+            grid.replaceChildren(gridFrag);
+            alertsContainer.replaceChildren(alertsFrag);
+        }
+
+        setInterval(() => {
+            if (sessions.length > 0 && currentOperator) {
+                renderSessions();
+            }
+        }, 1000);
+
+        // Busca atualizações de outros operadores periodicamente (crianças ativas + histórico)
+        setInterval(() => {
+            if (currentOperator) {
+                loadHistoryFromCloud();
+                retryPendingHistoryRecords();
+            }
+        }, 5000);
+
+        // Quando o celular trava a tela ou o navegador vai pra segundo plano, o sistema
+        // pausa (ou atrasa muito) o setInterval acima - é por isso que uma criança já
+        // finalizada em outro aparelho podia continuar aparecendo como ativa aqui até
+        // alguém atualizar a página manualmente. Ao voltar (desbloquear o celular, trocar
+        // de volta pro app/aba), força uma sincronização imediata em vez de esperar o
+        // próximo ciclo de 5s (que pode nem rodar se o timer ainda estiver suspenso).
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && currentOperator) {
+                loadHistoryFromCloud();
+                retryPendingHistoryRecords();
+            }
+        });
+        window.addEventListener('focus', () => {
+            if (currentOperator) {
+                loadHistoryFromCloud();
+            }
+        });
+        window.addEventListener('pageshow', () => {
+            if (currentOperator) {
+                loadHistoryFromCloud();
+            }
+        });
+    </script>
+
+
+</body></html>
