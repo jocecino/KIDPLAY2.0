@@ -96,6 +96,7 @@
             <button onclick="openModal()" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white py-3 rounded-2xl font-bold text-base shadow-lg shadow-emerald-300/40 hover:shadow-xl active:scale-[0.99] transition flex items-center justify-center gap-2">
                 <i class="fa-solid fa-plus"></i><span>Nova Entrada</span>
             </button>
+            <button id="agenda-today-banner" type="button" onclick="openTab('agenda')" class="hidden w-full text-left bg-sky-50 border border-sky-200 text-sky-900 text-sm rounded-2xl px-4 py-2.5 hover:bg-sky-100 transition"></button>
             <p class="text-gray-500 text-sm"><span class="mr-1">🤸</span>Brincando agora: <strong id="playing-now" class="text-gray-800">0 crianças</strong></p>
 
             <div id="sessions-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
@@ -112,6 +113,9 @@
             <button id="tab-principal" onclick="goToPrincipal()" class="tab-btn is-active flex flex-col items-center gap-0.5 flex-1 py-1 text-[11px]">
                 <span class="tab-ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></span><span>Principal</span>
             </button>
+            <button id="tab-agenda" onclick="openTab('agenda')" class="tab-btn flex flex-col items-center gap-0.5 flex-1 py-1 text-[11px]">
+                <span class="tab-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M8 13h2"/><path d="M14 13h2"/><path d="M8 17h2"/></svg></span><span>Agenda</span>
+            </button>
             <button id="tab-relatorio" onclick="openTab('relatorio')" class="tab-btn flex flex-col items-center gap-0.5 flex-1 py-1 text-[11px]">
                 <span class="tab-ico"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M8 17v-6"/><path d="M13 17V7"/><path d="M18 17v-4"/></svg></span><span>Relatório</span>
             </button>
@@ -119,6 +123,113 @@
                 <span class="tab-ico"><svg viewBox="0 0 24 24"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"/></svg></span><span>Editar</span>
             </button>
         </nav>
+    </div>
+
+    <!-- MODAL: AGENDA DA CARRETINHA -->
+    <div id="agenda-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="card-anim bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="text-xl font-extrabold text-gray-900 tracking-tight">📅 Agenda da Carretinha</h3>
+                <button onclick="goToPrincipal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <button id="agenda-new-btn" onclick="openAgendaForm(null)" class="admin-only hidden w-full mb-3 bg-gradient-to-r from-blue-700 to-sky-500 hover:from-blue-800 hover:to-sky-600 text-white py-2.5 rounded-xl font-bold text-sm shadow-md transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-plus"></i><span>Novo agendamento</span>
+            </button>
+            <div class="bg-gray-100 p-1 rounded-full flex text-xs font-semibold mb-2">
+                <button type="button" onclick="setAgendaFilter('proximos')" id="agenda-filter-proximos" class="flex-1 py-2 rounded-full transition">Próximos</button>
+                <button type="button" onclick="setAgendaFilter('hoje')" id="agenda-filter-hoje" class="flex-1 py-2 rounded-full transition">Hoje</button>
+                <button type="button" onclick="setAgendaFilter('semana')" id="agenda-filter-semana" class="flex-1 py-2 rounded-full transition">7 dias</button>
+                <button type="button" onclick="setAgendaFilter('mes')" id="agenda-filter-mes" class="flex-1 py-2 rounded-full transition">Mês</button>
+                <button type="button" onclick="setAgendaFilter('data')" id="agenda-filter-data" class="flex-1 py-2 rounded-full transition">Data</button>
+            </div>
+            <input type="date" id="agenda-date-input" onchange="renderAgendaList(true)"
+                class="hidden w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-gray-50 font-medium mb-2">
+            <div id="agenda-list" class="space-y-3"></div>
+        </div>
+    </div>
+
+    <!-- MODAL: NOVO / EDITAR AGENDAMENTO (admin) -->
+    <div id="agenda-form-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4 z-[60]">
+        <div class="card-anim bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative max-h-[90vh] overflow-y-auto">
+            <h3 id="agenda-form-title" class="text-lg font-bold text-gray-900 mb-3">Novo agendamento</h3>
+            <div class="space-y-2.5 text-sm">
+                <div><label class="block text-xs font-medium text-gray-600 mb-1">Data *</label>
+                    <input type="date" id="ag-date" class="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="block text-xs font-medium text-gray-600 mb-1">Início *</label>
+                        <input type="time" id="ag-start" class="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></div>
+                    <div><label class="block text-xs font-medium text-gray-600 mb-1">Fim *</label>
+                        <input type="time" id="ag-end" class="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></div>
+                </div>
+                <div><label class="block text-xs font-medium text-gray-600 mb-1">Celular (busca cliente)</label>
+                    <input type="tel" id="ag-phone" maxlength="15" placeholder="(00) 00000-0000" oninput="onAgendaPhoneInput(this)" class="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    <p id="ag-phone-feedback" class="text-xs mt-1 hidden"></p></div>
+                <div><label class="block text-xs font-medium text-gray-600 mb-1">Cliente / Responsável *</label>
+                    <input type="text" id="ag-client" placeholder="Ex: Maria" class="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></div>
+                <div><label class="block text-xs font-medium text-gray-600 mb-1">Local / Endereço do evento</label>
+                    <input type="text" id="ag-location" placeholder="Ex: Rua X, 123 - Bairro" class="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></div>
+                <div><label class="block text-xs font-medium text-gray-600 mb-1">Tipo de evento</label>
+                    <input type="text" id="ag-type" list="ag-type-list" placeholder="Ex: Aniversário" class="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    <datalist id="ag-type-list"><option value="Aniversário"><option value="Escola"><option value="Igreja"><option value="Evento"><option value="Festa"></datalist></div>
+                <div><label class="block text-xs font-medium text-gray-600 mb-1">Valor combinado (R$) — pode deixar em branco</label>
+                    <input type="number" step="0.01" min="0" id="ag-price" placeholder="Definir no final" class="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></div>
+                <div id="ag-deposit-wrap" class="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-2">
+                    <p class="text-xs font-bold text-gray-600">Sinal (opcional):</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div><label class="block text-[11px] text-gray-500">Pix (R$)</label><input type="number" step="0.01" id="ag-dep-pix" placeholder="0.00" class="w-full p-2 border border-gray-200 rounded-lg text-sm"></div>
+                        <div><label class="block text-[11px] text-gray-500">Dinheiro (R$)</label><input type="number" step="0.01" id="ag-dep-dinheiro" placeholder="0.00" class="w-full p-2 border border-gray-200 rounded-lg text-sm"></div>
+                        <div><label class="block text-[11px] text-gray-500">Débito (R$)</label><input type="number" step="0.01" id="ag-dep-debito" placeholder="0.00" class="w-full p-2 border border-gray-200 rounded-lg text-sm"></div>
+                        <div><label class="block text-[11px] text-gray-500">Crédito (R$)</label><input type="number" step="0.01" id="ag-dep-credito" placeholder="0.00" class="w-full p-2 border border-gray-200 rounded-lg text-sm"></div>
+                    </div>
+                </div>
+                <p id="ag-deposit-info" class="text-xs text-emerald-700 hidden"></p>
+                <div><label class="block text-xs font-medium text-gray-600 mb-1">Observações</label>
+                    <textarea id="ag-notes" rows="2" class="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea></div>
+            </div>
+            <div class="flex gap-2 mt-4">
+                <button type="button" onclick="closeAgendaForm()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition">Voltar</button>
+                <button type="button" id="ag-save-btn" onclick="saveAgendaForm()" class="flex-1 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold py-2.5 rounded-xl shadow-md transition disabled:opacity-50">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: RECEBER PAGAMENTO DO AGENDAMENTO (admin) -->
+    <div id="agenda-pay-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4 z-[60]">
+        <div class="card-anim bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 relative max-h-[90vh] overflow-y-auto">
+            <h3 class="text-lg font-bold text-gray-900 mb-1">Receber pagamento</h3>
+            <p id="agenda-pay-summary" class="text-sm text-gray-500 mb-3"></p>
+            <div class="grid grid-cols-2 gap-2 bg-gray-50 p-3 rounded-xl border">
+                <div><label class="block text-[11px] text-gray-500">Pix (R$)</label><input type="number" step="0.01" id="agp-pix" placeholder="0.00" oninput="calcAgendaPayTotal()" class="w-full p-2 border border-gray-200 rounded-lg text-sm"></div>
+                <div><label class="block text-[11px] text-gray-500">Dinheiro (R$)</label><input type="number" step="0.01" id="agp-dinheiro" placeholder="0.00" oninput="calcAgendaPayTotal()" class="w-full p-2 border border-gray-200 rounded-lg text-sm"></div>
+                <div><label class="block text-[11px] text-gray-500">Débito (R$)</label><input type="number" step="0.01" id="agp-debito" placeholder="0.00" oninput="calcAgendaPayTotal()" class="w-full p-2 border border-gray-200 rounded-lg text-sm"></div>
+                <div><label class="block text-[11px] text-gray-500">Crédito (R$)</label><input type="number" step="0.01" id="agp-credito" placeholder="0.00" oninput="calcAgendaPayTotal()" class="w-full p-2 border border-gray-200 rounded-lg text-sm"></div>
+            </div>
+            <div class="flex justify-between items-center px-1 mt-3">
+                <span class="text-sm font-medium text-gray-700">Recebendo agora:</span>
+                <span id="agp-total" class="text-xl font-extrabold text-emerald-600">R$ 0,00</span>
+            </div>
+            <label class="flex items-center gap-2 text-sm text-gray-700 mt-3">
+                <input type="checkbox" id="agp-conclude" checked class="w-4 h-4"> Concluir o agendamento (evento realizado)
+            </label>
+            <div class="flex gap-2 mt-4">
+                <button type="button" onclick="hideOverlayModal('agenda-pay-modal')" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition">Voltar</button>
+                <button type="button" id="agp-save-btn" onclick="confirmAgendaPay()" class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-2.5 rounded-xl shadow-md transition disabled:opacity-50">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CANCELAR AGENDAMENTO (admin) -->
+    <div id="agenda-cancel-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4 z-[60]">
+        <div class="card-anim bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 relative">
+            <h3 class="text-lg font-extrabold text-red-600 mb-2">Cancelar agendamento</h3>
+            <p id="agenda-cancel-summary" class="text-sm text-gray-500 mb-3"></p>
+            <textarea id="agenda-cancel-reason" rows="3" placeholder="Motivo do cancelamento" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:outline-none"></textarea>
+            <p id="agenda-cancel-note" class="hidden bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-lg p-2 mt-2"></p>
+            <div class="flex gap-2 mt-3">
+                <button type="button" onclick="hideOverlayModal('agenda-cancel-modal')" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition">Voltar</button>
+                <button type="button" id="agenda-cancel-btn" onclick="confirmAgendaCancel()" class="flex-1 bg-gradient-to-r from-red-600 to-rose-600 text-white font-semibold py-2.5 rounded-xl shadow-md transition disabled:opacity-50">Cancelar agendamento</button>
+            </div>
+        </div>
     </div>
 
     <!-- MODAL: EDITAR REGISTROS JÁ SALVOS (admin) -->
@@ -580,7 +691,8 @@
         // "sessions" = serverSessions + mudanças locais que ainda estão na fila de envio.
         let serverSessions = JSON.parse(localStorage.getItem('kidplay7_sessions') || '[]');
         let serverBonusPhones = JSON.parse(localStorage.getItem('kidplay7_bonus_phones') || '{}');
-        let sessions = [];
+        let sessions = [];      // só as crianças ativas
+        let agendaItems = [];   // agendamentos da carretinha (guardados na mesma lista, kind: 'agenda')
         let bonusAppliedPhones = {};
         let history = [];
         let historyLoadedFrom = null;
@@ -814,7 +926,8 @@
                 if (item.kind === 'RECORD' && item.payload.sessionOp) list = applySessionOpLocal(list, item.payload.sessionOp);
                 if (item.kind === 'BONUS_INC') bonus[item.payload.phone] = (bonus[item.payload.phone] || 0) + (item.payload.delta || 1);
             });
-            sessions = list;
+            sessions = list.filter(s => s.kind !== 'agenda');
+            agendaItems = list.filter(s => s.kind === 'agenda');
             bonusAppliedPhones = bonus;
         }
 
@@ -1073,7 +1186,8 @@
             currentRole = '';
             authToken = '';
             ['entry-modal', 'add-time-modal', 'edit-session-modal', 'midway-pay-modal', 'cancel-modal', 'checkout-modal',
-             'cash-modal', 'edit-records-modal', 'edit-one-record-modal'].forEach(hideOverlayModal);
+             'cash-modal', 'edit-records-modal', 'edit-one-record-modal',
+             'agenda-modal', 'agenda-form-modal', 'agenda-pay-modal', 'agenda-cancel-modal'].forEach(hideOverlayModal);
             document.getElementById('app-screen').classList.add('hidden');
             document.getElementById('login-screen').classList.remove('hidden');
             document.getElementById('login-form').classList.remove('hidden');
@@ -2025,6 +2139,7 @@
             hideOverlayModal('cash-modal');
             hideOverlayModal('edit-records-modal');
             hideOverlayModal('edit-one-record-modal');
+            ['agenda-modal', 'agenda-form-modal', 'agenda-pay-modal', 'agenda-cancel-modal'].forEach(hideOverlayModal);
             document.body.classList.remove('fechamento-unlocked');
             setActiveTab('principal');
         }
@@ -2035,6 +2150,8 @@
             setActiveTab(name);
             if (name === 'relatorio') {
                 openCashModal();
+            } else if (name === 'agenda') {
+                openAgenda();
             } else if (name === 'editar') {
                 document.getElementById('edit-records-search').value = '';
                 document.getElementById('edit-records-list').innerHTML = `<p class="text-center text-gray-400 text-sm py-6"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Carregando registros...</p>`;
@@ -2346,6 +2463,7 @@
             const emptyState = document.getElementById('empty-state');
             const alertsContainer = document.getElementById('global-alerts-container');
             if (!grid) return;
+            renderAgendaViews();
 
             const kids = sessions.reduce((sum, s) => sum + (Number(s.qty) || 1), 0);
             const playingEl = document.getElementById('playing-now');
@@ -2388,6 +2506,423 @@
                 alertsSig = newAlertsSig;
             }
             if (currentOperator) handleAlarms(alerting, now);
+        }
+
+        // ================= AGENDA DA CARRETINHA =================
+        // Os agendamentos ficam guardados junto com as crianças ativas (kind: 'agenda'),
+        // usando as mesmas operações do Apps Script v7 - não precisa mudar o script.
+        // Pagamentos viram linhas no Historico marcadas "(Parcial)": entram no caixa,
+        // mas não contam como atendimento nem como participação de fidelidade.
+        let agendaFilter = 'proximos';
+        let currentAgendaEditId = null;
+        let currentAgendaPayId = null;
+        let currentAgendaCancelId = null;
+        let agendaListSig = '';
+        let agendaBannerSig = '';
+
+        const AGENDA_STATUS = {
+            pendente: { label: 'Pendente', cls: 'bg-amber-100 text-amber-800', dot: '🟡' },
+            confirmado: { label: 'Confirmado', cls: 'bg-emerald-100 text-emerald-800', dot: '🟢' }
+        };
+
+        function findAgenda(id) { return agendaItems.find(a => String(a.id) === String(id)); }
+        function agendaPaid(a) { return round2(Number(a.paidTotal) || 0); }
+        function agendaRemaining(a) {
+            if (a.price === null || a.price === undefined || a.price === '') return null;
+            return round2(Math.max(0, Number(a.price) - agendaPaid(a)));
+        }
+        function weekdayBR(iso) {
+            const [y, m, d] = iso.split('-').map(Number);
+            return ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'][new Date(y, m - 1, d).getDay()];
+        }
+        function sortAgenda(list) {
+            return list.slice().sort((a, b) => (a.date + a.start).localeCompare(b.date + b.start));
+        }
+
+        function getAgendaRange() {
+            const today = new Date();
+            const t = toISODate(today);
+            if (agendaFilter === 'hoje') return { start: t, end: t };
+            if (agendaFilter === 'semana') { const e = new Date(today); e.setDate(e.getDate() + 6); return { start: t, end: toISODate(e) }; }
+            if (agendaFilter === 'mes') {
+                return { start: toISODate(new Date(today.getFullYear(), today.getMonth(), 1)), end: toISODate(new Date(today.getFullYear(), today.getMonth() + 1, 0)) };
+            }
+            if (agendaFilter === 'data') {
+                const v = document.getElementById('agenda-date-input').value || t;
+                return { start: v, end: v };
+            }
+            return { start: '0000-00-00', end: '9999-12-31' }; // próximos (inclui atrasados)
+        }
+
+        function setAgendaFilter(f) {
+            agendaFilter = f;
+            ['proximos', 'hoje', 'semana', 'mes', 'data'].forEach(k => {
+                document.getElementById('agenda-filter-' + k).className = (k === f)
+                    ? 'flex-1 py-2 rounded-full transition bg-indigo-600 text-white shadow'
+                    : 'flex-1 py-2 rounded-full transition text-gray-500 hover:text-gray-700';
+            });
+            const di = document.getElementById('agenda-date-input');
+            di.classList.toggle('hidden', f !== 'data');
+            if (f === 'data' && !di.value) di.value = toISODate(new Date());
+            renderAgendaList(true);
+        }
+
+        function openAgenda() {
+            showModal('agenda-modal');
+            setAgendaFilter(agendaFilter);
+        }
+
+        function buildAgendaCard(a, isAdmin, todayISO) {
+            const st = AGENDA_STATUS[a.status] || AGENDA_STATUS.pendente;
+            const late = a.date < todayISO;
+            const remaining = agendaRemaining(a);
+            const paid = agendaPaid(a);
+            const moneyLine = (a.price !== null && a.price !== undefined && a.price !== '')
+                ? `Valor: <strong>${formatBRL(a.price)}</strong>${paid > 0 ? ` · Pago: <strong class="text-emerald-700">${formatBRL(paid)}</strong>` : ''} · Falta: <strong class="text-amber-700">${formatBRL(remaining)}</strong>`
+                : `Valor: <em>a definir</em>${paid > 0 ? ` · Pago: <strong class="text-emerald-700">${formatBRL(paid)}</strong>` : ''}`;
+            const actions = isAdmin ? `
+                <div class="grid grid-cols-3 gap-1.5 pt-2 border-t border-gray-100">
+                    <button onclick="openAgendaForm('${a.id}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold py-2 rounded-lg">✏️ Editar</button>
+                    ${a.status !== 'confirmado' ? `<button onclick="confirmAgendaStatus('${a.id}')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-semibold py-2 rounded-lg">✅ Confirmar</button>` : `<span class="text-center text-[11px] text-emerald-700 py-2">✅ Confirmado</span>`}
+                    <button onclick="sendAgendaWhatsApp('${a.id}')" class="bg-green-50 hover:bg-green-100 text-green-700 text-xs font-semibold py-2 rounded-lg">💬 WhatsApp</button>
+                    <button onclick="openAgendaPay('${a.id}')" class="col-span-2 bg-teal-50 hover:bg-teal-100 text-teal-700 text-xs font-semibold py-2 rounded-lg">💰 Receber / Concluir</button>
+                    <button onclick="openAgendaCancel('${a.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold py-2 rounded-lg">❌ Cancelar</button>
+                </div>` : '';
+            return `
+                <div class="bg-white border ${late ? 'border-red-300' : 'border-gray-200'} rounded-2xl p-3 shadow-sm space-y-1.5">
+                    <div class="flex justify-between items-start gap-2">
+                        <div class="min-w-0">
+                            <p class="text-xs font-bold text-indigo-700 uppercase">${weekdayBR(a.date)}, ${escapeHtml(formatDateBR(a.date))} · ${escapeHtml(a.start)}–${escapeHtml(a.end)}</p>
+                            <p class="font-bold text-gray-900 truncate">${escapeHtml(a.client)}${a.eventType ? ` <span class="font-normal text-gray-500">· ${escapeHtml(a.eventType)}</span>` : ''}</p>
+                        </div>
+                        <span class="shrink-0 text-[11px] font-bold px-2 py-1 rounded-full ${st.cls}">${st.dot} ${st.label}</span>
+                    </div>
+                    ${late ? `<p class="text-xs text-red-600 font-semibold">⚠ A data já passou: conclua ou cancele.</p>` : ''}
+                    ${a.phone ? `<p class="text-xs text-gray-600">📞 ${escapeHtml(a.phone)}</p>` : ''}
+                    ${a.location ? `<p class="text-xs text-gray-600">📍 ${escapeHtml(a.location)}</p>` : ''}
+                    <p class="text-xs text-gray-700">${moneyLine}</p>
+                    ${a.notes ? `<p class="text-xs text-gray-500 italic">📝 ${escapeHtml(a.notes)}</p>` : ''}
+                    ${actions}
+                </div>`;
+        }
+
+        function renderAgendaList(force) {
+            const modal = document.getElementById('agenda-modal');
+            if (!modal || modal.classList.contains('hidden')) return;
+            const range = getAgendaRange();
+            const todayISO = toISODate(new Date());
+            const isAdmin = currentRole === 'admin';
+            const items = sortAgenda(agendaItems.filter(a => a.date >= range.start && a.date <= range.end));
+            const sig = JSON.stringify(items) + agendaFilter + range.start + range.end + todayISO + isAdmin;
+            if (!force && sig === agendaListSig) return;
+            agendaListSig = sig;
+            const el = document.getElementById('agenda-list');
+            if (items.length === 0) {
+                el.innerHTML = `<p class="text-center text-gray-400 text-sm py-8">Nenhum agendamento neste período.</p>`;
+                return;
+            }
+            let html = '', lastDate = '';
+            items.forEach(a => {
+                if (a.date !== lastDate && agendaFilter !== 'hoje' && agendaFilter !== 'data') {
+                    html += `<p class="text-xs font-bold text-gray-500 pt-1">${a.date === todayISO ? 'HOJE' : weekdayBR(a.date).toUpperCase() + ' ' + formatDateBR(a.date)}</p>`;
+                    lastDate = a.date;
+                }
+                html += buildAgendaCard(a, isAdmin, todayISO);
+            });
+            el.innerHTML = html;
+        }
+
+        function renderAgendaBanner() {
+            const el = document.getElementById('agenda-today-banner');
+            if (!el) return;
+            const todayISO = toISODate(new Date());
+            const today = sortAgenda(agendaItems.filter(a => a.date === todayISO));
+            const sig = JSON.stringify(today.map(a => [a.id, a.start, a.end, a.client, a.location])) + todayISO;
+            if (sig === agendaBannerSig) return;
+            agendaBannerSig = sig;
+            if (today.length === 0) { el.classList.add('hidden'); el.innerHTML = ''; return; }
+            el.innerHTML = today.map(a => `📅 <strong>Hoje:</strong> carretinha ${escapeHtml(a.start)}–${escapeHtml(a.end)} – ${escapeHtml(a.client)}${a.location ? ' (' + escapeHtml(a.location) + ')' : ''}`).join('<br>');
+            el.classList.remove('hidden');
+        }
+
+        function renderAgendaViews() {
+            renderAgendaBanner();
+            renderAgendaList(false);
+        }
+
+        // ---- Novo / editar ----
+        let agendaLookupTimer = null, agendaLookupSeq = 0;
+        function onAgendaPhoneInput(el) {
+            maskPhoneInput(el);
+            clearTimeout(agendaLookupTimer);
+            const clean = el.value.replace(/\D/g, '');
+            const fb = document.getElementById('ag-phone-feedback');
+            agendaLookupSeq++;
+            if (clean.length < 10) { fb.classList.add('hidden'); return; }
+            const seq = agendaLookupSeq;
+            agendaLookupTimer = setTimeout(async () => {
+                try {
+                    const r = await apiGet({ action: 'client', phone: clean });
+                    if (seq !== agendaLookupSeq || !r || r.status !== 'success') return;
+                    if (r.found) {
+                        const c = document.getElementById('ag-client');
+                        if (!c.value.trim()) c.value = r.reference || r.name || '';
+                        fb.innerText = 'Cliente já conhecido: ' + (r.reference || r.name || '');
+                        fb.className = 'text-xs mt-1 text-emerald-600';
+                    } else {
+                        fb.innerText = 'Cliente novo.';
+                        fb.className = 'text-xs mt-1 text-gray-500';
+                    }
+                } catch (e) { /* sem internet: segue sem buscar */ }
+            }, 400);
+        }
+
+        function openAgendaForm(id) {
+            if (currentRole !== 'admin') return;
+            const a = id ? findAgenda(id) : null;
+            if (id && !a) { alert('Esse agendamento não existe mais (pode ter sido concluído ou cancelado).'); renderAgendaList(true); return; }
+            currentAgendaEditId = a ? a.id : null;
+            document.getElementById('agenda-form-title').innerText = a ? 'Editar agendamento' : 'Novo agendamento';
+            document.getElementById('ag-date').value = a ? a.date : '';
+            document.getElementById('ag-start').value = a ? a.start : '';
+            document.getElementById('ag-end').value = a ? a.end : '';
+            const ph = document.getElementById('ag-phone');
+            ph.value = a ? (a.phone || '') : '';
+            maskPhoneInput(ph);
+            document.getElementById('ag-phone-feedback').classList.add('hidden');
+            document.getElementById('ag-client').value = a ? a.client : '';
+            document.getElementById('ag-location').value = a ? (a.location || '') : '';
+            document.getElementById('ag-type').value = a ? (a.eventType || '') : '';
+            document.getElementById('ag-price').value = a && a.price !== null && a.price !== undefined ? a.price : '';
+            document.getElementById('ag-notes').value = a ? (a.notes || '') : '';
+            ['pix', 'dinheiro', 'debito', 'credito'].forEach(k => document.getElementById('ag-dep-' + k).value = '');
+            // Sinal só no cadastro; depois, pagamentos entram pelo "Receber"
+            document.getElementById('ag-deposit-wrap').classList.toggle('hidden', !!a);
+            const info = document.getElementById('ag-deposit-info');
+            if (a && agendaPaid(a) > 0) { info.innerText = `Já pago: ${formatBRL(agendaPaid(a))} (novos pagamentos pelo botão "Receber").`; info.classList.remove('hidden'); }
+            else info.classList.add('hidden');
+            const btn = document.getElementById('ag-save-btn');
+            btn.disabled = false; btn.innerText = 'Salvar';
+            showModal('agenda-form-modal');
+        }
+
+        function closeAgendaForm() {
+            hideOverlayModal('agenda-form-modal');
+            currentAgendaEditId = null;
+        }
+
+        function findAgendaConflicts(date, start, end, ignoreId) {
+            return agendaItems.filter(o => String(o.id) !== String(ignoreId) && o.date === date && start < o.end && o.start < end);
+        }
+
+        function saveAgendaForm() {
+            if (currentRole !== 'admin') return;
+            const btn = document.getElementById('ag-save-btn');
+            if (btn.disabled) return;
+            const date = document.getElementById('ag-date').value;
+            const start = document.getElementById('ag-start').value;
+            const end = document.getElementById('ag-end').value;
+            const client = document.getElementById('ag-client').value.trim();
+            if (!date || !start || !end) { alert('Preencha a data, o início e o fim.'); return; }
+            if (end <= start) { alert('A hora de fim precisa ser depois da hora de início.'); return; }
+            if (!client) { alert('Informe o nome do cliente/responsável.'); return; }
+            const priceRaw = document.getElementById('ag-price').value;
+            const price = priceRaw === '' ? null : round2(parseFloat(priceRaw));
+            if (price !== null && (isNaN(price) || price < 0)) { alert('Valor combinado inválido.'); return; }
+
+            const conflicts = findAgendaConflicts(date, start, end, currentAgendaEditId);
+            if (conflicts.length > 0) {
+                const list = conflicts.map(o => `• ${o.start}–${o.end} – ${o.client}${o.location ? ' (' + o.location + ')' : ''}`).join('\n');
+                if (!confirm(`⚠ Choque de horário!\n\nJá existe agendamento nesse horário em ${formatDateBR(date)}:\n${list}\n\nSalvar mesmo assim?`)) return;
+            }
+
+            const fields = {
+                date, start, end, client, price,
+                phone: document.getElementById('ag-phone').value.replace(/\D/g, ''),
+                location: document.getElementById('ag-location').value.trim(),
+                eventType: document.getElementById('ag-type').value.trim(),
+                notes: document.getElementById('ag-notes').value.trim(),
+                updatedAt: Date.now(),
+                updatedBy: currentOperator
+            };
+            btn.disabled = true; btn.innerText = 'Salvando...';
+
+            if (currentAgendaEditId) {
+                patchSession(currentAgendaEditId, fields);
+            } else {
+                const dep = readPayFields('ag-dep');
+                const depTotal = round2(dep.pix + dep.dinheiro + dep.debito + dep.credito);
+                const item = Object.assign({
+                    id: 'ag-' + generateRecordId(),
+                    kind: 'agenda',
+                    status: 'pendente',
+                    paidTotal: depTotal,
+                    createdAt: Date.now(),
+                    createdBy: currentOperator
+                }, fields);
+                if (depTotal > 0) {
+                    const record = buildAgendaRecord(item, 'sinal', dep, depTotal, buildMethodDesc(dep.pix, dep.dinheiro, dep.debito, dep.credito));
+                    enqueue('RECORD', { record, sessionOp: { op: 'add', session: item } });
+                    addRecordToLocalHistory(record);
+                } else {
+                    sessionOp({ op: 'add', session: item });
+                }
+            }
+            closeAgendaForm();
+            renderAgendaList(true);
+        }
+
+        function buildAgendaRecord(a, what, pay, total, method) {
+            const nowObj = new Date();
+            return {
+                recordId: generateRecordId(),
+                date: getFormattedDate(nowObj),
+                time: formatTimeHM(nowObj),
+                // "(Parcial)" = entra no caixa, mas não conta como atendimento/criança/fidelidade
+                name: `Carretinha: ${a.client} – ${what} ${formatDateBR(a.date)} (Parcial)`,
+                qty: 1,
+                reference: a.location ? `Agendamento ${a.start}–${a.end} · ${a.location}` : `Agendamento ${a.start}–${a.end}`,
+                phone: a.phone || '',
+                minutes: 0,
+                referenceTotal: a.price !== null && a.price !== undefined ? a.price : 0,
+                total,
+                pix: pay.pix, dinheiro: pay.dinheiro, debito: pay.debito, credito: pay.credito,
+                method,
+                operator: currentOperator || 'Desconhecido'
+            };
+        }
+
+        function confirmAgendaStatus(id) {
+            if (currentRole !== 'admin') return;
+            const a = findAgenda(id);
+            if (!a) return renderAgendaList(true);
+            patchSession(id, { status: 'confirmado', updatedAt: Date.now(), updatedBy: currentOperator });
+            renderAgendaList(true);
+        }
+
+        function sendAgendaWhatsApp(id) {
+            const a = findAgenda(id);
+            if (!a) return;
+            const remaining = agendaRemaining(a);
+            let msg = `Olá, ${a.client}! 🎉\nConfirmando o agendamento da *Carretinha KidPlay* - Ayres Diversões:\n\n`;
+            msg += `📅 ${weekdayBR(a.date)}, ${formatDateBR(a.date)}\n⏰ ${a.start} às ${a.end}\n`;
+            if (a.location) msg += `📍 ${a.location}\n`;
+            if (a.price !== null && a.price !== undefined && a.price !== '') {
+                msg += `💰 Valor: ${formatBRL(a.price)}\n`;
+                if (agendaPaid(a) > 0) msg += `✅ Sinal/pago: ${formatBRL(agendaPaid(a))}\n`;
+                msg += `⏳ Restante: ${formatBRL(remaining)}\n`;
+            } else if (agendaPaid(a) > 0) {
+                msg += `✅ Sinal/pago: ${formatBRL(agendaPaid(a))}\n`;
+            }
+            msg += `\nQualquer dúvida, é só chamar. Obrigado! 🙏`;
+            const digits = String(a.phone || '').replace(/\D/g, '');
+            const target = digits.length >= 10 ? '55' + digits : '';
+            const link = document.createElement('a');
+            link.href = `https://wa.me/${target}?text=${encodeURIComponent(msg)}`;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // ---- Receber / concluir ----
+        function openAgendaPay(id) {
+            if (currentRole !== 'admin') return;
+            const a = findAgenda(id);
+            if (!a) return renderAgendaList(true);
+            currentAgendaPayId = a.id;
+            const remaining = agendaRemaining(a);
+            document.getElementById('agenda-pay-summary').innerHTML = `<strong>${escapeHtml(a.client)}</strong> · ${formatDateBR(a.date)} ${escapeHtml(a.start)}–${escapeHtml(a.end)}<br>`
+                + (remaining !== null ? `Valor ${formatBRL(a.price)} · Pago ${formatBRL(agendaPaid(a))} · <strong class="text-amber-700">Falta ${formatBRL(remaining)}</strong>` : `Valor a definir · Pago ${formatBRL(agendaPaid(a))}`);
+            ['pix', 'dinheiro', 'debito', 'credito'].forEach(k => document.getElementById('agp-' + k).value = '');
+            if (remaining) document.getElementById('agp-dinheiro').value = remaining.toFixed(2);
+            document.getElementById('agp-conclude').checked = true;
+            calcAgendaPayTotal();
+            const btn = document.getElementById('agp-save-btn');
+            btn.disabled = false; btn.innerText = 'Confirmar';
+            showModal('agenda-pay-modal');
+        }
+
+        function calcAgendaPayTotal() {
+            const p = readPayFields('agp');
+            document.getElementById('agp-total').innerText = formatBRL(p.pix + p.dinheiro + p.debito + p.credito);
+        }
+
+        function confirmAgendaPay() {
+            if (currentRole !== 'admin') return;
+            const btn = document.getElementById('agp-save-btn');
+            if (btn.disabled) return;
+            const a = findAgenda(currentAgendaPayId);
+            if (!a) { hideOverlayModal('agenda-pay-modal'); return renderAgendaList(true); }
+            const pay = readPayFields('agp');
+            const total = round2(pay.pix + pay.dinheiro + pay.debito + pay.credito);
+            const conclude = document.getElementById('agp-conclude').checked;
+            if (total <= 0 && !conclude) { alert('Informe um valor recebido ou marque "Concluir".'); return; }
+            const newPaid = round2(agendaPaid(a) + total);
+            const msg = conclude
+                ? `Concluir o agendamento de "${a.client}"${total > 0 ? ` recebendo ${formatBRL(total)} agora` : ' sem receber nada agora'} (total pago: ${formatBRL(newPaid)})? Ele sai da Agenda e fica registrado no Historico.`
+                : `Registrar ${formatBRL(total)} recebido de "${a.client}"? O agendamento continua na Agenda.`;
+            if (!confirm(msg)) return;
+            btn.disabled = true; btn.innerText = 'Salvando...';
+            const method = total > 0 ? buildMethodDesc(pay.pix, pay.dinheiro, pay.debito, pay.credito)
+                : (newPaid > 0 ? `Concluído - já pago antes (${formatBRL(newPaid)})` : 'Concluído sem pagamento registrado');
+            const record = buildAgendaRecord(a, conclude ? 'final' : 'pagamento', pay, total, method);
+            const sessionOpData = conclude
+                ? { op: 'remove', id: a.id }
+                : { op: 'patch', id: a.id, changes: { paidTotal: newPaid, updatedAt: Date.now(), updatedBy: currentOperator } };
+            enqueue('RECORD', { record, sessionOp: sessionOpData });
+            addRecordToLocalHistory(record);
+            hideOverlayModal('agenda-pay-modal');
+            renderAgendaList(true);
+        }
+
+        // ---- Cancelar ----
+        function openAgendaCancel(id) {
+            if (currentRole !== 'admin') return;
+            const a = findAgenda(id);
+            if (!a) return renderAgendaList(true);
+            currentAgendaCancelId = a.id;
+            document.getElementById('agenda-cancel-summary').innerHTML = `<strong>${escapeHtml(a.client)}</strong> · ${formatDateBR(a.date)} ${escapeHtml(a.start)}–${escapeHtml(a.end)}`;
+            document.getElementById('agenda-cancel-reason').value = '';
+            const note = document.getElementById('agenda-cancel-note');
+            if (agendaPaid(a) > 0) {
+                note.innerHTML = `Já foi pago <strong>${formatBRL(agendaPaid(a))}</strong>. Esse valor <strong>continua no caixa</strong> (o cancelamento não faz estorno). Se devolver ao cliente, corrija depois em "Editar".`;
+                note.classList.remove('hidden');
+            } else note.classList.add('hidden');
+            const btn = document.getElementById('agenda-cancel-btn');
+            btn.disabled = false; btn.innerText = 'Cancelar agendamento';
+            showModal('agenda-cancel-modal');
+        }
+
+        function confirmAgendaCancel() {
+            if (currentRole !== 'admin') return;
+            const btn = document.getElementById('agenda-cancel-btn');
+            if (btn.disabled) return;
+            const reason = document.getElementById('agenda-cancel-reason').value.trim();
+            if (!reason) { alert('Digite o motivo do cancelamento.'); return; }
+            const a = findAgenda(currentAgendaCancelId);
+            if (!a) { hideOverlayModal('agenda-cancel-modal'); return renderAgendaList(true); }
+            btn.disabled = true; btn.innerText = 'Salvando...';
+            const nowObj = new Date();
+            const record = {
+                recordId: generateRecordId(),
+                date: getFormattedDate(nowObj),
+                time: formatTimeHM(nowObj),
+                name: `Carretinha: ${a.client} – agendamento ${formatDateBR(a.date)} ${a.start} (CANCELADO: ${reason})`,
+                qty: 1,
+                reference: a.location ? `Agendamento · ${a.location}` : 'Agendamento',
+                phone: a.phone || '',
+                minutes: 0,
+                referenceTotal: a.price !== null && a.price !== undefined ? a.price : 0,
+                total: 0, pix: 0, dinheiro: 0, debito: 0, credito: 0,
+                method: agendaPaid(a) > 0 ? `Cancelado (sinal de ${formatBRL(agendaPaid(a))} mantido no caixa)` : 'Cancelado',
+                operator: currentOperator || 'Desconhecido'
+            };
+            enqueue('RECORD', { record, sessionOp: { op: 'remove', id: a.id } });
+            addRecordToLocalHistory(record);
+            hideOverlayModal('agenda-cancel-modal');
+            renderAgendaList(true);
         }
 
         // ================= CICLOS =================
